@@ -1,21 +1,19 @@
-package org.csgis.geobricks;
+package de.csgis.geobricks;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.csgis.geobricks.model.Installation;
+import de.csgis.geobricks.model.Installation;
 
 @Singleton
-public class TestGetServlet extends HttpServlet {
+public class TestAddServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Inject
@@ -24,12 +22,17 @@ public class TestGetServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		Query query = em.createQuery("SELECT i FROM "
-				+ Installation.class.getName() + " i");
-		List<?> list = query.getResultList();
-		for (Object object : list) {
-			Installation i = (Installation) object;
-			resp.getWriter().write(i.getId() + "\n");
+		String id = req.getParameter("id");
+		if (id == null || id.length() == 0) {
+			id = "id-" + System.currentTimeMillis();
 		}
+		Installation installation = new Installation();
+		installation.setId(id);
+
+		em.getTransaction().begin();
+		em.persist(installation);
+		em.getTransaction().commit();
+
+		resp.getWriter().write("Installation successfully added: " + id);
 	}
 }

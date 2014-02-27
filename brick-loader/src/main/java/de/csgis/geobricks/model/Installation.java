@@ -1,4 +1,4 @@
-package org.csgis.geobricks.model;
+package de.csgis.geobricks.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

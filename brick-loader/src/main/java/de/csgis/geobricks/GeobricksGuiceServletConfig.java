@@ -1,4 +1,4 @@
-package org.csgis.geobricks;
+package de.csgis.geobricks;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
