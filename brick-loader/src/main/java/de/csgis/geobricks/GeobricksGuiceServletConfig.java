@@ -1,10 +1,7 @@
 package de.csgis.geobricks;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.servlet.ServletContextEvent;
 
-import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -16,25 +13,34 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 	private class GeobricksServletModule extends ServletModule {
 		@Override
 		protected void configureServlets() {
-			serve("/get").with(TestGetServlet.class);
-			serve("/add").with(TestAddServlet.class);
+			serve("/apps/*").with(GetApplicationServlet.class);
 		}
 	}
 
-	private class GeobricksRuntimeModule implements Module {
-		@Override
-		public void configure(Binder binder) {
-			EntityManagerFactory emf = Persistence
-					.createEntityManagerFactory("geobricks");
-			EntityManager instance = emf.createEntityManager();
-			binder.bind(EntityManager.class).toInstance(instance);
+	private Module moduleInstance;
+
+	@Override
+	public void contextInitialized(ServletContextEvent servletContextEvent) {
+		String moduleClassName = servletContextEvent.getServletContext()
+				.getInitParameter("guice-module-class");
+		try {
+			moduleInstance = (Module) Class.forName(moduleClassName)
+					.newInstance();
+		} catch (InstantiationException | IllegalAccessException
+				| ClassNotFoundException e) {
+			/*
+			 * Nothing will work if this is wrong, so let's crash properly
+			 */
+			throw new RuntimeException(e);
 		}
+
+		super.contextInitialized(servletContextEvent);
 	}
 
 	@Override
 	protected Injector getInjector() {
 		return Guice.createInjector(new GeobricksServletModule(),
-				new GeobricksRuntimeModule());
+				moduleInstance);
 	}
 
 }

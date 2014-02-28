@@ -21,10 +21,12 @@ import org.junit.Test;
 
 public class ApplicationManagementTest {
 
-	private static final String APP_NAME = "apps";
+	private static final String LOADER_APP_NAME = "geobricks";
 	private static final int PORT = 9090;
 	private static final String BASE_URL = "http://localhost:" + PORT + "/"
-			+ APP_NAME + "/";
+			+ LOADER_APP_NAME + "/";
+	private static final String APP_BASE_URL = BASE_URL + "apps/";
+
 	private static Server server;
 
 	@BeforeClass
@@ -33,9 +35,12 @@ public class ApplicationManagementTest {
 		server.setStopAtShutdown(true);
 
 		WebAppContext webAppContext = new WebAppContext();
-		webAppContext.setContextPath("/" + APP_NAME);
+		webAppContext.setContextPath("/" + LOADER_APP_NAME);
 		webAppContext.setResourceBase("src/main/webapp");
-		webAppContext.setClassLoader(Server.class.getClassLoader());
+		webAppContext.setOverrideDescriptor("src/test/resources/test-web.xml");
+		// TODO can this be removed?
+		webAppContext.setClassLoader(ApplicationManagementTest.class
+				.getClassLoader());
 		server.setHandler(webAppContext);
 
 		server.start();
@@ -94,16 +99,16 @@ public class ApplicationManagementTest {
 	}
 
 	private int doPut(String path) throws IOException, ClientProtocolException {
-		return execute(new HttpPut(BASE_URL + path));
+		return execute(new HttpPut(APP_BASE_URL + path));
 	}
 
 	private int doDelete(String path) throws IOException,
 			ClientProtocolException {
-		return execute(new HttpDelete(BASE_URL + path));
+		return execute(new HttpDelete(APP_BASE_URL + path));
 	}
 
 	private int doGet(String path) throws MalformedURLException, IOException {
-		return execute(new HttpGet(BASE_URL + path));
+		return execute(new HttpGet(APP_BASE_URL + path));
 	}
 
 	private int execute(HttpRequestBase put) throws IOException,
