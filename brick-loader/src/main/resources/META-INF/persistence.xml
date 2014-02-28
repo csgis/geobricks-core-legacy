@@ -11,4 +11,16 @@
 			<property name="eclipselink.ddl-generation" value="create-tables" />
 		</properties>
 	</persistence-unit>
+	<persistence-unit name="test">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>de.csgis.geobricks.model.Installation</class>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test" />
+			<property name="javax.persistence.jdbc.user" value="sa" />
+			<property name="javax.persistence.jdbc.password" value="" />
+			<!-- Vendor specific -->
+			<property name="eclipselink.ddl-generation" value="create-tables" />
+		</properties>
+	</persistence-unit>
 </persistence>
