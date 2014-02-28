@@ -3,6 +3,7 @@ package de.csgis.geobricks;
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import de.csgis.geobricks.model.Installation;
 import de.csgis.geobricks.model.Installation_;
 
+@Singleton
 public class GetApplicationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
