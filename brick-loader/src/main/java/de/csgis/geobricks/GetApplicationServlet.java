@@ -29,12 +29,59 @@ public class GetApplicationServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		String appName = getAppName(req);
+
+		try {
+			getApplication(appName);
+			resp.getOutputStream().write(
+					("Application for " + appName).getBytes());
+		} catch (NoResultException e) {
+			throw new HTTPCodeServletException("Application not found: "
+					+ appName, 404);
+		}
+	}
+
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		String appName = getAppName(req);
+
+		em.getTransaction().begin();
+		try {
+			em.remove(getApplication(appName));
+			em.getTransaction().commit();
+			resp.sendError(204, "Application '" + appName
+					+ "' successfully removed");
+		} catch (NoResultException e) {
+			em.getTransaction().rollback();
+			resp.sendError(404, "Application not found: " + appName);
+		}
+	}
+
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		String appName = getAppName(req);
+
+		Application app = new Application();
+		app.setId(appName);
+
+		em.getTransaction().begin();
+		em.persist(app);
+		em.getTransaction().commit();
+
+		resp.sendError(204, "Application '" + appName + "' successfully added");
+	}
+
+	private String getAppName(HttpServletRequest req) {
 		String path = req.getPathInfo();
 		if (path.endsWith("/")) {
 			path = path.substring(0, path.length() - 1);
 		}
-		String appName = path.substring(path.lastIndexOf('/'));
+		return path.substring(path.lastIndexOf('/') + 1);
+	}
 
+	private Application getApplication(String appName) throws NoResultException {
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Application> criteria = criteriaBuilder
 				.createQuery(Application.class);
@@ -44,13 +91,7 @@ public class GetApplicationServlet extends HttpServlet {
 		criteria.where(predicate);
 
 		TypedQuery<Application> query = em.createQuery(criteria);
-		try {
-			query.getSingleResult();
-			resp.getOutputStream().write(
-					("Application for " + appName).getBytes());
-		} catch (NoResultException e) {
-			throw new HTTPCodeServletException("Application not found: "
-					+ appName, 404);
-		}
+
+		return query.getSingleResult();
 	}
 }
