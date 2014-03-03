@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-public class Installation {
+public class Application {
 	@Id
 	private String id;
 

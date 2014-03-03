@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.csgis.geobricks.model.Installation;
-import de.csgis.geobricks.model.Installation_;
+import de.csgis.geobricks.model.Application;
+import de.csgis.geobricks.model.Application_;
 
 @Singleton
 public class GetApplicationServlet extends HttpServlet {
@@ -36,14 +36,14 @@ public class GetApplicationServlet extends HttpServlet {
 		String appName = path.substring(path.lastIndexOf('/'));
 
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-		CriteriaQuery<Installation> criteria = criteriaBuilder
-				.createQuery(Installation.class);
-		Root<Installation> root = criteria.from(Installation.class);
-		Predicate predicate = criteriaBuilder.equal(root.get(Installation_.id),
+		CriteriaQuery<Application> criteria = criteriaBuilder
+				.createQuery(Application.class);
+		Root<Application> root = criteria.from(Application.class);
+		Predicate predicate = criteriaBuilder.equal(root.get(Application_.id),
 				appName);
 		criteria.where(predicate);
 
-		TypedQuery<Installation> query = em.createQuery(criteria);
+		TypedQuery<Application> query = em.createQuery(criteria);
 		try {
 			query.getSingleResult();
 			resp.getOutputStream().write(
