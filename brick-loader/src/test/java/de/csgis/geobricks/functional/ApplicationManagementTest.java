@@ -16,6 +16,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -49,6 +50,11 @@ public class ApplicationManagementTest {
 	@AfterClass
 	public static void stop() throws Exception {
 		server.stop();
+	}
+
+	@Before
+	public void cleanDatabase() throws Exception {
+		doDelete("stadtplan");
 	}
 
 	@Test

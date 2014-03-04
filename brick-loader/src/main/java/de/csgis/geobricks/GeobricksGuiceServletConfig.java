@@ -14,6 +14,7 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 		@Override
 		protected void configureServlets() {
 			serve("/apps/*").with(GetApplicationServlet.class);
+			filter("/apps/*").through(OutputFilter.class);
 		}
 	}
 

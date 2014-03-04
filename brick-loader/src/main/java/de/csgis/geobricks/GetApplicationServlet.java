@@ -50,11 +50,11 @@ public class GetApplicationServlet extends HttpServlet {
 		try {
 			em.remove(getApplication(appName));
 			em.getTransaction().commit();
-			resp.sendError(204, "Application '" + appName
-					+ "' successfully removed");
+			throw new HTTPCodeServletException(204);
 		} catch (NoResultException e) {
 			em.getTransaction().rollback();
-			resp.sendError(404, "Application not found: " + appName);
+			throw new HTTPCodeServletException("Application not found: "
+					+ appName, 404);
 		}
 	}
 
@@ -70,7 +70,7 @@ public class GetApplicationServlet extends HttpServlet {
 		em.persist(app);
 		em.getTransaction().commit();
 
-		resp.sendError(204, "Application '" + appName + "' successfully added");
+		throw new HTTPCodeServletException(204);
 	}
 
 	private String getAppName(HttpServletRequest req) {
