@@ -1,6 +1,7 @@
 package de.csgis.geobricks;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
+
 import de.csgis.geobricks.model.Application;
 import de.csgis.geobricks.model.Application_;
 
@@ -29,22 +32,28 @@ public class GetApplicationServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String appName = getAppName(req);
+		String appName = req.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE)
+				.toString();
 
 		try {
 			getApplication(appName);
-			resp.getOutputStream().write(
-					("Application for " + appName).getBytes());
 		} catch (NoResultException e) {
 			throw new HTTPCodeServletException("Application not found: "
 					+ appName, 404);
+		}
+		InputStream stream = this.getClass().getResourceAsStream("index.html");
+		try {
+			IOUtils.copy(stream, resp.getOutputStream());
+		} finally {
+			stream.close();
 		}
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String appName = getAppName(req);
+		String appName = req.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE)
+				.toString();
 
 		em.getTransaction().begin();
 		try {
@@ -61,7 +70,8 @@ public class GetApplicationServlet extends HttpServlet {
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String appName = getAppName(req);
+		String appName = req.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE)
+				.toString();
 
 		Application app = new Application();
 		app.setId(appName);
@@ -71,14 +81,6 @@ public class GetApplicationServlet extends HttpServlet {
 		em.getTransaction().commit();
 
 		throw new HTTPCodeServletException(204);
-	}
-
-	private String getAppName(HttpServletRequest req) {
-		String path = req.getPathInfo();
-		if (path.endsWith("/")) {
-			path = path.substring(0, path.length() - 1);
-		}
-		return path.substring(path.lastIndexOf('/') + 1);
 	}
 
 	private Application getApplication(String appName) throws NoResultException {

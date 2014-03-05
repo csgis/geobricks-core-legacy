@@ -13,8 +13,20 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 	private class GeobricksServletModule extends ServletModule {
 		@Override
 		protected void configureServlets() {
-			serve("/apps/*").with(GetApplicationServlet.class);
-			filter("/apps/*").through(OutputFilter.class);
+			String apps = Geobricks.APPS_ROOT;
+
+			serveRegex("/" + apps + "/.*/jslib/.*").with(
+					JslibStaticServlet.class);
+			serveRegex("/" + apps + "/.*/modules/.*").with(
+					ModulesStaticServlet.class);
+			serveRegex("/" + apps + "/.*/config.js").with(ConfigServlet.class);
+			serve("/" + apps + "/*").with(GetApplicationServlet.class);
+
+			/*
+			 * Filters
+			 */
+			filter("/" + apps + "/*").through(OutputFilter.class);
+			filter("/" + apps + "/*").through(AppGetterFilter.class);
 		}
 	}
 

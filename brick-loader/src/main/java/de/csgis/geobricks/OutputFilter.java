@@ -35,8 +35,8 @@ public class OutputFilter implements Filter {
 			response.setContentType("application/json");
 			response.setCharacterEncoding("utf8");
 			if (errorMsg != null) {
-				response.getWriter()
-						.write("{\"message\":\"" + errorMsg + "\"}");
+				String msg = "{\"message\":\"" + errorMsg + "\"}";
+				response.getOutputStream().write(msg.getBytes());
 			}
 		}
 	}
