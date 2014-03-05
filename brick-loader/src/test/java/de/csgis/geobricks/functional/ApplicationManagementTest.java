@@ -39,9 +39,6 @@ public class ApplicationManagementTest {
 		webAppContext.setContextPath("/" + LOADER_APP_NAME);
 		webAppContext.setResourceBase("src/main/webapp");
 		webAppContext.setOverrideDescriptor("src/test/resources/test-web.xml");
-		// TODO can this be removed?
-		webAppContext.setClassLoader(ApplicationManagementTest.class
-				.getClassLoader());
 		server.setHandler(webAppContext);
 
 		server.start();
