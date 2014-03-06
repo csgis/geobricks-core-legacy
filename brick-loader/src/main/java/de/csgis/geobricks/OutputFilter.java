@@ -11,8 +11,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 @Singleton
 public class OutputFilter implements Filter {
+	private static final Logger logger = Logger.getLogger(OutputFilter.class);
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -24,7 +27,6 @@ public class OutputFilter implements Filter {
 		try {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			e.printStackTrace();
 			int statusCode = 500;
 			String errorMsg = "Server error";
 			if (e instanceof HTTPCodeServletException) {
@@ -37,6 +39,14 @@ public class OutputFilter implements Filter {
 			if (errorMsg != null) {
 				String msg = "{\"message\":\"" + errorMsg + "\"}";
 				response.getOutputStream().write(msg.getBytes());
+			}
+
+			if (statusCode == 500) {
+				logger.error(errorMsg, e);
+			} else {
+				String msg = errorMsg != null ? errorMsg : "";
+				logger.info("(" + statusCode + ") " + msg);
+				logger.debug(e);
 			}
 		}
 	}
