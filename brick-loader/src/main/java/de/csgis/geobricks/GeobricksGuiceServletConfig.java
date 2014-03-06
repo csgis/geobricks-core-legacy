@@ -20,6 +20,8 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 			serveRegex("/" + apps + "/.*/modules/.*").with(
 					ModulesStaticServlet.class);
 			serveRegex("/" + apps + "/.*/config.js").with(ConfigServlet.class);
+			serveRegex("/" + apps + "/.*/plugins/.*")
+					.with(PluginsServlet.class);
 			serve("/" + apps + "/*").with(GetApplicationServlet.class);
 
 			/*
@@ -27,6 +29,8 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 			 */
 			filter("/" + apps + "/*").through(OutputFilter.class);
 			filter("/" + apps + "/*").through(AppGetterFilter.class);
+			filterRegex("/" + apps + "/.*/plugins/.*").through(
+					PluginGetterFilter.class);
 		}
 	}
 

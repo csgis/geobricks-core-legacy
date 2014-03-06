@@ -15,6 +15,7 @@ public class GeobricksRuntimeModule implements Module {
 				.createEntityManagerFactory(getPersistenceUnitName());
 		EntityManager instance = emf.createEntityManager();
 		binder.bind(EntityManager.class).toInstance(instance);
+		binder.bind(PersistenceUtils.class).toInstance(new PersistenceUtils());
 	}
 
 	protected String getPersistenceUnitName() {

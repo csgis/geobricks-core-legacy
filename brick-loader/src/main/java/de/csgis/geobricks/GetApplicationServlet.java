@@ -7,11 +7,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 
 import de.csgis.geobricks.model.Application;
-import de.csgis.geobricks.model.Application_;
 
 @Singleton
 public class GetApplicationServlet extends HttpServlet {
@@ -29,6 +23,9 @@ public class GetApplicationServlet extends HttpServlet {
 	@Inject
 	private EntityManager em;
 
+	@Inject
+	private PersistenceUtils utils;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -36,11 +33,12 @@ public class GetApplicationServlet extends HttpServlet {
 				.toString();
 
 		try {
-			getApplication(appName);
+			utils.getApplication(appName);
 		} catch (NoResultException e) {
 			throw new HTTPCodeServletException("Application not found: "
 					+ appName, 404);
 		}
+
 		InputStream stream = this.getClass().getResourceAsStream("index.html");
 		try {
 			IOUtils.copy(stream, resp.getOutputStream());
@@ -57,7 +55,7 @@ public class GetApplicationServlet extends HttpServlet {
 
 		em.getTransaction().begin();
 		try {
-			em.remove(getApplication(appName));
+			em.remove(utils.getApplication(appName));
 			em.getTransaction().commit();
 			throw new HTTPCodeServletException(204);
 		} catch (NoResultException e) {
@@ -81,19 +79,5 @@ public class GetApplicationServlet extends HttpServlet {
 		em.getTransaction().commit();
 
 		throw new HTTPCodeServletException(204);
-	}
-
-	private Application getApplication(String appName) throws NoResultException {
-		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-		CriteriaQuery<Application> criteria = criteriaBuilder
-				.createQuery(Application.class);
-		Root<Application> root = criteria.from(Application.class);
-		Predicate predicate = criteriaBuilder.equal(root.get(Application_.id),
-				appName);
-		criteria.where(predicate);
-
-		TypedQuery<Application> query = em.createQuery(criteria);
-
-		return query.getSingleResult();
 	}
 }
