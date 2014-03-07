@@ -26,4 +26,9 @@ public class RestPoint {
 		return serverManager.doGet(path + "/" + resource);
 	}
 
+	public void doDelete(String resource) throws ClientProtocolException,
+			IOException {
+		serverManager.doDelete(path + "/" + resource);
+	}
+
 }
