@@ -57,5 +57,6 @@ public class PluginsServlet extends HttpServlet {
 		em.getTransaction().begin();
 		em.merge(app);
 		em.getTransaction().commit();
+		throw new HTTPCodeServletException(204);
 	}
 }
