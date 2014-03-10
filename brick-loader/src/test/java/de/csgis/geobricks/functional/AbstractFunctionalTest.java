@@ -16,6 +16,11 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClients;
 
 public abstract class AbstractFunctionalTest {
+	private static final String LOADER_APP_NAME = "geobricks";
+	private static final int PORT = 9090;
+	private static final String BASE_URL = "http://localhost:" + PORT + "/"
+			+ LOADER_APP_NAME + "/";
+
 	private HttpClient client;
 
 	public AbstractFunctionalTest() {
@@ -67,5 +72,9 @@ public abstract class AbstractFunctionalTest {
 		return new JSONTokener(builder.toString());
 	}
 
-	protected abstract String getBase();
+	protected String getBase() {
+		return BASE_URL + getRoot() + "/";
+	}
+
+	protected abstract String getRoot();
 }

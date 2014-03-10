@@ -6,40 +6,24 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.http.HttpResponse;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.csgis.geobricks.Geobricks;
+
 public class ApplicationManagementTest extends AbstractFunctionalTest {
-
-	private static final String LOADER_APP_NAME = "geobricks";
-	private static final int PORT = 9090;
-	private static final String BASE_URL = "http://localhost:" + PORT + "/"
-			+ LOADER_APP_NAME + "/";
-	private static final String APP_BASE_URL = BASE_URL + "apps/";
-
-	private static Server server;
+	private static ServerManager serverManager = new ServerManager();
 
 	@BeforeClass
 	public static void start() throws Exception {
-		server = new Server(PORT);
-		server.setStopAtShutdown(true);
-
-		WebAppContext webAppContext = new WebAppContext();
-		webAppContext.setContextPath("/" + LOADER_APP_NAME);
-		webAppContext.setResourceBase("src/main/webapp");
-		webAppContext.setOverrideDescriptor("src/test/resources/test-web.xml");
-		server.setHandler(webAppContext);
-
-		server.start();
+		serverManager.start("geobricks");
 	}
 
 	@AfterClass
 	public static void stop() throws Exception {
-		server.stop();
+		serverManager.stop();
 	}
 
 	@Before
@@ -136,7 +120,7 @@ public class ApplicationManagementTest extends AbstractFunctionalTest {
 	}
 
 	@Override
-	protected String getBase() {
-		return APP_BASE_URL;
+	protected String getRoot() {
+		return Geobricks.APPS_ROOT;
 	}
 }
