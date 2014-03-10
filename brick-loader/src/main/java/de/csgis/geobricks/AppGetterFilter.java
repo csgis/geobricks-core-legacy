@@ -16,6 +16,6 @@ public class AppGetterFilter extends AbstractGetterFilter {
 
 	@Override
 	protected String getAttributeName() {
-		return Geobricks.APPNAME_HTTP_ATTRIBUTE;
+		return Geobricks.APP_ID_HTTP_ATTRIBUTE;
 	}
 }

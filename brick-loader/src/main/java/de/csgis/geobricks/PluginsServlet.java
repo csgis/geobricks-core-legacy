@@ -26,7 +26,7 @@ public class PluginsServlet extends HttpServlet {
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String appName = req.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE)
+		String appName = req.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE)
 				.toString();
 		String pluginName = req.getAttribute(
 				Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE).toString();
@@ -44,7 +44,7 @@ public class PluginsServlet extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String appName = req.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE)
+		String appName = req.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE)
 				.toString();
 		String pluginName = req.getAttribute(
 				Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE).toString();

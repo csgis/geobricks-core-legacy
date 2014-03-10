@@ -31,7 +31,7 @@ public class ConfigServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String appName = req.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE)
+		String appName = req.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE)
 				.toString();
 		Application app = utils.getApplication(appName);
 

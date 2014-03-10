@@ -29,7 +29,7 @@ public class GetApplicationServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		Object app = req.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE);
+		Object app = req.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE);
 		if (app == null) {
 			// Requesting the list of applications
 			handleAppList(resp);
@@ -71,7 +71,7 @@ public class GetApplicationServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		Object appAttribute = req
-				.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE);
+				.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE);
 		if (appAttribute == null) {
 			// TODO This response should include an Allow header containing a
 			// list of valid methods.
@@ -103,7 +103,7 @@ public class GetApplicationServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		Object appAttribute = req
-				.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE);
+				.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE);
 		if (appAttribute == null) {
 			// TODO This response should include an Allow header containing a
 			// list of valid methods.
