@@ -1,7 +1,7 @@
 package de.csgis.geobricks;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import de.csgis.geobricks.model.Application;
 
 @Singleton
@@ -29,54 +29,100 @@ public class GetApplicationServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String appName = req.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE)
-				.toString();
+		Object app = req.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE);
+		if (app == null) {
+			// Requesting the list of applications
+			handleAppList(resp);
+		} else {
+			// Requesting a single application
+			handleSingleApp(app.toString(), resp);
 
-		try {
-			utils.getApplication(appName);
-		} catch (NoResultException e) {
-			throw new HTTPCodeServletException("Application not found: "
-					+ appName, 404);
+		}
+	}
+
+	private void handleAppList(HttpServletResponse response) throws IOException {
+		JSONArray array = new JSONArray();
+
+		List<Application> apps = utils.getApplicationList();
+		for (Application app : apps) {
+			array.add(app.getId());
 		}
 
-		InputStream stream = this.getClass().getResourceAsStream("index.html");
-		try {
-			IOUtils.copy(stream, resp.getOutputStream());
-		} finally {
-			stream.close();
+		response.setContentType("application/javascript");
+		response.setCharacterEncoding("utf8");
+		response.getWriter().write(array.toString());
+	}
+
+	private void handleSingleApp(String appId, HttpServletResponse response)
+			throws HTTPCodeServletException, IOException {
+		Application app = utils.getApplication(appId);
+		if (app == null) {
+			throw new HTTPCodeServletException("Application not found: "
+					+ appId, 404);
+
+		} else {
+			JSONObject json = new JSONObject();
+			json.element("id", appId);
+			response.getWriter().write(json.toString());
 		}
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String appName = req.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE)
-				.toString();
+		Object appAttribute = req
+				.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE);
+		if (appAttribute == null) {
+			// TODO This response should include an Allow header containing a
+			// list of valid methods.
+			throw new HTTPCodeServletException(
+					"DELETE method requires an application id", 405);
+		}
 
-		em.getTransaction().begin();
-		try {
-			em.remove(utils.getApplication(appName));
-			em.getTransaction().commit();
-			throw new HTTPCodeServletException(204);
-		} catch (NoResultException e) {
-			em.getTransaction().rollback();
+		String appId = appAttribute.toString();
+
+		Application app = utils.getApplication(appId);
+		if (app == null) {
 			throw new HTTPCodeServletException("Application not found: "
-					+ appName, 404);
+					+ appId, 404);
+		} else {
+			em.getTransaction().begin();
+			try {
+				em.remove(app);
+				em.getTransaction().commit();
+				throw new HTTPCodeServletException(204);
+			} catch (NoResultException e) {
+				em.getTransaction().rollback();
+				throw new HTTPCodeServletException("Application not found: "
+						+ appId, 404);
+			}
 		}
 	}
 
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String appName = req.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE)
-				.toString();
+		Object appAttribute = req
+				.getAttribute(Geobricks.APPNAME_HTTP_ATTRIBUTE);
+		if (appAttribute == null) {
+			// TODO This response should include an Allow header containing a
+			// list of valid methods.
+			throw new HTTPCodeServletException(
+					"PUT method requires an application id", 405);
+		}
 
-		Application app = new Application();
-		app.setId(appName);
+		String appId = appAttribute.toString();
 
-		em.getTransaction().begin();
-		em.persist(app);
-		em.getTransaction().commit();
+		Application app = utils.getApplication(appId);
+
+		if (app == null) {
+			app = new Application();
+			app.setId(appId);
+
+			em.getTransaction().begin();
+			em.persist(app);
+			em.getTransaction().commit();
+		}
 
 		throw new HTTPCodeServletException(204);
 	}

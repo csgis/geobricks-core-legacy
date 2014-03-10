@@ -1,5 +1,7 @@
 package de.csgis.geobricks;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -21,6 +23,15 @@ public class PersistenceUtils {
 	PersistenceUtils() {
 	}
 
+	public List<Application> getApplicationList() {
+		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<Application> query = builder
+				.createQuery(Application.class);
+		CriteriaQuery<Application> all = query.select(query
+				.from(Application.class));
+		return em.createQuery(all).getResultList();
+	}
+
 	public Application getApplication(String name) {
 		return getEntityById(Application.class, Application_.id, name);
 	}
@@ -38,6 +49,12 @@ public class PersistenceUtils {
 		criteria.where(predicate);
 
 		TypedQuery<T> query = em.createQuery(criteria);
-		return query.getSingleResult();
+		List<T> list = query.getResultList();
+
+		if (list.size() == 0) {
+			return null;
+		} else {
+			return list.get(0);
+		}
 	}
 }
