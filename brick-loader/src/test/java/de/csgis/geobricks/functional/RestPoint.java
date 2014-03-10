@@ -16,9 +16,17 @@ public class RestPoint {
 		this.path = path;
 	}
 
-	public void doPut(String resource) throws ClientProtocolException,
+	public HttpResponse doPut() throws ClientProtocolException, IOException {
+		return serverManager.doPut(path);
+	}
+
+	public HttpResponse doPut(String resource) throws ClientProtocolException,
 			IOException {
-		serverManager.doPut(path + "/" + resource);
+		return serverManager.doPut(path + "/" + resource);
+	}
+
+	public HttpResponse doGet() throws ClientProtocolException, IOException {
+		return serverManager.doGet(path);
 	}
 
 	public HttpResponse doGet(String resource) throws MalformedURLException,
@@ -26,9 +34,12 @@ public class RestPoint {
 		return serverManager.doGet(path + "/" + resource);
 	}
 
-	public void doDelete(String resource) throws ClientProtocolException,
-			IOException {
-		serverManager.doDelete(path + "/" + resource);
+	public HttpResponse doDelete() throws ClientProtocolException, IOException {
+		return serverManager.doDelete(path);
 	}
 
+	public HttpResponse doDelete(String resource)
+			throws ClientProtocolException, IOException {
+		return serverManager.doDelete(path + "/" + resource);
+	}
 }

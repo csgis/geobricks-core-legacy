@@ -38,15 +38,14 @@ public class ServerManager {
 		server.stop();
 	}
 
-	public int doPut(String path) throws IOException, ClientProtocolException {
-		return execute(new HttpPut(getPath(path))).getStatusLine()
-				.getStatusCode();
+	public HttpResponse doPut(String path) throws IOException,
+			ClientProtocolException {
+		return execute(new HttpPut(getPath(path)));
 	}
 
-	public int doDelete(String path) throws IOException,
+	public HttpResponse doDelete(String path) throws IOException,
 			ClientProtocolException {
-		return execute(new HttpDelete(getPath(path))).getStatusLine()
-				.getStatusCode();
+		return execute(new HttpDelete(getPath(path)));
 	}
 
 	public HttpResponse doGet(String path) throws MalformedURLException,
