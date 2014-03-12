@@ -1,6 +1,7 @@
 package de.csgis.geobricks;
 
 import java.io.IOException;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import de.csgis.geobricks.model.Application;
 import de.csgis.geobricks.model.Plugin;
@@ -31,22 +33,42 @@ public class PluginsServlet extends HttpServlet {
 
 		Object pluginAttribute = req
 				.getAttribute(Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE);
-		if (pluginAttribute != null) {
-			String pluginId = pluginAttribute.toString();
-			Plugin plugin = utils.getPlugin(pluginId);
-			if (plugin == null || !app.getPlugins().contains(plugin)) {
-				throw new HTTPCodeServletException("Cannot find plugin '"
-						+ pluginId + "' for application '" + app.getId() + "'",
-						404);
-			}
-
-			JSONObject json = new JSONObject();
-			json.element("id", plugin.getId());
-
-			resp.setContentType("application/javascript");
-			resp.setCharacterEncoding("utf8");
-			resp.getWriter().write(json.toString());
+		if (pluginAttribute == null) {
+			handlePluginList(app, resp);
+		} else {
+			handleSinglePlugin(app, pluginAttribute.toString(), resp);
 		}
+	}
+
+	private void handlePluginList(Application app, HttpServletResponse response)
+			throws IOException {
+		JSONArray array = new JSONArray();
+
+		Set<Plugin> plugins = app.getPlugins();
+		for (Plugin plugin : plugins) {
+			array.add(plugin.getId());
+		}
+
+		response.setContentType("application/javascript");
+		response.setCharacterEncoding("utf8");
+		response.getWriter().write(array.toString());
+	}
+
+	private void handleSinglePlugin(Application app, String pluginId,
+			HttpServletResponse response) throws HTTPCodeServletException,
+			IOException {
+		Plugin plugin = utils.getPlugin(pluginId);
+		if (plugin == null || !app.getPlugins().contains(plugin)) {
+			throw new HTTPCodeServletException("Cannot find plugin '"
+					+ pluginId + "' for application '" + app.getId() + "'", 404);
+		}
+
+		JSONObject json = new JSONObject();
+		json.element("id", plugin.getId());
+
+		response.setContentType("application/javascript");
+		response.setCharacterEncoding("utf8");
+		response.getWriter().write(json.toString());
 	}
 
 	@Override
@@ -88,8 +110,9 @@ public class PluginsServlet extends HttpServlet {
 
 	private Application getApplication(HttpServletRequest request)
 			throws HTTPCodeServletException {
-		String appName = request.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE)
-				.toString();
+		Object appAttribute = request
+				.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE);
+		String appName = appAttribute.toString();
 		Application app = utils.getApplication(appName);
 
 		if (app == null) {

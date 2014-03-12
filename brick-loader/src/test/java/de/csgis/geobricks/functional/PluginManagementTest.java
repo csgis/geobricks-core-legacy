@@ -38,19 +38,27 @@ public class PluginManagementTest extends AbstractFunctionalTest {
 
 	@Before
 	public void installApp() throws ClientProtocolException, IOException {
-		apps = new RestPoint(serverManager, Geobricks.APPS_ROOT);
-		pluginList = new RestPoint(serverManager, "plugins");
+		String appsBase = Geobricks.ADMIN_ROOT + "/" + Geobricks.APPS_ROOT;
+		String pluginsBase = Geobricks.ADMIN_ROOT + "/"
+				+ Geobricks.PLUGINS_ROOT;
+		String appBase = appsBase + "/" + APP_ID;
 
+		apps = new RestPoint(serverManager, appsBase);
+		pluginList = new RestPoint(serverManager, pluginsBase);
+
+		apps.doDelete(APP_ID);
 		apps.doPut(APP_ID);
-		app = new RestPoint(serverManager, Geobricks.APPS_ROOT + "/" + APP_ID);
-		plugins = new RestPoint(serverManager, Geobricks.APPS_ROOT + "/"
-				+ APP_ID + "/plugins");
+
+		app = new RestPoint(serverManager, appBase);
+		plugins = new RestPoint(serverManager, appBase + "/"
+				+ Geobricks.PLUGINS_ROOT);
 	}
 
 	@Test
 	public void getPluginList() throws Exception {
 		JSONArray array = parseJsonArray(pluginList.doGet());
-		assertEquals(0, array.size());
+		assertEquals(1, array.size());
+		assertEquals("hello", array.getString(0));
 	}
 
 	@Test
@@ -89,7 +97,7 @@ public class PluginManagementTest extends AbstractFunctionalTest {
 
 	@Test
 	public void deletePluginListForApp() throws Exception {
-		HttpResponse response = apps.doDelete(Geobricks.PLUGINS_ROOT);
+		HttpResponse response = app.doDelete(Geobricks.PLUGINS_ROOT);
 		assertEquals(405, response.getStatusLine().getStatusCode());
 	}
 

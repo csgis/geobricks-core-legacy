@@ -15,22 +15,29 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 		protected void configureServlets() {
 			String apps = Geobricks.APPS_ROOT;
 
+			// Admin REST API
+			String adminBase = "/" + Geobricks.ADMIN_ROOT + "/";
+			String adminAppsBase = adminBase + Geobricks.APPS_ROOT + "/";
+			String adminPluginList = adminBase + Geobricks.PLUGINS_ROOT;
+			String adminAppPlugins = adminAppsBase + ".*/"
+					+ Geobricks.PLUGINS_ROOT;
+
+			serveRegex(adminAppPlugins, adminAppPlugins + "/.*").with(
+					PluginsServlet.class);
+			serve(adminPluginList).with(PluginListServlet.class);
+			serve(adminAppsBase + "*").with(GetApplicationServlet.class);
+
+			filter(adminAppsBase + "*").through(AppGetterFilter.class);
+			filterRegex(adminAppPlugins + ".*").through(
+					PluginGetterFilter.class);
+			filter(adminBase + "*").through(OutputFilter.class);
+
+			// Client Requests
 			serveRegex("/" + apps + "/.*/jslib/.*").with(
 					JslibStaticServlet.class);
 			serveRegex("/" + apps + "/.*/modules/.*").with(
 					ModulesStaticServlet.class);
 			serveRegex("/" + apps + "/.*/config.js").with(ConfigServlet.class);
-			serveRegex("/" + apps + "/.*/plugins/.*")
-					.with(PluginsServlet.class);
-			serve("/" + apps + "/*").with(GetApplicationServlet.class);
-
-			/*
-			 * Filters
-			 */
-			filter("/" + apps + "/*").through(OutputFilter.class);
-			filter("/" + apps + "/*").through(AppGetterFilter.class);
-			filterRegex("/" + apps + "/.*/plugins/.*").through(
-					PluginGetterFilter.class);
 		}
 	}
 
