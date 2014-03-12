@@ -17,7 +17,7 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 
 			// Admin REST API
 			String adminBase = "/" + Geobricks.ADMIN_ROOT + "/";
-			String adminAppsBase = adminBase + Geobricks.APPS_ROOT + "/";
+			String adminAppsBase = adminBase + Geobricks.APPS_ROOT;
 			String adminPluginList = adminBase + Geobricks.PLUGINS_ROOT;
 			String adminAppPlugins = adminAppsBase + ".*/"
 					+ Geobricks.PLUGINS_ROOT;
@@ -25,7 +25,8 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 			serveRegex(adminAppPlugins, adminAppPlugins + "/.*").with(
 					PluginsServlet.class);
 			serve(adminPluginList).with(PluginListServlet.class);
-			serve(adminAppsBase + "*").with(GetApplicationServlet.class);
+			serve(adminAppsBase, adminAppsBase + "/*").with(
+					GetApplicationServlet.class);
 
 			filter(adminAppsBase + "*").through(AppGetterFilter.class);
 			filterRegex(adminAppPlugins + ".*").through(

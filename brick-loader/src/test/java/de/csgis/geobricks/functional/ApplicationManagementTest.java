@@ -13,8 +13,12 @@ import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
 
-public class ApplicationManagementTest extends AbstractFunctionalTest {
+public class ApplicationManagementTest extends TestUtils {
 	private static ServerManager serverManager = new ServerManager();
+
+	private static final String APP_ID = "stadtplan";
+
+	private RestPoint apps;
 
 	@BeforeClass
 	public static void start() throws Exception {
@@ -28,99 +32,76 @@ public class ApplicationManagementTest extends AbstractFunctionalTest {
 
 	@Before
 	public void cleanDatabase() throws Exception {
-		doDelete("stadtplan");
+		apps = new RestPoint(serverManager, Geobricks.ADMIN_ROOT + "/"
+				+ Geobricks.APPS_ROOT);
+		apps.doDelete(APP_ID);
 	}
 
 	@Test
 	public void getList() throws Exception {
-		HttpResponse response = doGet("");
+		HttpResponse response = apps.doGet();
 		JSONArray array = parseJsonArray(response);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals(0, array.size());
 
-		doPut("stadtplan");
+		apps.doPut(APP_ID);
 
-		response = doGet("");
+		response = apps.doGet();
 		array = parseJsonArray(response);
 		assertEquals(1, array.size());
 		assertEquals(200, response.getStatusLine().getStatusCode());
-		assertEquals("stadtplan", array.get(0));
+		assertEquals(APP_ID, array.getString(0));
 	}
 
 	@Test
 	public void getApplication() throws Exception {
-		doPut("stadtplan");
+		apps.doPut(APP_ID);
 
-		HttpResponse response = doGet("stadtplan");
+		HttpResponse response = apps.doGet(APP_ID);
 		JSONObject obj = parseJsonObject(response);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertTrue(obj.has("id"));
-		assertEquals("stadtplan", obj.get("id"));
+		assertEquals(APP_ID, obj.get("id"));
 	}
 
 	@Test
 	public void getNonExistingApplication() throws Exception {
-		assertEquals(404, doGetStatus("stadtplan"));
+		assertEquals(404, apps.doGet("none").getStatusLine().getStatusCode());
 	}
 
 	@Test
 	public void putApplication() throws Exception {
-		/*
-		 * PUT new application in root
-		 */
-		assertEquals(204, doPutStatus("stadtplan"));
-
-		/*
-		 * Check the url now exists
-		 */
-		assertEquals(200, doGetStatus("stadtplan"));
+		assertEquals(204, apps.doPut(APP_ID).getStatusLine().getStatusCode());
+		assertEquals(200, apps.doGet(APP_ID).getStatusLine().getStatusCode());
 	}
 
 	@Test
 	public void putExistingApplication() throws Exception {
-		assertEquals(204, doPutStatus("stadtplan"));
-		assertEquals(200, doGetStatus("stadtplan"));
-		assertEquals(204, doPutStatus("stadtplan"));
-		assertEquals(200, doGetStatus("stadtplan"));
+		assertEquals(204, apps.doPut(APP_ID).getStatusLine().getStatusCode());
+		assertEquals(200, apps.doGet(APP_ID).getStatusLine().getStatusCode());
+		assertEquals(204, apps.doPut(APP_ID).getStatusLine().getStatusCode());
+		assertEquals(200, apps.doGet(APP_ID).getStatusLine().getStatusCode());
 	}
 
 	@Test
 	public void putBaseUrl() throws Exception {
-		HttpResponse response = doPut("");
-		assertEquals(405, response.getStatusLine().getStatusCode());
+		assertEquals(405, apps.doPut().getStatusLine().getStatusCode());
 	}
 
 	@Test
 	public void deleteApplication() throws Exception {
-		/*
-		 * Add the application
-		 */
-		assertEquals(204, doPutStatus("stadtplan"));
-
-		/*
-		 * Remove it
-		 */
-		assertEquals(204, doDeleteStatus("stadtplan"));
-
-		/*
-		 * Check the url does not exist
-		 */
-		assertEquals(404, doGetStatus("stadtplan"));
+		assertEquals(204, apps.doPut(APP_ID).getStatusLine().getStatusCode());
+		assertEquals(204, apps.doDelete(APP_ID).getStatusLine().getStatusCode());
+		assertEquals(404, apps.doGet(APP_ID).getStatusLine().getStatusCode());
 	}
 
 	@Test
 	public void deleteUnexistentApplication() throws Exception {
-		assertEquals(404, doDeleteStatus("doesnotexist"));
+		assertEquals(404, apps.doDelete("none").getStatusLine().getStatusCode());
 	}
 
 	@Test
 	public void deleteBaseUrl() throws Exception {
-		HttpResponse response = doDelete("");
-		assertEquals(405, response.getStatusLine().getStatusCode());
-	}
-
-	@Override
-	protected String getRoot() {
-		return Geobricks.APPS_ROOT;
+		assertEquals(405, apps.doDelete().getStatusLine().getStatusCode());
 	}
 }

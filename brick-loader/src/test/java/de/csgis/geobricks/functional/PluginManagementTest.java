@@ -19,7 +19,7 @@ import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
 
-public class PluginManagementTest extends AbstractFunctionalTest {
+public class PluginManagementTest {
 	private static ServerManager serverManager = new ServerManager();
 
 	private static final String APP_ID = "stadtplan";
@@ -56,7 +56,7 @@ public class PluginManagementTest extends AbstractFunctionalTest {
 
 	@Test
 	public void getPluginList() throws Exception {
-		JSONArray array = parseJsonArray(pluginList.doGet());
+		JSONArray array = TestUtils.parseJsonArray(pluginList.doGet());
 		assertEquals(1, array.size());
 		assertEquals("hello", array.getString(0));
 	}
@@ -73,12 +73,12 @@ public class PluginManagementTest extends AbstractFunctionalTest {
 
 	@Test
 	public void getPluginListForApp() throws Exception {
-		JSONArray array = parseJsonArray(plugins.doGet());
+		JSONArray array = TestUtils.parseJsonArray(plugins.doGet());
 		assertEquals(0, array.size());
 
 		String pluginId = "p1";
 		plugins.doPut(pluginId);
-		array = parseJsonArray(plugins.doGet());
+		array = TestUtils.parseJsonArray(plugins.doGet());
 		assertEquals(1, array.size());
 		assertEquals(pluginId, array.get(0));
 	}
@@ -106,7 +106,7 @@ public class PluginManagementTest extends AbstractFunctionalTest {
 		String pluginId = "p1";
 		plugins.doPut(pluginId);
 
-		JSONObject plugin = parseJsonObject(plugins.doGet(pluginId));
+		JSONObject plugin = TestUtils.parseJsonObject(plugins.doGet(pluginId));
 		assertTrue(plugin.has("id"));
 		assertEquals(pluginId, plugin.get("id"));
 	}
@@ -194,10 +194,5 @@ public class PluginManagementTest extends AbstractFunctionalTest {
 		response = apps.doGet("stadtplan/config.js");
 		content = IOUtils.toString(response.getEntity().getContent());
 		assertTrue(content.contains("hello"));
-	}
-
-	@Override
-	protected String getRoot() {
-		return Geobricks.PLUGINS_ROOT;
 	}
 }
