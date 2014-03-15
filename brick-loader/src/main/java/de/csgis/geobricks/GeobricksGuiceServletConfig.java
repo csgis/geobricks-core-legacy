@@ -36,6 +36,8 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 			// Client Requests
 			serveRegex("/" + apps + "/.*/jslib/.*").with(
 					JslibStaticServlet.class);
+			serveRegex("/" + apps + "/.*/modules/main.js").with(
+					MainModulesStaticServlet.class);
 			serveRegex("/" + apps + "/.*/modules/.*").with(
 					ModulesStaticServlet.class);
 			serveRegex("/" + apps + "/.*/config.js").with(ConfigServlet.class);

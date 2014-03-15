@@ -1,7 +1,7 @@
 require.config({
 	baseUrl : "modules",
 	paths : {
-		"jquery" : "../jslib/jquery"
+		$nonRequireJSDependencies
 	},
 	shim : {}
 });
