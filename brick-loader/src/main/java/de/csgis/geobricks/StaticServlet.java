@@ -36,8 +36,9 @@ public abstract class StaticServlet extends HttpServlet {
 		String requestURI = req.getRequestURI();
 		String resource = requestURI.substring(requestURI.indexOf(folder)
 				+ folder.length() + 1);
-		InputStream resourceStream = this.getClass().getResourceAsStream(
-				folder + "/" + resource);
+
+		InputStream resourceStream = Geobricks.root.file(folder).file(resource)
+				.getResourceAsStream();
 		try {
 			IOUtils.copy(resourceStream, resp.getOutputStream());
 		} finally {

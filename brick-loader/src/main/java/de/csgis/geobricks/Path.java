@@ -1,5 +1,7 @@
 package de.csgis.geobricks;
 
+import java.io.InputStream;
+
 /**
  * Class that holds all the folder structure of the rest API and the web
  * applications
@@ -65,6 +67,11 @@ public class Path {
 	private Path append(String segment) {
 		path.append(segment);
 		return this;
+	}
+
+	public InputStream getResourceAsStream() {
+		return this.getClass().getResourceAsStream(
+				"/de/csgis/geobricks/webapp" + path());
 	}
 
 }

@@ -22,8 +22,8 @@ public class MainModulesStaticServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		InputStream resourceStream = this.getClass().getResourceAsStream(
-				"modules/main.js");
+		InputStream resourceStream = Geobricks.root.module("main.js")
+				.getResourceAsStream();
 		String main;
 		try {
 			main = IOUtils.toString(resourceStream);

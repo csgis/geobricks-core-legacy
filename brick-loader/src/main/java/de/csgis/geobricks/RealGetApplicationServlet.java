@@ -33,7 +33,8 @@ public class RealGetApplicationServlet extends HttpServlet {
 					+ appName, 404);
 		}
 
-		InputStream stream = this.getClass().getResourceAsStream("index.html");
+		InputStream stream = Geobricks.root.file("index.html")
+				.getResourceAsStream();
 		try {
 			IOUtils.copy(stream, resp.getOutputStream());
 		} finally {
