@@ -1,6 +1,5 @@
 package de.csgis.geobricks;
 
-import de.csgis.geobricks.paths.Path;
 
 public class Geobricks {
 

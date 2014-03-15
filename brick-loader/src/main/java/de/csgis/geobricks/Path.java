@@ -1,4 +1,4 @@
-package de.csgis.geobricks.paths;
+package de.csgis.geobricks;
 
 public class Path {
 
