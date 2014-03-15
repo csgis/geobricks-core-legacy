@@ -10,8 +10,8 @@ import javax.inject.Singleton;
 @Singleton
 public class AppGetterFilter extends AbstractGetterFilter {
 	@Override
-	protected String getRoot() {
-		return Geobricks.APPS_ROOT;
+	protected String getPreviousSegment() {
+		return Path.APPS;
 	}
 
 	@Override

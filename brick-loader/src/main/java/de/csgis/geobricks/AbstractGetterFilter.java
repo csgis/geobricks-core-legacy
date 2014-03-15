@@ -24,7 +24,7 @@ public abstract class AbstractGetterFilter implements Filter {
 		String[] parts = path.split(Pattern.quote("/"));
 		for (int i = 0; i < parts.length; i++) {
 			String part = parts[i];
-			if (part.equals(getRoot()) && i < parts.length - 1) {
+			if (part.equals(getPreviousSegment()) && i < parts.length - 1) {
 				request.setAttribute(getAttributeName(), parts[i + 1]);
 				break;
 			}
@@ -33,11 +33,11 @@ public abstract class AbstractGetterFilter implements Filter {
 	}
 
 	/**
-	 * Returns the name of the previous part to get
+	 * Returns the name of the previous segment to get
 	 * 
 	 * @return
 	 */
-	protected abstract String getRoot();
+	protected abstract String getPreviousSegment();
 
 	/**
 	 * Returns the name of the attribute where the part name will be storde

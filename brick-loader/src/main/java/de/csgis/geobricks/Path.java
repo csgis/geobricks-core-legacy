@@ -1,6 +1,15 @@
 package de.csgis.geobricks;
 
+/**
+ * Class that holds all the folder structure of the rest API and the web
+ * applications
+ * 
+ * @author fergonco
+ */
 public class Path {
+
+	public static final String APPS = "apps";
+	public static final String PLUGINS = "plugins";
 
 	protected StringBuilder path;
 
@@ -17,8 +26,12 @@ public class Path {
 		return ret;
 	}
 
+	public Path rest() {
+		return copy().append("/" + "rest");
+	}
+
 	public Path apps() {
-		return copy().append("/apps");
+		return copy().append("/" + APPS);
 	}
 
 	public Path any() {
@@ -26,7 +39,7 @@ public class Path {
 	}
 
 	public Path plugins() {
-		return copy().append("/plugins");
+		return copy().append("/" + PLUGINS);
 	}
 
 	public Path jslib() {
@@ -39,6 +52,10 @@ public class Path {
 
 	public Path module(String moduleName) {
 		return copy().append("/modules/" + moduleName);
+	}
+
+	public Path app(String appId) {
+		return copy().append("/apps/" + appId);
 	}
 
 	public Path file(String fileName) {

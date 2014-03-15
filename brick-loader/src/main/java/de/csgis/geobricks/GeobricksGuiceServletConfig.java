@@ -14,22 +14,23 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 		@Override
 		protected void configureServlets() {
 			// Admin REST API
-			serveRegex(Geobricks.rest.apps().any().plugins().path(),
-					Geobricks.rest.apps().any().plugins().any().path()).with(
-					PluginsServlet.class);
-			serve(Geobricks.rest.plugins().path())
-					.with(PluginListServlet.class);
-			serveRegex(Geobricks.rest.apps().path(),
-					Geobricks.rest.apps().any().path()).with(
+			serveRegex(Geobricks.root.rest().apps().any().plugins().path(),
+					Geobricks.root.rest().apps().any().plugins().any().path())
+					.with(PluginsServlet.class);
+			serve(Geobricks.root.rest().plugins().path()).with(
+					PluginListServlet.class);
+			serveRegex(Geobricks.root.rest().apps().path(),
+					Geobricks.root.rest().apps().any().path()).with(
 					GetApplicationServlet.class);
 
 			filterRegex(Geobricks.root.apps().any().path(),
-					Geobricks.rest.apps().any().path()).through(
+					Geobricks.root.rest().apps().any().path()).through(
 					AppGetterFilter.class);
-			filterRegex(Geobricks.rest.apps().any().plugins().any().path())
+			filterRegex(
+					Geobricks.root.rest().apps().any().plugins().any().path())
 					.through(PluginGetterFilter.class);
-			filterRegex(Geobricks.rest.any().path())
-					.through(OutputFilter.class);
+			filterRegex(Geobricks.root.rest().any().path()).through(
+					OutputFilter.class);
 
 			// Client Requests
 			serveRegex(Geobricks.root.apps().any().jslib().any().path()).with(

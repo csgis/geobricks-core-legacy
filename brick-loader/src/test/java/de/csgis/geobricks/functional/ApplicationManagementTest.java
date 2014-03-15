@@ -32,8 +32,7 @@ public class ApplicationManagementTest extends TestUtils {
 
 	@Before
 	public void cleanDatabase() throws Exception {
-		apps = new RestPoint(serverManager, Geobricks.ADMIN_ROOT + "/"
-				+ Geobricks.APPS_ROOT);
+		apps = new RestPoint(serverManager, Geobricks.root.rest().apps().path());
 		apps.doDelete(APP_ID);
 	}
 
