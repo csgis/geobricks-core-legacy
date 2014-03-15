@@ -1,7 +1,7 @@
 require.config({
 	baseUrl : "modules",
 	paths : {
-		"jquery" : "http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min"
+		"jquery" : "../jslib/jquery"
 	},
 	shim : {}
 });
