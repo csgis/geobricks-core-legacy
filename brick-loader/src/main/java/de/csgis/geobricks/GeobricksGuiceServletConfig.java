@@ -28,7 +28,7 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 			serve(adminAppsBase, adminAppsBase + "/*").with(
 					GetApplicationServlet.class);
 
-			filter(adminAppsBase + "*").through(AppGetterFilter.class);
+			filterRegex(".*/apps/.*").through(AppGetterFilter.class);
 			filterRegex(adminAppPlugins + ".*").through(
 					PluginGetterFilter.class);
 			filter(adminBase + "*").through(OutputFilter.class);
@@ -39,6 +39,7 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 			serveRegex("/" + apps + "/.*/modules/.*").with(
 					ModulesStaticServlet.class);
 			serveRegex("/" + apps + "/.*/config.js").with(ConfigServlet.class);
+			serve("/" + apps + "/*").with(RealGetApplicationServlet.class);
 		}
 	}
 
