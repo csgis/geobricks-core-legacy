@@ -28,6 +28,9 @@ public class ConfigServlet extends HttpServlet {
 	@Inject
 	private PersistenceUtils utils;
 
+	@Inject
+	private PluginRegistry pluginRegistry;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -44,6 +47,12 @@ public class ConfigServlet extends HttpServlet {
 
 		JSONObject moduleConfig = new JSONObject();
 		moduleConfig.element("main", pluginIds);
+		ClientModuleConfiguration[] configuration = pluginRegistry
+				.getClientModuleConfiguration();
+		for (ClientModuleConfiguration clientModuleConfiguration : configuration) {
+			moduleConfig.element(clientModuleConfiguration.getModuleName(),
+					clientModuleConfiguration.getEntity());
+		}
 
 		String json = new JSONObject().element("config", moduleConfig)
 				.toString();

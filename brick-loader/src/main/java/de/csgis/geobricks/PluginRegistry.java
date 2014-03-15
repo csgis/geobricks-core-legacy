@@ -22,4 +22,13 @@ public class PluginRegistry {
 
 		return ret.toArray(new NonRequireDependency[ret.size()]);
 	}
+
+	public ClientModuleConfiguration[] getClientModuleConfiguration() {
+		ArrayList<ClientModuleConfiguration> ret = new ArrayList<>();
+		for (PluginDescriptor descriptor : plugins) {
+			Collections.addAll(ret, descriptor.getClientModuleConfiguration());
+		}
+
+		return ret.toArray(new ClientModuleConfiguration[ret.size()]);
+	}
 }
