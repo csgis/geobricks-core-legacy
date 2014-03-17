@@ -54,7 +54,7 @@ public class ServerManager {
 	}
 
 	private String getPath(String path) {
-		return "http://localhost:" + port + "/" + appName + "/" + path;
+		return "http://localhost:" + port + "/" + appName + path;
 	}
 
 	private HttpResponse execute(HttpRequestBase put) throws IOException,

@@ -13,32 +13,36 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 	private class GeobricksServletModule extends ServletModule {
 		@Override
 		protected void configureServlets() {
-			String apps = Geobricks.APPS_ROOT;
-
 			// Admin REST API
-			String adminBase = "/" + Geobricks.ADMIN_ROOT + "/";
-			String adminAppsBase = adminBase + Geobricks.APPS_ROOT;
-			String adminPluginList = adminBase + Geobricks.PLUGINS_ROOT;
-			String adminAppPlugins = adminAppsBase + ".*/"
-					+ Geobricks.PLUGINS_ROOT;
-
-			serveRegex(adminAppPlugins, adminAppPlugins + "/.*").with(
-					PluginsServlet.class);
-			serve(adminPluginList).with(PluginListServlet.class);
-			serve(adminAppsBase, adminAppsBase + "/*").with(
+			serveRegex(Geobricks.root.rest().apps().any().plugins().path(),
+					Geobricks.root.rest().apps().any().plugins().any().path())
+					.with(PluginsServlet.class);
+			serve(Geobricks.root.rest().plugins().path()).with(
+					PluginListServlet.class);
+			serveRegex(Geobricks.root.rest().apps().path(),
+					Geobricks.root.rest().apps().any().path()).with(
 					GetApplicationServlet.class);
 
-			filter(adminAppsBase + "*").through(AppGetterFilter.class);
-			filterRegex(adminAppPlugins + ".*").through(
-					PluginGetterFilter.class);
-			filter(adminBase + "*").through(OutputFilter.class);
+			filterRegex(Geobricks.root.apps().any().path(),
+					Geobricks.root.rest().apps().any().path()).through(
+					AppGetterFilter.class);
+			filterRegex(
+					Geobricks.root.rest().apps().any().plugins().any().path())
+					.through(PluginGetterFilter.class);
+			filterRegex(Geobricks.root.rest().any().path()).through(
+					OutputFilter.class);
 
 			// Client Requests
-			serveRegex("/" + apps + "/.*/jslib/.*").with(
+			serveRegex(Geobricks.root.apps().any().jslib().any().path()).with(
 					JslibStaticServlet.class);
-			serveRegex("/" + apps + "/.*/modules/.*").with(
-					ModulesStaticServlet.class);
-			serveRegex("/" + apps + "/.*/config.js").with(ConfigServlet.class);
+			serveRegex(Geobricks.root.apps().any().module("main.js").path())
+					.with(MainModulesStaticServlet.class);
+			serveRegex(Geobricks.root.apps().any().modules().any().path())
+					.with(ModulesStaticServlet.class);
+			serveRegex(Geobricks.root.apps().any().file("config.js").path())
+					.with(ConfigServlet.class);
+			serveRegex(Geobricks.root.apps().any().path()).with(
+					RealGetApplicationServlet.class);
 		}
 	}
 

@@ -18,6 +18,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.Path;
 
 public class PluginManagementTest {
 	private static ServerManager serverManager = new ServerManager();
@@ -38,20 +39,18 @@ public class PluginManagementTest {
 
 	@Before
 	public void installApp() throws ClientProtocolException, IOException {
-		String appsBase = Geobricks.ADMIN_ROOT + "/" + Geobricks.APPS_ROOT;
-		String pluginsBase = Geobricks.ADMIN_ROOT + "/"
-				+ Geobricks.PLUGINS_ROOT;
-		String appBase = appsBase + "/" + APP_ID;
+		String appBase = Geobricks.root.rest().app(APP_ID).path();
 
-		apps = new RestPoint(serverManager, appsBase);
-		pluginList = new RestPoint(serverManager, pluginsBase);
+		apps = new RestPoint(serverManager, Geobricks.root.rest().apps().path());
+		pluginList = new RestPoint(serverManager, Geobricks.root.rest()
+				.plugins().path());
 
 		apps.doDelete(APP_ID);
 		apps.doPut(APP_ID);
 
 		app = new RestPoint(serverManager, appBase);
-		plugins = new RestPoint(serverManager, appBase + "/"
-				+ Geobricks.PLUGINS_ROOT);
+		plugins = new RestPoint(serverManager, Geobricks.root.rest()
+				.app(APP_ID).plugins().path());
 	}
 
 	@Test
@@ -91,13 +90,13 @@ public class PluginManagementTest {
 
 	@Test
 	public void putPluginListForApp() throws Exception {
-		HttpResponse response = app.doPut(Geobricks.PLUGINS_ROOT);
+		HttpResponse response = app.doPut(Path.PLUGINS);
 		assertEquals(405, response.getStatusLine().getStatusCode());
 	}
 
 	@Test
 	public void deletePluginListForApp() throws Exception {
-		HttpResponse response = app.doDelete(Geobricks.PLUGINS_ROOT);
+		HttpResponse response = app.doDelete(Path.PLUGINS);
 		assertEquals(405, response.getStatusLine().getStatusCode());
 	}
 
