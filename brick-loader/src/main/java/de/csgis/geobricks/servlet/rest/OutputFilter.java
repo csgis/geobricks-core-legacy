@@ -1,4 +1,4 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.servlet.rest;
 
 import java.io.IOException;
 
@@ -12,6 +12,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+
+import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
 @Singleton
 public class OutputFilter implements Filter {

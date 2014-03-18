@@ -1,8 +1,8 @@
 package de.csgis.geobricks.functional;
 
-import de.csgis.geobricks.GeobricksRuntimeModule;
+import de.csgis.geobricks.guice.RuntimeModule;
 
-public class GeobricksTestModule extends GeobricksRuntimeModule {
+public class GeobricksTestModule extends RuntimeModule {
 
 	@Override
 	protected String getPersistenceUnitName() {

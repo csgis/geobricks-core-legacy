@@ -1,4 +1,4 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.servlet;
 
 import javax.servlet.ServletException;
 

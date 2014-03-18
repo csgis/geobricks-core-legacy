@@ -14,7 +14,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
@@ -180,17 +179,18 @@ public class PluginManagementTest {
 	}
 
 	@Test
-	@Ignore
 	public void testAddPlugin() throws Exception {
 		plugins.doPut("hello");
 
 		// Check the application has a call to config.js
-		HttpResponse response = apps.doGet("stadtplan");
+		RestPoint clientApps = new RestPoint(serverManager, Geobricks.root
+				.apps().path());
+		HttpResponse response = clientApps.doGet("stadtplan");
 		String content = IOUtils.toString(response.getEntity().getContent());
 		assertTrue(content.contains("config.js"));
 
 		// Check that the call to config.js contains the reference to the plugin
-		response = apps.doGet("stadtplan/config.js");
+		response = clientApps.doGet("stadtplan/config.js");
 		content = IOUtils.toString(response.getEntity().getContent());
 		assertTrue(content.contains("hello"));
 	}

@@ -1,4 +1,4 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,6 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
+import de.csgis.geobricks.ClientModuleConfiguration;
+import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.PersistenceUtils;
+import de.csgis.geobricks.PluginRegistry;
 import de.csgis.geobricks.model.Application;
 import de.csgis.geobricks.model.Plugin;
 

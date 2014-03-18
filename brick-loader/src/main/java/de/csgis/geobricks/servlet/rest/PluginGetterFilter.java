@@ -1,6 +1,9 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.servlet.rest;
 
 import javax.inject.Singleton;
+
+import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.Path;
 
 /**
  * Puts the name of the plugin as an attribute in the request

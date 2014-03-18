@@ -1,7 +1,6 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.servlet.rest;
 
 import java.io.IOException;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -11,10 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.PersistenceUtils;
 import de.csgis.geobricks.model.Application;
 import de.csgis.geobricks.model.Plugin;
+import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
 @Singleton
 public class PluginsServlet extends HttpServlet {
@@ -27,37 +28,14 @@ public class PluginsServlet extends HttpServlet {
 	private PersistenceUtils utils;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		Application app = getApplication(req);
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		Application app = getApplication(request);
 
-		Object pluginAttribute = req
-				.getAttribute(Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE);
-		if (pluginAttribute == null) {
-			handlePluginList(app, resp);
-		} else {
-			handleSinglePlugin(app, pluginAttribute.toString(), resp);
-		}
-	}
-
-	private void handlePluginList(Application app, HttpServletResponse response)
-			throws IOException {
-		JSONArray array = new JSONArray();
-
-		Set<Plugin> plugins = app.getPlugins();
-		for (Plugin plugin : plugins) {
-			array.add(plugin.getId());
-		}
-
-		response.setContentType("application/javascript");
-		response.setCharacterEncoding("utf8");
-		response.getWriter().write(array.toString());
-	}
-
-	private void handleSinglePlugin(Application app, String pluginId,
-			HttpServletResponse response) throws HTTPCodeServletException,
-			IOException {
+		String pluginId = request.getAttribute(
+				Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE).toString();
 		Plugin plugin = utils.getPlugin(pluginId);
+
 		if (plugin == null || !app.getPlugins().contains(plugin)) {
 			throw new HTTPCodeServletException("Cannot find plugin '"
 					+ pluginId + "' for application '" + app.getId() + "'", 404);
@@ -110,9 +88,8 @@ public class PluginsServlet extends HttpServlet {
 
 	private Application getApplication(HttpServletRequest request)
 			throws HTTPCodeServletException {
-		Object appAttribute = request
-				.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE);
-		String appName = appAttribute.toString();
+		String appName = request.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE)
+				.toString();
 		Application app = utils.getApplication(appName);
 
 		if (app == null) {

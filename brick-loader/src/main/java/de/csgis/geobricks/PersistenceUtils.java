@@ -20,7 +20,13 @@ public class PersistenceUtils {
 	@Inject
 	private EntityManager em;
 
-	PersistenceUtils() {
+	private static final PersistenceUtils instance = new PersistenceUtils();
+
+	public static PersistenceUtils getInstance() {
+		return instance;
+	}
+
+	private PersistenceUtils() {
 	}
 
 	public List<Application> getApplicationList() {

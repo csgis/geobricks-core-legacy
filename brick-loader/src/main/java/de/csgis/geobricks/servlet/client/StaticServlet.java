@@ -1,4 +1,4 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+
+import de.csgis.geobricks.Geobricks;
 
 /**
  * Serves static content from the resources space, starting to look in its own

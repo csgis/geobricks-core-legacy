@@ -1,4 +1,4 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.guice;
 
 import javax.servlet.ServletContextEvent;
 
@@ -8,21 +8,48 @@ import com.google.inject.Module;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
-public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
+import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.servlet.client.GetApplicationServlet;
+import de.csgis.geobricks.servlet.client.ConfigServlet;
+import de.csgis.geobricks.servlet.client.JslibStaticServlet;
+import de.csgis.geobricks.servlet.client.MainModulesStaticServlet;
+import de.csgis.geobricks.servlet.client.ModulesStaticServlet;
+import de.csgis.geobricks.servlet.rest.AppGetterFilter;
+import de.csgis.geobricks.servlet.rest.ApplicationListServlet;
+import de.csgis.geobricks.servlet.rest.ApplicationsServlet;
+import de.csgis.geobricks.servlet.rest.AvailablePluginsListServlet;
+import de.csgis.geobricks.servlet.rest.OutputFilter;
+import de.csgis.geobricks.servlet.rest.PluginGetterFilter;
+import de.csgis.geobricks.servlet.rest.PluginListServlet;
+import de.csgis.geobricks.servlet.rest.PluginsServlet;
+
+public class GuiceServletConfig extends GuiceServletContextListener {
 
 	private class GeobricksServletModule extends ServletModule {
 		@Override
 		protected void configureServlets() {
-			// Admin REST API
-			serveRegex(Geobricks.root.rest().apps().any().plugins().path(),
+			/*
+			 * Admin REST API. Note that order matters. If more than one regex
+			 * matches the same path, the first declared servlet will take care.
+			 */
+			// Plugins
+			serveRegex(Geobricks.root.rest().apps().any().plugins().path())
+					.with(PluginListServlet.class);
+			serveRegex(
 					Geobricks.root.rest().apps().any().plugins().any().path())
 					.with(PluginsServlet.class);
-			serve(Geobricks.root.rest().plugins().path()).with(
-					PluginListServlet.class);
-			serveRegex(Geobricks.root.rest().apps().path(),
-					Geobricks.root.rest().apps().any().path()).with(
-					GetApplicationServlet.class);
 
+			// Available plugin list
+			serve(Geobricks.root.rest().plugins().path()).with(
+					AvailablePluginsListServlet.class);
+
+			// Apps
+			serveRegex(Geobricks.root.rest().apps().path()).with(
+					ApplicationListServlet.class);
+			serveRegex(Geobricks.root.rest().apps().any().path()).with(
+					ApplicationsServlet.class);
+
+			// Filters
 			filterRegex(Geobricks.root.apps().any().path(),
 					Geobricks.root.rest().apps().any().path()).through(
 					AppGetterFilter.class);
@@ -32,7 +59,9 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 			filterRegex(Geobricks.root.rest().any().path()).through(
 					OutputFilter.class);
 
-			// Client Requests
+			/*
+			 * Client Requests
+			 */
 			serveRegex(Geobricks.root.apps().any().jslib().any().path()).with(
 					JslibStaticServlet.class);
 			serveRegex(Geobricks.root.apps().any().module("main.js").path())
@@ -42,7 +71,7 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 			serveRegex(Geobricks.root.apps().any().file("config.js").path())
 					.with(ConfigServlet.class);
 			serveRegex(Geobricks.root.apps().any().path()).with(
-					RealGetApplicationServlet.class);
+					GetApplicationServlet.class);
 		}
 	}
 
@@ -71,5 +100,4 @@ public class GeobricksGuiceServletConfig extends GuiceServletContextListener {
 		return Guice.createInjector(new GeobricksServletModule(),
 				moduleInstance);
 	}
-
 }

@@ -1,4 +1,4 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,8 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
+import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.PersistenceUtils;
+import de.csgis.geobricks.servlet.HTTPCodeServletException;
+
 @Singleton
-public class RealGetApplicationServlet extends HttpServlet {
+public class GetApplicationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Inject

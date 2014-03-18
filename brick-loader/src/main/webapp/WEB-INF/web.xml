@@ -13,11 +13,11 @@
 	</filter-mapping>
 
 	<listener>
-		<listener-class>de.csgis.geobricks.GeobricksGuiceServletConfig</listener-class>
+		<listener-class>de.csgis.geobricks.guice.GuiceServletConfig</listener-class>
 	</listener>
 
 	<context-param>
 		<param-name>guice-module-class</param-name>
-		<param-value>de.csgis.geobricks.GeobricksRuntimeModule</param-value>
+		<param-value>de.csgis.geobricks.guice.RuntimeModule</param-value>
 	</context-param>
 </web-app>

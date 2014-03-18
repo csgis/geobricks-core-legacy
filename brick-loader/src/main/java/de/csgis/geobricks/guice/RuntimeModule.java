@@ -1,4 +1,4 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.guice;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -7,7 +7,10 @@ import javax.persistence.Persistence;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 
-public class GeobricksRuntimeModule implements Module {
+import de.csgis.geobricks.PersistenceUtils;
+import de.csgis.geobricks.PluginRegistry;
+
+public class RuntimeModule implements Module {
 
 	@Override
 	public void configure(Binder binder) {
@@ -15,7 +18,8 @@ public class GeobricksRuntimeModule implements Module {
 				.createEntityManagerFactory(getPersistenceUnitName());
 		EntityManager instance = emf.createEntityManager();
 		binder.bind(EntityManager.class).toInstance(instance);
-		binder.bind(PersistenceUtils.class).toInstance(new PersistenceUtils());
+		binder.bind(PersistenceUtils.class).toInstance(
+				PersistenceUtils.getInstance());
 		binder.bind(PluginRegistry.class).toInstance(new PluginRegistry());
 	}
 

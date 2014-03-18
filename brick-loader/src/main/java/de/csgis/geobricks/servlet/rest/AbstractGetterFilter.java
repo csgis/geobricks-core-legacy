@@ -1,4 +1,4 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.servlet.rest;
 
 import java.io.IOException;
 import java.util.regex.Pattern;

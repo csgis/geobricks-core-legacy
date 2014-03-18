@@ -1,4 +1,4 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+
+import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.NonRequireDependency;
+import de.csgis.geobricks.PluginRegistry;
 
 @Singleton
 public class MainModulesStaticServlet extends HttpServlet {

@@ -1,4 +1,4 @@
-package de.csgis.geobricks;
+package de.csgis.geobricks.servlet.rest;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 
 @Singleton
-public class PluginListServlet extends HttpServlet {
+public class AvailablePluginsListServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -24,17 +24,5 @@ public class PluginListServlet extends HttpServlet {
 		resp.setContentType("application/javascript");
 		resp.setCharacterEncoding("utf8");
 		resp.getWriter().write(array.toString());
-	}
-
-	@Override
-	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		throw new HTTPCodeServletException(405);
-	}
-
-	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		throw new HTTPCodeServletException(405);
 	}
 }
