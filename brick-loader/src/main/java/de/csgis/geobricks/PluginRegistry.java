@@ -15,7 +15,7 @@ public class PluginRegistry {
 
 	public NonRequireDependency[] getNonRequireDependencies() {
 		ArrayList<NonRequireDependency> ret = new ArrayList<>();
-		ret.add(new NonRequireDependency("jquery", "jslib/jquery"));
+		ret.add(new NonRequireDependency("jquery", "jslib/jquery-1.11.0.min.js"));
 		for (PluginDescriptor descriptor : plugins) {
 			Collections.addAll(ret, descriptor.getNonRequireDependencies());
 		}
