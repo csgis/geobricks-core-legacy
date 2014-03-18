@@ -70,8 +70,7 @@ public class GetApplicationServlet extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		Object appAttribute = req
-				.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE);
+		Object appAttribute = req.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE);
 		if (appAttribute == null) {
 			// TODO This response should include an Allow header containing a
 			// list of valid methods.
@@ -83,8 +82,10 @@ public class GetApplicationServlet extends HttpServlet {
 
 		Application app = utils.getApplication(appId);
 		if (app == null) {
+			// TODO Use constants on every call to the HTTPCodeException
+			// constructor
 			throw new HTTPCodeServletException("Application not found: "
-					+ appId, 404);
+					+ appId, HttpServletResponse.SC_NOT_FOUND);
 		} else {
 			em.getTransaction().begin();
 			try {
@@ -102,8 +103,7 @@ public class GetApplicationServlet extends HttpServlet {
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		Object appAttribute = req
-				.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE);
+		Object appAttribute = req.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE);
 		if (appAttribute == null) {
 			// TODO This response should include an Allow header containing a
 			// list of valid methods.
