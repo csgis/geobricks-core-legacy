@@ -34,7 +34,7 @@ public class GetApplicationServlet extends HttpServlet {
 			utils.getApplication(appName);
 		} catch (NoResultException e) {
 			throw new HTTPCodeServletException("Application not found: "
-					+ appName, 404);
+					+ appName, HttpServletResponse.SC_NOT_FOUND);
 		}
 
 		InputStream stream = Geobricks.root.file("index.html")

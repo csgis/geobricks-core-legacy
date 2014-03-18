@@ -38,7 +38,8 @@ public class PluginsServlet extends HttpServlet {
 
 		if (plugin == null || !app.getPlugins().contains(plugin)) {
 			throw new HTTPCodeServletException("Cannot find plugin '"
-					+ pluginId + "' for application '" + app.getId() + "'", 404);
+					+ pluginId + "' for application '" + app.getId() + "'",
+					HttpServletResponse.SC_NOT_FOUND);
 		}
 
 		JSONObject json = new JSONObject();
@@ -53,7 +54,8 @@ public class PluginsServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		Application app = getApplication(req);
-		String pluginId = getPluginId(req);
+		String pluginId = req
+				.getAttribute(Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE).toString();
 
 		app.getPlugins().add(new Plugin(pluginId));
 
@@ -61,20 +63,22 @@ public class PluginsServlet extends HttpServlet {
 		em.merge(app);
 		em.getTransaction().commit();
 
-		throw new HTTPCodeServletException(204);
+		throw new HTTPCodeServletException(HttpServletResponse.SC_NO_CONTENT);
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		Application app = getApplication(req);
-		String pluginId = getPluginId(req);
+		String pluginId = req
+				.getAttribute(Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE).toString();
 
 		Plugin plugin = utils.getPlugin(pluginId);
 
 		if (plugin == null) {
 			throw new HTTPCodeServletException("Cannot find plugin '"
-					+ pluginId + "' for application '" + app.getId() + "'", 404);
+					+ pluginId + "' for application '" + app.getId() + "'",
+					HttpServletResponse.SC_NOT_FOUND);
 		}
 
 		app.getPlugins().remove(plugin);
@@ -83,7 +87,7 @@ public class PluginsServlet extends HttpServlet {
 		em.merge(app);
 		em.getTransaction().commit();
 
-		throw new HTTPCodeServletException(204);
+		throw new HTTPCodeServletException(HttpServletResponse.SC_NO_CONTENT);
 	}
 
 	private Application getApplication(HttpServletRequest request)
@@ -94,20 +98,9 @@ public class PluginsServlet extends HttpServlet {
 
 		if (app == null) {
 			throw new HTTPCodeServletException("Application not found: "
-					+ appName, 404);
+					+ appName, HttpServletResponse.SC_NOT_FOUND);
 		}
 
 		return app;
-	}
-
-	private String getPluginId(HttpServletRequest request)
-			throws HTTPCodeServletException {
-		Object pluginAttribute = request
-				.getAttribute(Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE);
-		if (pluginAttribute == null) {
-			throw new HTTPCodeServletException(
-					"DELETE method requires a plugin id", 405);
-		}
-		return pluginAttribute.toString();
 	}
 }

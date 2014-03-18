@@ -35,7 +35,7 @@ public class ApplicationsServlet extends HttpServlet {
 		Application app = utils.getApplication(appId);
 		if (app == null) {
 			throw new HTTPCodeServletException("Application not found: "
-					+ appId, 404);
+					+ appId, HttpServletResponse.SC_NOT_FOUND);
 
 		} else {
 			JSONObject json = new JSONObject();
@@ -59,11 +59,12 @@ public class ApplicationsServlet extends HttpServlet {
 			try {
 				em.remove(app);
 				em.getTransaction().commit();
-				throw new HTTPCodeServletException(204);
+				throw new HTTPCodeServletException(
+						HttpServletResponse.SC_NO_CONTENT);
 			} catch (NoResultException e) {
 				em.getTransaction().rollback();
 				throw new HTTPCodeServletException("Application not found: "
-						+ appId, 404);
+						+ appId, HttpServletResponse.SC_NOT_FOUND);
 			}
 		}
 	}
@@ -84,6 +85,6 @@ public class ApplicationsServlet extends HttpServlet {
 			em.getTransaction().commit();
 		}
 
-		throw new HTTPCodeServletException(204);
+		throw new HTTPCodeServletException(HttpServletResponse.SC_NO_CONTENT);
 	}
 }

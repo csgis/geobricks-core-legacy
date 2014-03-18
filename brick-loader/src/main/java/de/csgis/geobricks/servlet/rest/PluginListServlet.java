@@ -33,7 +33,7 @@ public class PluginListServlet extends HttpServlet {
 
 		if (app == null) {
 			throw new HTTPCodeServletException("Application not found: "
-					+ appId, 404);
+					+ appId, HttpServletResponse.SC_NOT_FOUND);
 		}
 
 		JSONArray array = new JSONArray();
