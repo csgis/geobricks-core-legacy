@@ -4,6 +4,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<context-param>
 		<param-name>guice-module-class</param-name>
-		<param-value>de.csgis.geobricks.functional.GeobricksTestModule</param-value>
+		<param-value>de.csgis.geobricks.functional.TestModule</param-value>
 	</context-param>
 </web-app>
