@@ -10,6 +10,8 @@
 		<module>brick-loader</module>
     <module>olmap</module>
     <module>loader-core</module>
+    <module>layout</module>
+    <module>title</module>
   </modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -3,7 +3,9 @@ package de.csgis.geobricks;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
+import de.csgis.geobricks.title.TitlePlugin;
 
 public class PluginRegistry {
 
@@ -11,11 +13,13 @@ public class PluginRegistry {
 
 	public PluginRegistry() {
 		plugins.add(new OLMapPlugin());
+		plugins.add(new LayoutPlugin());
+		plugins.add(new TitlePlugin());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {
 		ArrayList<NonRequireDependency> ret = new ArrayList<>();
-		ret.add(new NonRequireDependency("jquery", "jslib/jquery-1.11.0.min.js"));
+		ret.add(new NonRequireDependency("jquery", "jslib/jquery-1.11.0.min"));
 		for (PluginDescriptor descriptor : plugins) {
 			Collections.addAll(ret, descriptor.getNonRequireDependencies());
 		}

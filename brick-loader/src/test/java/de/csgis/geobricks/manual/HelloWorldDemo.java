@@ -20,6 +20,8 @@ public class HelloWorldDemo {
 		System.out.println("Enter to add hello.js plugin");
 		// sc.nextLine();
 		plugins.doPut("olmap");
+		plugins.doPut("title");
+		plugins.doPut("layout");
 		System.out.println("plugin added");
 		System.out.println("Enter to remove the plugin");
 		sc.nextLine();
