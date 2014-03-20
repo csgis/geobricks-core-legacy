@@ -23,6 +23,7 @@ public class HelloWorldDemo {
 		plugins.doPut("title");
 		plugins.doPut("layout");
 		plugins.doPut("layer-list");
+		plugins.doPut("address-search");
 		System.out.println("plugin added");
 		System.out.println("Enter to remove the plugin");
 		sc.nextLine();
