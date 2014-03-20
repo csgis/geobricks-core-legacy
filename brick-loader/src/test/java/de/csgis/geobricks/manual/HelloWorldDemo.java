@@ -22,6 +22,7 @@ public class HelloWorldDemo {
 		plugins.doPut("olmap");
 		plugins.doPut("title");
 		plugins.doPut("layout");
+		plugins.doPut("layer-list");
 		System.out.println("plugin added");
 		System.out.println("Enter to remove the plugin");
 		sc.nextLine();

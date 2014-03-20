@@ -3,6 +3,7 @@ package de.csgis.geobricks;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
 import de.csgis.geobricks.title.TitlePlugin;
@@ -15,6 +16,7 @@ public class PluginRegistry {
 		plugins.add(new OLMapPlugin());
 		plugins.add(new LayoutPlugin());
 		plugins.add(new TitlePlugin());
+		plugins.add(new LayerListPlugin());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {
