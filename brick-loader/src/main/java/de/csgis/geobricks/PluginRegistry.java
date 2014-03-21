@@ -39,4 +39,13 @@ public class PluginRegistry {
 
 		return ret.toArray(new ClientModuleConfiguration[ret.size()]);
 	}
+
+	public String[] getStyleSheets() {
+		ArrayList<String> ret = new ArrayList<String>();
+		for (PluginDescriptor descriptor : plugins) {
+			Collections.addAll(ret, descriptor.getStyleSheets());
+		}
+
+		return ret.toArray(new String[ret.size()]);
+	}
 }

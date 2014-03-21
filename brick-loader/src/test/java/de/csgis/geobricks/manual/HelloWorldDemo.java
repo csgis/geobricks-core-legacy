@@ -28,7 +28,7 @@ public class HelloWorldDemo {
 		System.out.println("Enter to remove the plugin");
 		sc.nextLine();
 
-		plugins.doDelete("olmap");
+		plugins.doDelete("address-search");
 		System.out.println("plugin removed");
 		System.out.println("Enter to stop server");
 		sc.nextLine();

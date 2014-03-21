@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -94,5 +95,17 @@ public class GetApplicationTest {
 				.getStatusCode());
 		String line = IOUtils.toString(response.getEntity().getContent());
 		assertTrue(line.trim().startsWith("define(["));
+	}
+
+	@Test
+	public void indexHTMLContainsCSS() throws Exception {
+		RestPoint plugins = new RestPoint(serverManager, Geobricks.root.rest()
+				.apps().app(APP_ID).plugins().path());
+		plugins.doPut("address-search");
+
+		HttpResponse response = app.doGet();
+		String content = IOUtils.toString(response.getEntity().getContent());
+		Pattern pattern = Pattern.compile("<link[^>]*address-search.css[^>]/>");
+		assertTrue(pattern.matcher(content).find());
 	}
 }

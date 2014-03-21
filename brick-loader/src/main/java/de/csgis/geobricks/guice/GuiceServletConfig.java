@@ -10,6 +10,7 @@ import com.google.inject.servlet.ServletModule;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.servlet.client.ConfigServlet;
+import de.csgis.geobricks.servlet.client.IndexContentProcessor;
 import de.csgis.geobricks.servlet.client.IndexRequestPreprocessor;
 import de.csgis.geobricks.servlet.client.MainModuleContentProcessor;
 import de.csgis.geobricks.servlet.client.StaticServlet;
@@ -85,8 +86,10 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			// Application index.html
 			IndexRequestPreprocessor indexPreprocessor = injector
 					.getInstance(IndexRequestPreprocessor.class);
-			serveRegex(Geobricks.root.apps().any().path())
-					.with(new StaticServlet("", "index.html", null,
+			IndexContentProcessor indexProcessor = injector
+					.getInstance(IndexContentProcessor.class);
+			serveRegex(Geobricks.root.apps().any().path()).with(
+					new StaticServlet("", "index.html", indexProcessor,
 							indexPreprocessor));
 		}
 	}
