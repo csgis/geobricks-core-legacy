@@ -9,11 +9,10 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
 import de.csgis.geobricks.Geobricks;
-import de.csgis.geobricks.servlet.client.GetApplicationServlet;
 import de.csgis.geobricks.servlet.client.ConfigServlet;
-import de.csgis.geobricks.servlet.client.JslibStaticServlet;
-import de.csgis.geobricks.servlet.client.MainModulesStaticServlet;
-import de.csgis.geobricks.servlet.client.ModulesStaticServlet;
+import de.csgis.geobricks.servlet.client.IndexRequestPreprocessor;
+import de.csgis.geobricks.servlet.client.MainModuleContentProcessor;
+import de.csgis.geobricks.servlet.client.StaticServlet;
 import de.csgis.geobricks.servlet.rest.AppGetterFilter;
 import de.csgis.geobricks.servlet.rest.ApplicationListServlet;
 import de.csgis.geobricks.servlet.rest.ApplicationsServlet;
@@ -62,16 +61,31 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			/*
 			 * Client Requests
 			 */
-			serveRegex(Geobricks.root.apps().any().jslib().any().path()).with(
-					JslibStaticServlet.class);
+			// Static content
+			Injector injector = Guice.createInjector(moduleInstance);
+
+			// main.js module
+			MainModuleContentProcessor mainModuleProcessor = injector
+					.getInstance(MainModuleContentProcessor.class);
 			serveRegex(Geobricks.root.apps().any().module("main.js").path())
-					.with(MainModulesStaticServlet.class);
-			serveRegex(Geobricks.root.apps().any().modules().any().path())
-					.with(ModulesStaticServlet.class);
+					.with(new StaticServlet("modules", mainModuleProcessor));
+
+			// Config.js
 			serveRegex(Geobricks.root.apps().any().file("config.js").path())
 					.with(ConfigServlet.class);
-			serveRegex(Geobricks.root.apps().any().path()).with(
-					GetApplicationServlet.class);
+
+			// Static content
+			serveRegex(Geobricks.root.apps().any().modules().any().path())
+					.with(new StaticServlet("modules"));
+			serveRegex(Geobricks.root.apps().any().jslib().any().path()).with(
+					new StaticServlet("jslib"));
+
+			// Application index.html
+			IndexRequestPreprocessor indexPreprocessor = injector
+					.getInstance(IndexRequestPreprocessor.class);
+			serveRegex(Geobricks.root.apps().any().path())
+					.with(new StaticServlet("", "index.html", null,
+							indexPreprocessor));
 		}
 	}
 
