@@ -52,6 +52,10 @@ public class Path {
 		return copy().append("/modules");
 	}
 
+	public Path images() {
+		return copy().append("/images");
+	}
+
 	public Path module(String moduleName) {
 		return copy().append("/modules/" + moduleName);
 	}

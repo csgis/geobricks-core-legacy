@@ -79,6 +79,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 					.with(new StaticServlet("modules"));
 			serveRegex(Geobricks.root.apps().any().jslib().any().path()).with(
 					new StaticServlet("jslib"));
+			serveRegex(Geobricks.root.apps().any().images().any().path()).with(
+					new StaticServlet("images"));
 
 			// Application index.html
 			IndexRequestPreprocessor indexPreprocessor = injector
