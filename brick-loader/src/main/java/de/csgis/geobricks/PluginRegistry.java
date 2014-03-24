@@ -2,6 +2,7 @@ package de.csgis.geobricks;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
@@ -56,5 +57,9 @@ public class PluginRegistry {
 		}
 
 		return null;
+	}
+
+	public List<PluginDescriptor> getPlugins() {
+		return plugins;
 	}
 }

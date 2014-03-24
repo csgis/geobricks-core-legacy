@@ -20,7 +20,11 @@ import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.Path;
+import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
+import de.csgis.geobricks.layerList.LayerListPlugin;
+import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
+import de.csgis.geobricks.title.TitlePlugin;
 
 public class PluginManagementTest {
 	private static ServerManager serverManager = new ServerManager();
@@ -58,8 +62,11 @@ public class PluginManagementTest {
 	@Test
 	public void getPluginList() throws Exception {
 		JSONArray array = TestUtils.parseJsonArray(pluginList.doGet());
-		assertEquals(1, array.size());
-		assertEquals("hello", array.getString(0));
+		assertTrue(array.contains(OLMapPlugin.NAME));
+		assertTrue(array.contains(LayerListPlugin.NAME));
+		assertTrue(array.contains(LayoutPlugin.NAME));
+		assertTrue(array.contains(TitlePlugin.NAME));
+		assertTrue(array.contains(AddressSearchPlugin.NAME));
 	}
 
 	@Test
