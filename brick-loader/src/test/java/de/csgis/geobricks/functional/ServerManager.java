@@ -12,6 +12,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.HttpClients;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.URIUtil;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 public class ServerManager {
@@ -53,8 +54,9 @@ public class ServerManager {
 		return execute(new HttpGet(getPath(path)));
 	}
 
-	private String getPath(String path) {
-		return "http://localhost:" + port + "/" + appName + path;
+	private String getPath(String path) throws IOException {
+		return URIUtil.encodePath("http://localhost:" + port + "/" + appName
+				+ path);
 	}
 
 	private HttpResponse execute(HttpRequestBase put) throws IOException,

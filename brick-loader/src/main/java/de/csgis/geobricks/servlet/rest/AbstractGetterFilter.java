@@ -1,6 +1,7 @@
 package de.csgis.geobricks.servlet.rest;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
@@ -25,7 +26,8 @@ public abstract class AbstractGetterFilter implements Filter {
 		for (int i = 0; i < parts.length; i++) {
 			String part = parts[i];
 			if (part.equals(getPreviousSegment()) && i < parts.length - 1) {
-				request.setAttribute(getAttributeName(), parts[i + 1]);
+				request.setAttribute(getAttributeName(),
+						URLDecoder.decode(parts[i + 1], "UTF-8"));
 				break;
 			}
 		}

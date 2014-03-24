@@ -2,7 +2,9 @@ package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -16,6 +18,7 @@ import net.sf.json.JSONObject;
 import de.csgis.geobricks.ClientModuleConfiguration;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PersistenceUtils;
+import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginRegistry;
 import de.csgis.geobricks.model.Application;
 import de.csgis.geobricks.model.Plugin;
@@ -43,14 +46,16 @@ public class ConfigServlet extends HttpServlet {
 		Application app = utils.getApplication(appName);
 
 		Set<Plugin> plugins = app.getPlugins();
-		String[] pluginIds = new String[plugins.size()];
-		Iterator<Plugin> iterator = plugins.iterator();
-		for (int i = 0; i < pluginIds.length; i++) {
-			pluginIds[i] = iterator.next().getId();
+		List<String> modules = new ArrayList<String>();
+		for (Plugin plugin : plugins) {
+			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
+					.getId());
+			Collections.addAll(modules, descriptor.getModules());
 		}
 
 		JSONObject moduleConfig = new JSONObject();
-		moduleConfig.element("main", pluginIds);
+		moduleConfig.element("main",
+				modules.toArray(new String[modules.size()]));
 		ClientModuleConfiguration[] configuration = pluginRegistry
 				.getClientModuleConfiguration();
 		for (ClientModuleConfiguration clientModuleConfiguration : configuration) {

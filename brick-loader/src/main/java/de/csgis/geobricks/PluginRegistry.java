@@ -10,7 +10,6 @@ import de.csgis.geobricks.olmap.OLMapPlugin;
 import de.csgis.geobricks.title.TitlePlugin;
 
 public class PluginRegistry {
-
 	private ArrayList<PluginDescriptor> plugins = new ArrayList<>();
 
 	public PluginRegistry() {
@@ -47,5 +46,15 @@ public class PluginRegistry {
 		}
 
 		return ret.toArray(new String[ret.size()]);
+	}
+
+	public PluginDescriptor getPlugin(String name) {
+		for (PluginDescriptor plugin : plugins) {
+			if (plugin.getName().equals(name)) {
+				return plugin;
+			}
+		}
+
+		return null;
 	}
 }

@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PersistenceUtils;
+import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.PluginRegistry;
 import de.csgis.geobricks.model.Application;
 import de.csgis.geobricks.model.Plugin;
 import de.csgis.geobricks.servlet.HTTPCodeServletException;
@@ -26,6 +28,9 @@ public class PluginsServlet extends HttpServlet {
 
 	@Inject
 	private PersistenceUtils utils;
+
+	@Inject
+	private PluginRegistry registry;
 
 	@Override
 	protected void doGet(HttpServletRequest request,
@@ -56,6 +61,12 @@ public class PluginsServlet extends HttpServlet {
 		Application app = getApplication(req);
 		String pluginId = req
 				.getAttribute(Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE).toString();
+
+		PluginDescriptor plugin = registry.getPlugin(pluginId);
+		if (plugin == null) {
+			throw new HTTPCodeServletException("Plugin does not exist: "
+					+ pluginId, HttpServletResponse.SC_NOT_FOUND);
+		}
 
 		app.getPlugins().add(new Plugin(pluginId));
 

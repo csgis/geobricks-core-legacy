@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletResponse;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -18,6 +20,7 @@ import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.Path;
+import de.csgis.geobricks.olmap.OLMapPlugin;
 
 public class PluginManagementTest {
 	private static ServerManager serverManager = new ServerManager();
@@ -74,11 +77,10 @@ public class PluginManagementTest {
 		JSONArray array = TestUtils.parseJsonArray(plugins.doGet());
 		assertEquals(0, array.size());
 
-		String pluginId = "p1";
-		plugins.doPut(pluginId);
+		plugins.doPut(OLMapPlugin.NAME);
 		array = TestUtils.parseJsonArray(plugins.doGet());
 		assertEquals(1, array.size());
-		assertEquals(pluginId, array.get(0));
+		assertEquals(OLMapPlugin.NAME, array.get(0));
 	}
 
 	@Test
@@ -101,12 +103,12 @@ public class PluginManagementTest {
 
 	@Test
 	public void getPlugin() throws Exception {
-		String pluginId = "p1";
-		plugins.doPut(pluginId);
+		plugins.doPut(OLMapPlugin.NAME);
 
-		JSONObject plugin = TestUtils.parseJsonObject(plugins.doGet(pluginId));
+		JSONObject plugin = TestUtils.parseJsonObject(plugins
+				.doGet(OLMapPlugin.NAME));
 		assertTrue(plugin.has("id"));
-		assertEquals(pluginId, plugin.get("id"));
+		assertEquals(OLMapPlugin.NAME, plugin.get("id"));
 	}
 
 	@Test
@@ -123,11 +125,10 @@ public class PluginManagementTest {
 
 	@Test
 	public void putPlugin() throws Exception {
-		String pluginId = "p1";
-		HttpResponse response = plugins.doPut(pluginId);
+		HttpResponse response = plugins.doPut(OLMapPlugin.NAME);
 		assertEquals(204, response.getStatusLine().getStatusCode());
 
-		response = plugins.doGet(pluginId);
+		response = plugins.doGet(OLMapPlugin.NAME);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 	}
 
@@ -139,30 +140,28 @@ public class PluginManagementTest {
 
 	@Test
 	public void putExistingPlugin() throws Exception {
-		String pluginId = "p1";
-		HttpResponse response = plugins.doPut(pluginId);
+		HttpResponse response = plugins.doPut(OLMapPlugin.NAME);
 		assertEquals(204, response.getStatusLine().getStatusCode());
-		response = plugins.doPut(pluginId);
+		response = plugins.doPut(OLMapPlugin.NAME);
 		assertEquals(204, response.getStatusLine().getStatusCode());
 	}
 
 	@Test
 	public void deletePlugin() throws Exception {
-		String pluginId = "p1";
 		// Put
-		HttpResponse response = plugins.doPut(pluginId);
+		HttpResponse response = plugins.doPut(OLMapPlugin.NAME);
 		assertEquals(204, response.getStatusLine().getStatusCode());
 
 		// Check it's there
-		response = plugins.doGet(pluginId);
+		response = plugins.doGet(OLMapPlugin.NAME);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 
 		// Delete
-		response = plugins.doDelete(pluginId);
+		response = plugins.doDelete(OLMapPlugin.NAME);
 		assertEquals(204, response.getStatusLine().getStatusCode());
 
 		// Check it's not there
-		response = plugins.doGet(pluginId);
+		response = plugins.doGet(OLMapPlugin.NAME);
 		assertEquals(404, response.getStatusLine().getStatusCode());
 	}
 
@@ -180,7 +179,7 @@ public class PluginManagementTest {
 
 	@Test
 	public void testAddPlugin() throws Exception {
-		plugins.doPut("hello");
+		plugins.doPut(OLMapPlugin.NAME);
 
 		// Check the application has a call to config.js
 		RestPoint clientApps = new RestPoint(serverManager, Geobricks.root
@@ -192,6 +191,16 @@ public class PluginManagementTest {
 		// Check that the call to config.js contains the reference to the plugin
 		response = clientApps.doGet("stadtplan/config.js");
 		content = IOUtils.toString(response.getEntity().getContent());
-		assertTrue(content.contains("hello"));
+		JSONObject config = JSONObject.fromObject(content.replace(
+				"var require = ", ""));
+		JSONArray array = config.getJSONObject("config").getJSONArray("main");
+		assertTrue(array.contains("olmap"));
+	}
+
+	@Test
+	public void putNonExistingPlugin() throws Exception {
+		HttpResponse response = plugins.doPut("non_existing_plugin");
+		assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatusLine()
+				.getStatusCode());
 	}
 }
