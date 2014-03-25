@@ -3,8 +3,13 @@ package de.csgis.geobricks.manual;
 import java.util.Scanner;
 
 import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.functional.RestPoint;
 import de.csgis.geobricks.functional.ServerManager;
+import de.csgis.geobricks.layerList.LayerListPlugin;
+import de.csgis.geobricks.layout.LayoutPlugin;
+import de.csgis.geobricks.olmap.OLMapPlugin;
+import de.csgis.geobricks.title.TitlePlugin;
 
 public class HelloWorldDemo {
 
@@ -19,11 +24,11 @@ public class HelloWorldDemo {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to add hello.js plugin");
 		// sc.nextLine();
-		plugins.doPut("olmap");
-		plugins.doPut("title");
-		plugins.doPut("layout");
-		plugins.doPut("layer-list");
-		plugins.doPut("address-search");
+		plugins.doPut(OLMapPlugin.NAME);
+		plugins.doPut(TitlePlugin.NAME);
+		plugins.doPut(LayoutPlugin.NAME);
+		plugins.doPut(LayerListPlugin.NAME);
+		plugins.doPut(AddressSearchPlugin.NAME);
 		System.out.println("plugin added");
 		System.out.println("Enter to remove the plugin");
 		sc.nextLine();
