@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
+import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
@@ -19,11 +20,13 @@ public class PluginRegistry {
 		plugins.add(new TitlePlugin());
 		plugins.add(new LayerListPlugin());
 		plugins.add(new AddressSearchPlugin());
+		plugins.add(new BaseLayerPlugin());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {
 		ArrayList<NonRequireDependency> ret = new ArrayList<>();
 		ret.add(new NonRequireDependency("jquery", "jslib/jquery-1.11.0.min"));
+		ret.add(new NonRequireDependency("async", "jslib/async"));
 		for (PluginDescriptor descriptor : plugins) {
 			Collections.addAll(ret, descriptor.getNonRequireDependencies());
 		}
