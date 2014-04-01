@@ -66,6 +66,7 @@ public class PluginManagementTest {
 		assertTrue(array.contains(TitlePlugin.NAME));
 		assertTrue(array.contains(AddressSearchPlugin.NAME));
 		assertTrue(false);
+		assertTrue(false);
 	}
 
 	@Test
