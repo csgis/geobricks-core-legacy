@@ -20,6 +20,8 @@ import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.Path;
+import de.csgis.geobricks.addressSearch.AddressSearchPlugin; 
+import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
 import de.csgis.geobricks.title.TitlePlugin;
@@ -65,7 +67,6 @@ public class PluginManagementTest {
 		assertTrue(array.contains(LayoutPlugin.NAME));
 		assertTrue(array.contains(TitlePlugin.NAME));
 		assertTrue(array.contains(AddressSearchPlugin.NAME));
-		assertTrue(false);
 	}
 
 	@Test
