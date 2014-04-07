@@ -16,6 +16,7 @@
 		<module>layer-list</module>
 		<module>address-search</module>
 		<module>base-layer</module>
+		<module>feature-info</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

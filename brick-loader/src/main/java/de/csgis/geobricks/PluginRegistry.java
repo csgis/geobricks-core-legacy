@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
+import de.csgis.geobricks.featureInfo.FeatureInfoPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
@@ -21,6 +22,7 @@ public class PluginRegistry {
 		plugins.add(new LayerListPlugin());
 		plugins.add(new AddressSearchPlugin());
 		plugins.add(new BaseLayerPlugin());
+		plugins.add(new FeatureInfoPlugin());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {

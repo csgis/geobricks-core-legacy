@@ -5,6 +5,7 @@ import java.util.Scanner;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
+import de.csgis.geobricks.featureInfo.FeatureInfoPlugin;
 import de.csgis.geobricks.functional.RestPoint;
 import de.csgis.geobricks.functional.ServerManager;
 import de.csgis.geobricks.layerList.LayerListPlugin;
@@ -31,6 +32,7 @@ public class HelloWorldDemo {
 		plugins.doPut(LayerListPlugin.NAME);
 		plugins.doPut(AddressSearchPlugin.NAME);
 		plugins.doPut(BaseLayerPlugin.NAME);
+		plugins.doPut(FeatureInfoPlugin.NAME);
 		System.out.println("plugin added");
 		System.out.println("Enter to remove the plugin");
 		sc.nextLine();
