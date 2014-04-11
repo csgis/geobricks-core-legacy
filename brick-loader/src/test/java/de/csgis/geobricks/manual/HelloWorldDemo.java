@@ -2,16 +2,16 @@ package de.csgis.geobricks.manual;
 
 import java.util.Scanner;
 
+import org.apache.http.message.BasicNameValuePair;
+
 import de.csgis.geobricks.Geobricks;
-import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
-import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
-import de.csgis.geobricks.featureInfo.FeatureInfoPlugin;
+import de.csgis.geobricks.admin.AdminPluginDescriptor;
+import de.csgis.geobricks.divstack.DivStackPluginDescriptor;
 import de.csgis.geobricks.functional.RestPoint;
 import de.csgis.geobricks.functional.ServerManager;
-import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
-import de.csgis.geobricks.olmap.OLMapPlugin;
 import de.csgis.geobricks.title.TitlePlugin;
+import de.csgis.geobricks.ui.UIPluginDescriptor;
 
 public class HelloWorldDemo {
 
@@ -26,13 +26,19 @@ public class HelloWorldDemo {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to add hello.js plugin");
 		// sc.nextLine();
-		plugins.doPut(OLMapPlugin.NAME);
-		plugins.doPut(TitlePlugin.NAME);
+		// plugins.doPut(OLMapPlugin.NAME);
+		plugins.doPut(
+				TitlePlugin.NAME,
+				new BasicNameValuePair(
+						"configuration",
+						"\"title\":{\"div\":\"layout-header\", \"text\":\"Geobricks admin application\"}"));
 		plugins.doPut(LayoutPlugin.NAME);
-		plugins.doPut(LayerListPlugin.NAME);
-		plugins.doPut(AddressSearchPlugin.NAME);
-		plugins.doPut(BaseLayerPlugin.NAME);
-		plugins.doPut(FeatureInfoPlugin.NAME);
+		plugins.doPut(new AdminPluginDescriptor().getName());
+		plugins.doPut(new UIPluginDescriptor().getName());
+		plugins.doPut(new DivStackPluginDescriptor().getName());
+		// plugins.doPut(LayerListPlugin.NAME);
+		// plugins.doPut(AddressSearchPlugin.NAME);
+		// plugins.doPut(BaseLayerPlugin.NAME);
 		System.out.println("plugin added");
 		System.out.println("Enter to remove the plugin");
 		sc.nextLine();

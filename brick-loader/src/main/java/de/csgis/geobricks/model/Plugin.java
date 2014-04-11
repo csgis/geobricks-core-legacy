@@ -8,6 +8,8 @@ public class Plugin {
 	@Id
 	private String id;
 
+	private String configuration;
+
 	public Plugin() {
 	}
 
@@ -21,5 +23,13 @@ public class Plugin {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getConfiguration() {
+		return configuration;
+	}
+
+	public void setConfiguration(String configuration) {
+		this.configuration = configuration;
 	}
 }

@@ -19,7 +19,6 @@ import de.csgis.geobricks.servlet.rest.ApplicationListServlet;
 import de.csgis.geobricks.servlet.rest.ApplicationsServlet;
 import de.csgis.geobricks.servlet.rest.AvailablePluginsListServlet;
 import de.csgis.geobricks.servlet.rest.OutputFilter;
-import de.csgis.geobricks.servlet.rest.PluginConfigurationServlet;
 import de.csgis.geobricks.servlet.rest.PluginGetterFilter;
 import de.csgis.geobricks.servlet.rest.PluginListServlet;
 import de.csgis.geobricks.servlet.rest.PluginsServlet;
@@ -33,12 +32,6 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			 * Admin REST API. Note that order matters. If more than one regex
 			 * matches the same path, the first declared servlet will take care.
 			 */
-
-			// Plugin configuration
-			serveRegex(
-					Geobricks.root.rest().apps().any().plugins().any()
-							.configuration().path()).with(
-					PluginConfigurationServlet.class);
 
 			// Plugins
 			serveRegex(Geobricks.root.rest().apps().any().plugins().path())

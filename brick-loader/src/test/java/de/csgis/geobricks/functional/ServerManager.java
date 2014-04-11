@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.URIUtil;
@@ -39,9 +40,11 @@ public class ServerManager {
 		server.stop();
 	}
 
-	public HttpResponse doPut(String path) throws IOException,
-			ClientProtocolException {
-		return execute(new HttpPut(getPath(path)));
+	public HttpResponse doPut(String path, NameValuePair... params)
+			throws IOException, ClientProtocolException {
+		RequestBuilder request = RequestBuilder.create("put")
+				.setUri(getPath(path)).addParameters(params);
+		return execute(request.build());
 	}
 
 	public HttpResponse doDelete(String path) throws IOException,
@@ -59,7 +62,7 @@ public class ServerManager {
 				+ path);
 	}
 
-	private HttpResponse execute(HttpRequestBase put) throws IOException,
+	private HttpResponse execute(HttpUriRequest put) throws IOException,
 			ClientProtocolException {
 		HttpClient client = HttpClients.createDefault();
 		HttpResponse response = client.execute(put);

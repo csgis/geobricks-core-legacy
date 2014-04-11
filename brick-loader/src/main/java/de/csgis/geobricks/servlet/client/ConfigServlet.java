@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-import de.csgis.geobricks.ClientModuleConfiguration;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PersistenceUtils;
 import de.csgis.geobricks.PluginDescriptor;
@@ -57,16 +56,19 @@ public class ConfigServlet extends HttpServlet {
 			}
 		}
 
-		JSONObject moduleConfig = new JSONObject();
+		StringBuilder pluginsJson = new StringBuilder();
+		String separator = "";
+		for (Plugin plugin : plugins) {
+			String configuration = plugin.getConfiguration();
+			if (configuration != null) {
+				pluginsJson.append(separator).append(configuration);
+				separator = ",";
+			}
+		}
+		JSONObject moduleConfig = (JSONObject) JSONSerializer.toJSON("{"
+				+ pluginsJson + "}");
 		moduleConfig.element("main",
 				modules.toArray(new String[modules.size()]));
-		ClientModuleConfiguration[] configuration = pluginRegistry
-				.getClientModuleConfiguration();
-		for (ClientModuleConfiguration clientModuleConfiguration : configuration) {
-			moduleConfig.element(clientModuleConfiguration.getModuleName(),
-					JSONSerializer.toJSON(clientModuleConfiguration
-							.getJsonContent()));
-		}
 
 		String json = new JSONObject().element("config", moduleConfig)
 				.toString();

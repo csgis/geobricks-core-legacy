@@ -7,8 +7,8 @@ import java.util.List;
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.admin.AdminPluginDescriptor;
 import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
-import de.csgis.geobricks.featureInfo.FeatureInfoPlugin;
 import de.csgis.geobricks.divstack.DivStackPluginDescriptor;
+import de.csgis.geobricks.featureInfo.FeatureInfoPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
@@ -44,19 +44,6 @@ public class PluginRegistry {
 		}
 
 		return ret.toArray(new NonRequireDependency[ret.size()]);
-	}
-
-	public ClientModuleConfiguration[] getClientModuleConfiguration() {
-		ArrayList<ClientModuleConfiguration> ret = new ArrayList<>();
-		for (PluginDescriptor descriptor : plugins) {
-			ClientModuleConfiguration[] clientModuleConfiguration = descriptor
-					.getClientModuleConfiguration();
-			if (clientModuleConfiguration != null) {
-				Collections.addAll(ret, clientModuleConfiguration);
-			}
-		}
-
-		return ret.toArray(new ClientModuleConfiguration[ret.size()]);
 	}
 
 	public String[] getStyleSheets() {

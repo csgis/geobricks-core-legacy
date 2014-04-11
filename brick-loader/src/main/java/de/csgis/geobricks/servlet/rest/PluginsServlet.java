@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PersistenceUtils;
 import de.csgis.geobricks.PluginDescriptor;
@@ -49,6 +50,8 @@ public class PluginsServlet extends HttpServlet {
 
 		JSONObject json = new JSONObject();
 		json.element("id", plugin.getId());
+		json.element("configuration",
+				JSONSerializer.toJSON("{" + plugin.getConfiguration() + "}"));
 
 		response.setContentType("application/javascript");
 		response.setCharacterEncoding("utf8");
@@ -62,13 +65,22 @@ public class PluginsServlet extends HttpServlet {
 		String pluginId = req
 				.getAttribute(Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE).toString();
 
-		PluginDescriptor plugin = registry.getPlugin(pluginId);
-		if (plugin == null) {
+		PluginDescriptor pluginDescriptor = registry.getPlugin(pluginId);
+		if (pluginDescriptor == null) {
 			throw new HTTPCodeServletException("Plugin does not exist: "
 					+ pluginId, HttpServletResponse.SC_NOT_FOUND);
 		}
 
-		app.getPlugins().add(new Plugin(pluginId));
+		Plugin plugin = new Plugin(pluginId);
+		String configurationParameter = req.getParameter("configuration");
+		if (configurationParameter != null) {
+			plugin.setConfiguration(configurationParameter);
+		} else {
+			plugin.setConfiguration(pluginDescriptor
+					.getClientModuleConfiguration());
+		}
+
+		app.getPlugins().add(plugin);
 
 		em.getTransaction().begin();
 		em.merge(app);
