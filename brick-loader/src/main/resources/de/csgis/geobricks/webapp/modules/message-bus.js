@@ -14,7 +14,7 @@ define([ "jquery" ], function($) {
 	 *            sent to the listeners of the event.
 	 */
 	function send(name, parameters) {
-		messageBus.trigger(name, parameters);
+		messageBus.triggerHandler(name, parameters);
 	}
 
 	/**
