@@ -64,6 +64,10 @@ public class Path {
 		return copy().append("/apps/" + appId);
 	}
 
+	public Path configuration() {
+		return copy().append("/conf");
+	}
+
 	public Path file(String fileName) {
 		return copy().append("/" + fileName);
 	}
