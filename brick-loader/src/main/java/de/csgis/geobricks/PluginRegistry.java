@@ -12,8 +12,6 @@ import de.csgis.geobricks.divstack.DivStackPluginDescriptor;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
-import de.csgis.geobricks.selectablelist.SelectableListPlugin;
-import de.csgis.geobricks.textAreaFactory.TextAreaFactoryPluginDescriptor;
 import de.csgis.geobricks.title.TitlePlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
@@ -28,11 +26,9 @@ public class PluginRegistry {
 		plugins.add(new AddressSearchPlugin());
 		plugins.add(new BaseLayerPlugin());
 		plugins.add(new FeatureInfoPlugin());
-		plugins.add(new SelectableListPlugin());
 		plugins.add(new UIPluginDescriptor());
 		plugins.add(new AdminPluginDescriptor());
 		plugins.add(new DivStackPluginDescriptor());
-		plugins.add(new TextAreaFactoryPluginDescriptor());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {

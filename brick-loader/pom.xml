@@ -133,17 +133,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>selectable-list-factory</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
 			<artifactId>divstack</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>text-area-factory</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 

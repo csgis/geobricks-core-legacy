@@ -16,11 +16,9 @@
 		<module>address-search</module>
 		<module>base-layer</module>
 		<module>feature-info</module>
-		<module>selectable-list-factory</module>
 		<module>ui</module>
 		<module>admin</module>
 		<module>divstack</module>
-		<module>text-area-factory</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
