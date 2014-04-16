@@ -1,6 +1,7 @@
 package de.csgis.geobricks.functional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -107,5 +108,14 @@ public class GetApplicationTest {
 		String content = IOUtils.toString(response.getEntity().getContent());
 		Pattern pattern = Pattern.compile("<link[^>]*address-search.css[^>]/>");
 		assertTrue(pattern.matcher(content).find());
+	}
+
+	@Test
+	public void indexHTMLNoBootstrapCSS() throws Exception {
+		HttpResponse response = app.doGet();
+		String content = IOUtils.toString(response.getEntity().getContent());
+		System.out.println(content);
+		Pattern pattern = Pattern.compile("<link[^>]*bootstrap.*[^>]/>");
+		assertFalse(pattern.matcher(content).find());
 	}
 }
