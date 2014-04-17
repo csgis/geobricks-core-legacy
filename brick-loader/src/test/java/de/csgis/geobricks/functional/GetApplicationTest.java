@@ -19,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 
 public class GetApplicationTest {
 	private static ServerManager serverManager = new ServerManager();
@@ -30,8 +31,7 @@ public class GetApplicationTest {
 	@BeforeClass
 	public static void start() throws Exception {
 		serverManager.start("geobricks");
-		app = new RestPoint(serverManager, Geobricks.root.apps().app(APP_ID)
-				.path());
+		app = new RestPoint(serverManager, Geobricks.root.app(APP_ID).path());
 
 	}
 
@@ -101,8 +101,8 @@ public class GetApplicationTest {
 	@Test
 	public void indexHTMLContainsCSS() throws Exception {
 		RestPoint plugins = new RestPoint(serverManager, Geobricks.root.rest()
-				.apps().app(APP_ID).plugins().path());
-		plugins.doPut("address-search");
+				.app(APP_ID).plugins().path());
+		plugins.doPut(new AddressSearchPlugin().getName());
 
 		HttpResponse response = app.doGet();
 		String content = IOUtils.toString(response.getEntity().getContent());
@@ -114,8 +114,8 @@ public class GetApplicationTest {
 	public void indexHTMLNoBootstrapCSS() throws Exception {
 		HttpResponse response = app.doGet();
 		String content = IOUtils.toString(response.getEntity().getContent());
-		System.out.println(content);
 		Pattern pattern = Pattern.compile("<link[^>]*bootstrap.*[^>]/>");
 		assertFalse(pattern.matcher(content).find());
 	}
+
 }

@@ -9,9 +9,9 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
 import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.servlet.client.GetApplicationInstanceFilter;
 import de.csgis.geobricks.servlet.client.ConfigServlet;
-import de.csgis.geobricks.servlet.client.IndexContentProcessor;
-import de.csgis.geobricks.servlet.client.IndexRequestPreprocessor;
+import de.csgis.geobricks.servlet.client.IndexReplaceCSSFilter;
 import de.csgis.geobricks.servlet.client.MainModuleContentProcessor;
 import de.csgis.geobricks.servlet.client.StaticServlet;
 import de.csgis.geobricks.servlet.rest.AppGetterFilter;
@@ -64,13 +64,12 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			 * Client Requests
 			 */
 			// Static content
-			Injector injector = Guice.createInjector(moduleInstance);
 
 			// main.js module
-			MainModuleContentProcessor mainModuleProcessor = injector
-					.getInstance(MainModuleContentProcessor.class);
+			filterRegex(Geobricks.root.apps().any().module("main.js").path())
+					.through(MainModuleContentProcessor.class);
 			serveRegex(Geobricks.root.apps().any().module("main.js").path())
-					.with(new StaticServlet("modules", mainModuleProcessor));
+					.with(new StaticServlet("modules"));
 
 			// Config.js
 			serveRegex(Geobricks.root.apps().any().file("config.js").path())
@@ -85,13 +84,12 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 					new StaticServlet("images"));
 
 			// Application index.html
-			IndexRequestPreprocessor indexPreprocessor = injector
-					.getInstance(IndexRequestPreprocessor.class);
-			IndexContentProcessor indexProcessor = injector
-					.getInstance(IndexContentProcessor.class);
+			filterRegex(Geobricks.root.apps().any().path()).through(
+					GetApplicationInstanceFilter.class);
+			filterRegex(Geobricks.root.apps().any().path()).through(
+					IndexReplaceCSSFilter.class);
 			serveRegex(Geobricks.root.apps().any().path()).with(
-					new StaticServlet("", "index.html", indexProcessor,
-							indexPreprocessor));
+					new StaticServlet("", "index.html"));
 		}
 	}
 

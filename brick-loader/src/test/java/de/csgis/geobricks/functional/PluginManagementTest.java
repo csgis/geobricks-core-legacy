@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.Path;
-import de.csgis.geobricks.addressSearch.AddressSearchPlugin; 
+import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
