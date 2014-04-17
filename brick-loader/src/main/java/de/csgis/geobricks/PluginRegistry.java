@@ -46,18 +46,6 @@ public class PluginRegistry {
 		return ret.toArray(new NonRequireDependency[ret.size()]);
 	}
 
-	public String[] getStyleSheets() {
-		ArrayList<String> ret = new ArrayList<String>();
-		for (PluginDescriptor descriptor : plugins) {
-			String[] styleSheets = descriptor.getStyleSheets();
-			if (styleSheets != null) {
-				Collections.addAll(ret, styleSheets);
-			}
-		}
-
-		return ret.toArray(new String[ret.size()]);
-	}
-
 	public PluginDescriptor getPlugin(String name) {
 		for (PluginDescriptor plugin : plugins) {
 			if (plugin.getName().equals(name)) {

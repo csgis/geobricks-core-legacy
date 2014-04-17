@@ -1,6 +1,7 @@
 package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -12,12 +13,14 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import de.csgis.geobricks.NonRequireDependency;
+import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginRegistry;
+import de.csgis.geobricks.model.Application;
+import de.csgis.geobricks.model.Plugin;
 
 @Singleton
-public class MainModuleContentProcessor implements Filter {
-
+public class IndexReplaceCSSFilter implements Filter {
 	@Inject
 	private PluginRegistry pluginRegistry;
 
@@ -31,21 +34,25 @@ public class MainModuleContentProcessor implements Filter {
 		CharResponseWrapper wrapper = new CharResponseWrapper(
 				(HttpServletResponse) response);
 		chain.doFilter(request, wrapper);
-		NonRequireDependency[] dependencies = pluginRegistry
-				.getNonRequireDependencies();
+
+		Application app = (Application) request
+				.getAttribute(Geobricks.APP_INSTANCE_HTTP_ATTRIBUTE);
+		Set<Plugin> plugins = app.getPlugins();
 		StringBuilder str = new StringBuilder();
-		for (NonRequireDependency dep : dependencies) {
-			str.append('"').append(dep.getName()).append('"');
-			str.append(':');
-			// Paths are relative to modules so we go up one level
-			str.append("\"../").append(dep.getPath()).append('"');
-			str.append(",\n\t\t");
+		for (Plugin plugin : plugins) {
+			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
+					.getId());
+			String[] styleSheets = descriptor.getStyleSheets();
+			if (styleSheets != null) {
+				for (String styleSheet : styleSheets) {
+					str.append("<link rel=\"stylesheet\" href=\"" + styleSheet
+							+ "\"/>\n");
+				}
+			}
 		}
 
-		// remove last comma
-		str.setLength(str.lastIndexOf(","));
-		String returnCode = wrapper.toString().replace(
-				"$nonRequireJSDependencies", str.toString());
+		String returnCode = wrapper.toString().replace("$styleSheets",
+				str.toString());
 
 		response.getWriter().write(returnCode);
 	}
