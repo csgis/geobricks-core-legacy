@@ -77,7 +77,7 @@ public class PluginsServlet extends HttpServlet {
 			plugin.setConfiguration(configurationParameter);
 		} else {
 			plugin.setConfiguration(pluginDescriptor
-					.getClientModuleConfiguration());
+					.getDefaultConfiguration());
 		}
 
 		app.getPlugins().add(plugin);
