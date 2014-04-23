@@ -13,6 +13,7 @@ import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
 import de.csgis.geobricks.title.TitlePlugin;
+import de.csgis.geobricks.ui.UIPluginDescriptor;
 
 public class BasicViewerDemo {
 	private static final String APP = "viewer";
@@ -32,12 +33,19 @@ public class BasicViewerDemo {
 						"title : { div : 'layout-header', "
 								+ "text : 'Basic viewer' }"));
 
+		plugins.doPut(new UIPluginDescriptor().getName(),
+				new BasicNameValuePair("configuration",
+						"ui : { pre : [{ eventName : 'ui-accordion:create', "
+								+ "div : 'layers-accordion', "
+								+ "parentDiv : 'layout-side'}]}"));
+
 		plugins.doPut(OLMapPlugin.NAME);
 		plugins.doPut(TitlePlugin.NAME);
 		plugins.doPut(LayoutPlugin.NAME);
 		plugins.doPut(LayerListPlugin.NAME);
 		plugins.doPut(AddressSearchPlugin.NAME);
 		plugins.doPut(BaseLayerPlugin.NAME);
+		plugins.doPut(new UIPluginDescriptor().getName());
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to stop server");
