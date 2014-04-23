@@ -12,7 +12,6 @@ import de.csgis.geobricks.featureInfo.FeatureInfoPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
-import de.csgis.geobricks.title.TitlePlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
 public class PluginRegistry {
@@ -21,7 +20,6 @@ public class PluginRegistry {
 	public PluginRegistry() {
 		plugins.add(new OLMapPlugin());
 		plugins.add(new LayoutPlugin());
-		plugins.add(new TitlePlugin());
 		plugins.add(new LayerListPlugin());
 		plugins.add(new AddressSearchPlugin());
 		plugins.add(new BaseLayerPlugin());

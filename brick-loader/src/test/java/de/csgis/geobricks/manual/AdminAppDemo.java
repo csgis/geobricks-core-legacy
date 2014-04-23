@@ -10,7 +10,6 @@ import de.csgis.geobricks.divstack.DivStackPluginDescriptor;
 import de.csgis.geobricks.functional.RestPoint;
 import de.csgis.geobricks.functional.ServerManager;
 import de.csgis.geobricks.layout.LayoutPlugin;
-import de.csgis.geobricks.title.TitlePlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
 public class AdminAppDemo {
@@ -25,12 +24,18 @@ public class AdminAppDemo {
 		RestPoint plugins = new RestPoint(serverManager, Geobricks.root.rest()
 				.app(APP).plugins().path());
 
-		plugins.doPut(TitlePlugin.ID, new BasicNameValuePair("configuration",
-				"title : { div : 'layout-header', "
-						+ "text : 'Geobricks admin application' }"));
+		String post = "[{ eventName : 'ui-selectable-list:create', div: 'apps_list', parentDiv : 'layout-center', url :'/geobricks/rest/apps'},"
+				+ "{ eventName : 'ui-selectable-list:create', div : 'plugins_list', parentDiv : 'layout-center'},"
+				+ "{ eventName : 'ui-text-area', div : 'plugin_configuration', parentDiv : 'layout-center'}"
+				+ "]";
+		String pre = "[{ eventName : 'ui-html', " + "div : 'title', "
+				+ "parentDiv : 'layout-header', "
+				+ "html: 'Geobricks admin application'}]";
+		plugins.doPut(UIPluginDescriptor.ID, new BasicNameValuePair(
+				"configuration", "ui : { post: " + post + ", " + "pre : " + pre
+						+ "}"));
 		plugins.doPut(LayoutPlugin.ID);
 		plugins.doPut(AdminPluginDescriptor.ID);
-		plugins.doPut(UIPluginDescriptor.ID);
 		plugins.doPut(DivStackPluginDescriptor.ID);
 
 		Scanner sc = new Scanner(System.in);

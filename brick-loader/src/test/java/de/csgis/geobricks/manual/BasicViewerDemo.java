@@ -12,7 +12,6 @@ import de.csgis.geobricks.functional.ServerManager;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
-import de.csgis.geobricks.title.TitlePlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
 public class BasicViewerDemo {
@@ -28,19 +27,16 @@ public class BasicViewerDemo {
 		RestPoint plugins = new RestPoint(serverManager, Geobricks.root.rest()
 				.app(APP).plugins().path());
 
-		plugins.doPut(TitlePlugin.ID,
-				new BasicNameValuePair("configuration",
-						"title : { div : 'layout-header', "
-								+ "text : 'Basic viewer' }"));
-
 		plugins.doPut(UIPluginDescriptor.ID, new BasicNameValuePair(
 				"configuration",
-				"ui : { pre : [{ eventName : 'ui-accordion:create', "
+				"ui : { post: [], pre : [{ eventName : 'ui-accordion:create', "
 						+ "div : 'layers-accordion', "
-						+ "parentDiv : 'layout-side'}]}"));
+						+ "parentDiv : 'layout-side'},"
+						+ "{ eventName : 'ui-html', " + "div : 'title', "
+						+ "parentDiv : 'layout-header', "
+						+ "html: 'Basic viewer'}]}"));
 
 		plugins.doPut(OLMapPlugin.ID);
-		plugins.doPut(TitlePlugin.ID);
 		plugins.doPut(LayoutPlugin.ID);
 		plugins.doPut(LayerListPlugin.ID);
 		plugins.doPut(AddressSearchPlugin.ID);

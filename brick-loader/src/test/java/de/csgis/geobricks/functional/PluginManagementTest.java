@@ -24,7 +24,6 @@ import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
-import de.csgis.geobricks.title.TitlePlugin;
 
 public class PluginManagementTest {
 	private static ServerManager serverManager = new ServerManager();
@@ -65,7 +64,6 @@ public class PluginManagementTest {
 		assertTrue(array.contains(OLMapPlugin.ID));
 		assertTrue(array.contains(LayerListPlugin.ID));
 		assertTrue(array.contains(LayoutPlugin.ID));
-		assertTrue(array.contains(TitlePlugin.ID));
 		assertTrue(array.contains(AddressSearchPlugin.ID));
 	}
 
