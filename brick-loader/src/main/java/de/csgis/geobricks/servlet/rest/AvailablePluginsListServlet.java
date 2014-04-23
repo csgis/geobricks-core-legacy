@@ -27,7 +27,7 @@ public class AvailablePluginsListServlet extends HttpServlet {
 		List<PluginDescriptor> plugins = pluginRegistry.getPlugins();
 		JSONArray array = new JSONArray();
 		for (PluginDescriptor plugin : plugins) {
-			array.add(plugin.getName());
+			array.add(plugin.getId());
 		}
 		resp.setContentType("application/javascript");
 		resp.setCharacterEncoding("utf8");

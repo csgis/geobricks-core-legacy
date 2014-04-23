@@ -62,11 +62,11 @@ public class PluginManagementTest {
 	@Test
 	public void getPluginList() throws Exception {
 		JSONArray array = TestUtils.parseJsonArray(pluginList.doGet());
-		assertTrue(array.contains(OLMapPlugin.NAME));
-		assertTrue(array.contains(LayerListPlugin.NAME));
-		assertTrue(array.contains(LayoutPlugin.NAME));
-		assertTrue(array.contains(TitlePlugin.NAME));
-		assertTrue(array.contains(AddressSearchPlugin.NAME));
+		assertTrue(array.contains(OLMapPlugin.ID));
+		assertTrue(array.contains(LayerListPlugin.ID));
+		assertTrue(array.contains(LayoutPlugin.ID));
+		assertTrue(array.contains(TitlePlugin.ID));
+		assertTrue(array.contains(AddressSearchPlugin.ID));
 	}
 
 	@Test
@@ -84,10 +84,10 @@ public class PluginManagementTest {
 		JSONArray array = TestUtils.parseJsonArray(plugins.doGet());
 		assertEquals(0, array.size());
 
-		plugins.doPut(OLMapPlugin.NAME);
+		plugins.doPut(OLMapPlugin.ID);
 		array = TestUtils.parseJsonArray(plugins.doGet());
 		assertEquals(1, array.size());
-		assertEquals(OLMapPlugin.NAME, array.get(0));
+		assertEquals(OLMapPlugin.ID, array.get(0));
 	}
 
 	@Test
@@ -110,12 +110,12 @@ public class PluginManagementTest {
 
 	@Test
 	public void getPlugin() throws Exception {
-		plugins.doPut(OLMapPlugin.NAME);
+		plugins.doPut(OLMapPlugin.ID);
 
 		JSONObject plugin = TestUtils.parseJsonObject(plugins
-				.doGet(OLMapPlugin.NAME));
+				.doGet(OLMapPlugin.ID));
 		assertTrue(plugin.has("id"));
-		assertEquals(OLMapPlugin.NAME, plugin.get("id"));
+		assertEquals(OLMapPlugin.ID, plugin.get("id"));
 	}
 
 	@Test
@@ -132,10 +132,10 @@ public class PluginManagementTest {
 
 	@Test
 	public void putPlugin() throws Exception {
-		HttpResponse response = plugins.doPut(OLMapPlugin.NAME);
+		HttpResponse response = plugins.doPut(OLMapPlugin.ID);
 		assertEquals(204, response.getStatusLine().getStatusCode());
 
-		response = plugins.doGet(OLMapPlugin.NAME);
+		response = plugins.doGet(OLMapPlugin.ID);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 	}
 
@@ -147,28 +147,28 @@ public class PluginManagementTest {
 
 	@Test
 	public void putExistingPlugin() throws Exception {
-		HttpResponse response = plugins.doPut(OLMapPlugin.NAME);
+		HttpResponse response = plugins.doPut(OLMapPlugin.ID);
 		assertEquals(204, response.getStatusLine().getStatusCode());
-		response = plugins.doPut(OLMapPlugin.NAME);
+		response = plugins.doPut(OLMapPlugin.ID);
 		assertEquals(204, response.getStatusLine().getStatusCode());
 	}
 
 	@Test
 	public void deletePlugin() throws Exception {
 		// Put
-		HttpResponse response = plugins.doPut(OLMapPlugin.NAME);
+		HttpResponse response = plugins.doPut(OLMapPlugin.ID);
 		assertEquals(204, response.getStatusLine().getStatusCode());
 
 		// Check it's there
-		response = plugins.doGet(OLMapPlugin.NAME);
+		response = plugins.doGet(OLMapPlugin.ID);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 
 		// Delete
-		response = plugins.doDelete(OLMapPlugin.NAME);
+		response = plugins.doDelete(OLMapPlugin.ID);
 		assertEquals(204, response.getStatusLine().getStatusCode());
 
 		// Check it's not there
-		response = plugins.doGet(OLMapPlugin.NAME);
+		response = plugins.doGet(OLMapPlugin.ID);
 		assertEquals(404, response.getStatusLine().getStatusCode());
 	}
 
@@ -186,7 +186,7 @@ public class PluginManagementTest {
 
 	@Test
 	public void testAddPlugin() throws Exception {
-		plugins.doPut(OLMapPlugin.NAME);
+		plugins.doPut(OLMapPlugin.ID);
 
 		// Check the application has a call to config.js
 		RestPoint clientApps = new RestPoint(serverManager, Geobricks.root

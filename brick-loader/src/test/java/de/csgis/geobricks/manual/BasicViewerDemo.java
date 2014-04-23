@@ -28,24 +28,24 @@ public class BasicViewerDemo {
 		RestPoint plugins = new RestPoint(serverManager, Geobricks.root.rest()
 				.app(APP).plugins().path());
 
-		plugins.doPut(TitlePlugin.NAME,
+		plugins.doPut(TitlePlugin.ID,
 				new BasicNameValuePair("configuration",
 						"title : { div : 'layout-header', "
 								+ "text : 'Basic viewer' }"));
 
-		plugins.doPut(new UIPluginDescriptor().getName(),
-				new BasicNameValuePair("configuration",
-						"ui : { pre : [{ eventName : 'ui-accordion:create', "
-								+ "div : 'layers-accordion', "
-								+ "parentDiv : 'layout-side'}]}"));
+		plugins.doPut(UIPluginDescriptor.ID, new BasicNameValuePair(
+				"configuration",
+				"ui : { pre : [{ eventName : 'ui-accordion:create', "
+						+ "div : 'layers-accordion', "
+						+ "parentDiv : 'layout-side'}]}"));
 
-		plugins.doPut(OLMapPlugin.NAME);
-		plugins.doPut(TitlePlugin.NAME);
-		plugins.doPut(LayoutPlugin.NAME);
-		plugins.doPut(LayerListPlugin.NAME);
-		plugins.doPut(AddressSearchPlugin.NAME);
-		plugins.doPut(BaseLayerPlugin.NAME);
-		plugins.doPut(new UIPluginDescriptor().getName());
+		plugins.doPut(OLMapPlugin.ID);
+		plugins.doPut(TitlePlugin.ID);
+		plugins.doPut(LayoutPlugin.ID);
+		plugins.doPut(LayerListPlugin.ID);
+		plugins.doPut(AddressSearchPlugin.ID);
+		plugins.doPut(BaseLayerPlugin.ID);
+		plugins.doPut(UIPluginDescriptor.ID);
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to stop server");

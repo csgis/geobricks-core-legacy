@@ -25,13 +25,13 @@ public class AdminAppDemo {
 		RestPoint plugins = new RestPoint(serverManager, Geobricks.root.rest()
 				.app(APP).plugins().path());
 
-		plugins.doPut(TitlePlugin.NAME, new BasicNameValuePair("configuration",
+		plugins.doPut(TitlePlugin.ID, new BasicNameValuePair("configuration",
 				"title : { div : 'layout-header', "
 						+ "text : 'Geobricks admin application' }"));
-		plugins.doPut(LayoutPlugin.NAME);
-		plugins.doPut(new AdminPluginDescriptor().getName());
-		plugins.doPut(new UIPluginDescriptor().getName());
-		plugins.doPut(new DivStackPluginDescriptor().getName());
+		plugins.doPut(LayoutPlugin.ID);
+		plugins.doPut(AdminPluginDescriptor.ID);
+		plugins.doPut(UIPluginDescriptor.ID);
+		plugins.doPut(DivStackPluginDescriptor.ID);
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to stop server");

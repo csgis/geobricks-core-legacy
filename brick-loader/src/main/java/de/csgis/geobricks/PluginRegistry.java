@@ -46,9 +46,9 @@ public class PluginRegistry {
 		return ret.toArray(new NonRequireDependency[ret.size()]);
 	}
 
-	public PluginDescriptor getPlugin(String name) {
+	public PluginDescriptor getPlugin(String id) {
 		for (PluginDescriptor plugin : plugins) {
-			if (plugin.getName().equals(name)) {
+			if (plugin.getId().equals(id)) {
 				return plugin;
 			}
 		}

@@ -102,7 +102,7 @@ public class GetApplicationTest {
 	public void indexHTMLContainsCSS() throws Exception {
 		RestPoint plugins = new RestPoint(serverManager, Geobricks.root.rest()
 				.app(APP_ID).plugins().path());
-		plugins.doPut(new AddressSearchPlugin().getName());
+		plugins.doPut(AddressSearchPlugin.ID);
 
 		HttpResponse response = app.doGet();
 		String content = IOUtils.toString(response.getEntity().getContent());
