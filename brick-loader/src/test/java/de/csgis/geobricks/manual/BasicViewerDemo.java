@@ -7,6 +7,7 @@ import org.apache.http.message.BasicNameValuePair;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
+import de.csgis.geobricks.featureInfo.FeatureInfoPlugin;
 import de.csgis.geobricks.functional.RestPoint;
 import de.csgis.geobricks.functional.ServerManager;
 import de.csgis.geobricks.layerList.LayerListPlugin;
@@ -41,6 +42,7 @@ public class BasicViewerDemo {
 		plugins.doPut(LayerListPlugin.ID);
 		plugins.doPut(AddressSearchPlugin.ID);
 		plugins.doPut(BaseLayerPlugin.ID);
+		plugins.doPut(FeatureInfoPlugin.ID);
 		plugins.doPut(UIPluginDescriptor.ID);
 
 		Scanner sc = new Scanner(System.in);
