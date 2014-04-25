@@ -51,10 +51,10 @@ public class IndexReplaceCSSFilter implements Filter {
 			}
 		}
 
-		String returnCode = wrapper.toString().replace("$styleSheets",
+		String indexHtmlContent = wrapper.toString().replace("$styleSheets",
 				str.toString());
 
-		response.getWriter().write(returnCode);
+		response.getOutputStream().print(indexHtmlContent);
 	}
 
 	@Override

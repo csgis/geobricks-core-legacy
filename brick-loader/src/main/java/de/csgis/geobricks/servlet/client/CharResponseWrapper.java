@@ -1,8 +1,11 @@
 package de.csgis.geobricks.servlet.client;
 
 import java.io.CharArrayWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
@@ -22,4 +25,23 @@ public class CharResponseWrapper extends HttpServletResponseWrapper {
 		return new PrintWriter(output);
 	}
 
+	@Override
+	public ServletOutputStream getOutputStream() throws IOException {
+		return new ServletOutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				output.write(b);
+			}
+
+			@Override
+			public void setWriteListener(WriteListener writeListener) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public boolean isReady() {
+				return true;
+			}
+		};
+	}
 }

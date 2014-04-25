@@ -11,6 +11,7 @@ import com.google.inject.servlet.ServletModule;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.servlet.client.GetApplicationInstanceFilter;
 import de.csgis.geobricks.servlet.client.ConfigServlet;
+import de.csgis.geobricks.servlet.client.IndexHTMLRedirectFilter;
 import de.csgis.geobricks.servlet.client.IndexReplaceCSSFilter;
 import de.csgis.geobricks.servlet.client.MainModuleContentProcessor;
 import de.csgis.geobricks.servlet.client.StaticServlet;
@@ -28,11 +29,24 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 	private class GeobricksServletModule extends ServletModule {
 		@Override
 		protected void configureServlets() {
+			// Redirect client app requests to index.html
+			filterRegex(Geobricks.root.apps().any().path(),
+					Geobricks.root.apps().any().path() + "/").through(
+					IndexHTMLRedirectFilter.class);
+
+			// Common application id getter for REST API and client requests
+			filterRegex(Geobricks.root.apps().all().path(),
+					Geobricks.root.rest().apps().all().path()).through(
+					AppGetterFilter.class);
+
+			// Common output filter for REST APPI and client requests
+			filterRegex(Geobricks.root.rest().all().path()).through(
+					OutputFilter.class);
+
 			/*
 			 * Admin REST API. Note that order matters. If more than one regex
 			 * matches the same path, the first declared servlet will take care.
 			 */
-
 			// Plugins
 			serveRegex(Geobricks.root.rest().apps().any().plugins().path())
 					.with(PluginListServlet.class);
@@ -50,21 +64,14 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			serveRegex(Geobricks.root.rest().apps().any().path()).with(
 					ApplicationsServlet.class);
 
-			// Filters
-			filterRegex(Geobricks.root.apps().any().path(),
-					Geobricks.root.rest().apps().any().path()).through(
-					AppGetterFilter.class);
+			// Plugin getter filter
 			filterRegex(
 					Geobricks.root.rest().apps().any().plugins().any().path())
 					.through(PluginGetterFilter.class);
-			filterRegex(Geobricks.root.rest().any().path()).through(
-					OutputFilter.class);
 
 			/*
 			 * Client Requests
 			 */
-			// Static content
-
 			// main.js module
 			filterRegex(Geobricks.root.apps().any().module("main.js").path())
 					.through(MainModuleContentProcessor.class);
@@ -76,20 +83,22 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 					.with(ConfigServlet.class);
 
 			// Static content
-			serveRegex(Geobricks.root.apps().any().modules().any().path())
+			serveRegex(Geobricks.root.apps().any().modules().all().path())
 					.with(new StaticServlet("modules"));
-			serveRegex(Geobricks.root.apps().any().jslib().any().path()).with(
+			serveRegex(Geobricks.root.apps().any().jslib().all().path()).with(
 					new StaticServlet("jslib"));
-			serveRegex(Geobricks.root.apps().any().images().any().path()).with(
+			serveRegex(Geobricks.root.apps().any().images().all().path()).with(
 					new StaticServlet("images"));
 
 			// Application index.html
-			filterRegex(Geobricks.root.apps().any().path()).through(
+			String indexPath = Geobricks.root.apps().any().file("index.html")
+					.path();
+			filterRegex(indexPath).through(IndexReplaceCSSFilter.class);
+			serveRegex(indexPath).with(new StaticServlet("", "index.html"));
+
+			// Application instance getter
+			filterRegex(Geobricks.root.apps().all().path()).through(
 					GetApplicationInstanceFilter.class);
-			filterRegex(Geobricks.root.apps().any().path()).through(
-					IndexReplaceCSSFilter.class);
-			serveRegex(Geobricks.root.apps().any().path()).with(
-					new StaticServlet("", "index.html"));
 		}
 	}
 

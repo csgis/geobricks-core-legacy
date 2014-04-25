@@ -2,6 +2,8 @@ package de.csgis.geobricks;
 
 import java.io.InputStream;
 
+import com.google.inject.servlet.ServletModule;
+
 /**
  * Class that holds all the folder structure of the rest API and the web
  * applications
@@ -19,6 +21,13 @@ public class Path {
 		path = new StringBuilder(root);
 	}
 
+	/**
+	 * A Java-style regex representing the path. It has to be used with
+	 * {@link ServletModule#serveRegex} and {@link ServletModule#filterRegex}
+	 * instead of {@link ServletModule#serve} and {@link ServletModule#filter}.
+	 * 
+	 * @return A Java-style regex representing the path.
+	 */
 	public String path() {
 		return path.toString();
 	}
@@ -37,7 +46,11 @@ public class Path {
 	}
 
 	public Path any() {
-		return copy().append("/.*");
+		return copy().append("/[^/]+");
+	}
+
+	public Path all() {
+		return copy().append(".*");
 	}
 
 	public Path plugins() {

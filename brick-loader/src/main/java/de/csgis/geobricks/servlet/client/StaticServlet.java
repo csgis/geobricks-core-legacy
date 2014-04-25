@@ -56,7 +56,10 @@ public class StaticServlet extends HttpServlet {
 		}
 
 		try {
-			IOUtils.copy(resourceStream, resp.getWriter());
+			// We cannot use resp.getWriter() since it is intented to work for
+			// text responses and the static servlet can return binary files
+			// (like images)
+			IOUtils.copy(resourceStream, resp.getOutputStream());
 		} finally {
 			resourceStream.close();
 		}
