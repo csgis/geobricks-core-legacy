@@ -40,9 +40,9 @@ public class PluginsServlet extends HttpServlet {
 
 		String pluginId = request.getAttribute(
 				Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE).toString();
-		Plugin plugin = utils.getPlugin(pluginId);
 
-		if (plugin == null || !app.getPlugins().contains(plugin)) {
+		Plugin plugin = app.getPlugin(pluginId);
+		if (plugin == null) {
 			throw new HTTPCodeServletException("Cannot find plugin '"
 					+ pluginId + "' for application '" + app.getId() + "'",
 					HttpServletResponse.SC_NOT_FOUND);
@@ -71,18 +71,18 @@ public class PluginsServlet extends HttpServlet {
 					+ pluginId, HttpServletResponse.SC_NOT_FOUND);
 		}
 
-		Plugin plugin = new Plugin(pluginId);
+		Plugin plugin = new Plugin(pluginId, app);
 		String configurationParameter = req.getParameter("configuration");
 		if (configurationParameter != null) {
 			plugin.setConfiguration(configurationParameter);
 		} else {
-			plugin.setConfiguration(pluginDescriptor
-					.getDefaultConfiguration());
+			plugin.setConfiguration(pluginDescriptor.getDefaultConfiguration());
 		}
 
-		app.getPlugins().add(plugin);
+		app.setPlugin(plugin);
 
 		em.getTransaction().begin();
+		em.merge(plugin);
 		em.merge(app);
 		em.getTransaction().commit();
 
@@ -96,7 +96,7 @@ public class PluginsServlet extends HttpServlet {
 		String pluginId = req
 				.getAttribute(Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE).toString();
 
-		Plugin plugin = utils.getPlugin(pluginId);
+		Plugin plugin = app.getPlugin(pluginId);
 
 		if (plugin == null) {
 			throw new HTTPCodeServletException("Cannot find plugin '"

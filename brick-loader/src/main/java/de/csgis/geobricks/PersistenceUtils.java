@@ -13,8 +13,6 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import de.csgis.geobricks.model.Application;
 import de.csgis.geobricks.model.Application_;
-import de.csgis.geobricks.model.Plugin;
-import de.csgis.geobricks.model.Plugin_;
 
 public class PersistenceUtils {
 	@Inject
@@ -40,10 +38,6 @@ public class PersistenceUtils {
 
 	public Application getApplication(String name) {
 		return getEntityById(Application.class, Application_.id, name);
-	}
-
-	public Plugin getPlugin(String name) {
-		return getEntityById(Plugin.class, Plugin_.id, name);
 	}
 
 	private <T extends Object> T getEntityById(Class<T> clazz,
