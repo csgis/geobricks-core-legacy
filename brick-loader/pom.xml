@@ -119,16 +119,21 @@
 		<dependency>
 			<groupId>de.csgis.geobricks</groupId>
 			<artifactId>feature-info</artifactId>
-                        <version>1.0-SNAPSHOT</version>
-                </dependency>
-                <dependency>
-                        <groupId>de.csgis.geobricks</groupId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.csgis.geobricks</groupId>
 			<artifactId>ui</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.csgis.geobricks</groupId>
 			<artifactId>divstack</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.csgis.geobricks</groupId>
+			<artifactId>toolbar</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 

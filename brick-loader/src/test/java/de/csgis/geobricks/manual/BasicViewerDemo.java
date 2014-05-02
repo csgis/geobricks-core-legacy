@@ -13,6 +13,7 @@ import de.csgis.geobricks.functional.ServerManager;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
+import de.csgis.geobricks.toolbar.ToolbarPlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
 public class BasicViewerDemo {
@@ -28,14 +29,18 @@ public class BasicViewerDemo {
 		RestPoint plugins = new RestPoint(serverManager, Geobricks.root.rest()
 				.app(APP).plugins().path());
 
-		plugins.doPut(UIPluginDescriptor.ID, new BasicNameValuePair(
-				"configuration",
-				"ui : { post: [], pre : [{ eventName : 'ui-accordion:create', "
-						+ "div : 'layers-accordion', "
-						+ "parentDiv : 'layout-side'},"
-						+ "{ eventName : 'ui-html', " + "div : 'title', "
-						+ "parentDiv : 'layout-header', "
-						+ "html: 'Basic viewer'}]}"));
+		plugins.doPut(
+				UIPluginDescriptor.ID,
+				new BasicNameValuePair(
+						"configuration",
+						"ui : { post: ["
+								+ "{ eventName : 'toolbar:create', div : 'mytoolbar', parentDiv : 'layout-center'}, "
+								+ "{ eventName : 'toolbar:add-button', toolbar : 'mytoolbar', id : 'mybutton', image : 'images/close.png'}"
+								+ "], "
+								+ "pre : ["
+								+ "{ eventName : 'ui-accordion:create', div : 'layers-accordion', parentDiv : 'layout-side'},"
+								+ "{ eventName : 'ui-html', div : 'title', parentDiv : 'layout-header', html: 'Basic viewer'}"
+								+ "]}"));
 
 		plugins.doPut(OLMapPlugin.ID);
 		plugins.doPut(LayoutPlugin.ID);
@@ -43,6 +48,7 @@ public class BasicViewerDemo {
 		plugins.doPut(AddressSearchPlugin.ID);
 		plugins.doPut(BaseLayerPlugin.ID);
 		plugins.doPut(FeatureInfoPlugin.ID);
+		plugins.doPut(ToolbarPlugin.ID);
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to stop server");

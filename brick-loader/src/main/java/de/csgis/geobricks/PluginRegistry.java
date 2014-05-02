@@ -12,6 +12,7 @@ import de.csgis.geobricks.featureInfo.FeatureInfoPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
+import de.csgis.geobricks.toolbar.ToolbarPlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
 public class PluginRegistry {
@@ -27,6 +28,7 @@ public class PluginRegistry {
 		plugins.add(new UIPluginDescriptor());
 		plugins.add(new AdminPluginDescriptor());
 		plugins.add(new DivStackPluginDescriptor());
+		plugins.add(new ToolbarPlugin());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {
