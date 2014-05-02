@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,20 +51,22 @@ public class StaticServletTest {
 		// This image is on the address-search plugin
 		String img = "close.png";
 
-		File originalFile = new File(AddressSearchPlugin.class.getResource(
-				"../webapp/images/" + img).getPath());
+		File original = File.createTempFile("close", ".png");
+		InputStream originalStream = AddressSearchPlugin.class
+				.getResourceAsStream("/de/csgis/geobricks/webapp/images/" + img);
+		IOUtils.copy(originalStream, new FileOutputStream(original));
 
 		HttpResponse response = app.doGet("images/" + img);
-
 		File tmp = File.createTempFile("close", ".png");
 		IOUtils.copy(response.getEntity().getContent(), new FileOutputStream(
 				tmp));
 
-		assertEquals(originalFile.length(), tmp.length());
-		assertEquals(FileUtils.checksumCRC32(originalFile),
+		assertEquals(original.length(), tmp.length());
+		assertEquals(FileUtils.checksumCRC32(original),
 				FileUtils.checksumCRC32(tmp));
 
 		tmp.delete();
+		original.delete();
 	}
 
 	@Test
