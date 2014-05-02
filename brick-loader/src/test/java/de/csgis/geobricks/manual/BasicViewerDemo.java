@@ -33,9 +33,11 @@ public class BasicViewerDemo {
 				new BasicNameValuePair(
 						"configuration",
 						"ui : { post: ["
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'mybutton', css : 'toolbar-button', image : 'images/close.png', sendEventName : 'map-control-navigate' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'mybutton', css : 'toolbar-button', image : 'images/close.png', sendEventName : 'map-control-measure-area' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'mybutton', css : 'toolbar-button', image : 'images/close.png', sendEventName : 'map-control-measure-distance' }"
+								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNavigate', css : 'toolbar-button', image : 'images/navigate.png', sendEventName : 'map-control-navigate' },"
+								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnMeasureDistance', css : 'toolbar-button', image : 'images/measure-distance.png', sendEventName : 'map-control-measure-distance' },"
+								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnMeasureArea', css : 'toolbar-button', image : 'images/measure-area.png', sendEventName : 'map-control-measure-area' },"
+								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnPreviousExtent', css : 'toolbar-button', image : 'images/zoom-previous.png', sendEventName : 'extent-history:back', enableEventName : 'extent-history:back-enabled', disableEventName : 'extent-history:back-disabled' },"
+								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNextExtent', css : 'toolbar-button', image : 'images/zoom-next.png', sendEventName : 'extent-history:forward', enableEventName : 'extent-history:forward-enabled', disableEventName : 'extent-history:forward-disabled' }"
 								+ "], "
 								+ "pre : ["
 								+ "{ eventName : 'ui-toolbar:create', div : 'mytoolbar', parentDiv : 'layout-center'},"
