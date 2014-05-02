@@ -37,6 +37,7 @@ public class BasicViewerDemo {
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnMeasureDistance', css : 'toolbar-button', image : 'images/measure-distance.png', sendEventName : 'map-control-measure-distance' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnMeasureArea', css : 'toolbar-button', image : 'images/measure-area.png', sendEventName : 'map-control-measure-area' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnPreviousExtent', css : 'toolbar-button', image : 'images/zoom-previous.png', sendEventName : 'extent-history:back', enableEventName : 'extent-history:back-enabled', disableEventName : 'extent-history:back-disabled' },"
+								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnFullExtent', css : 'toolbar-button', image : 'images/full-extent.png', sendEventName : 'initial-zoom' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNextExtent', css : 'toolbar-button', image : 'images/zoom-next.png', sendEventName : 'extent-history:forward', enableEventName : 'extent-history:forward-enabled', disableEventName : 'extent-history:forward-disabled' }"
 								+ "], "
 								+ "pre : ["
