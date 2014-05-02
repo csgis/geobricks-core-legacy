@@ -21,7 +21,7 @@ import de.csgis.geobricks.PersistenceUtils;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginRegistry;
 import de.csgis.geobricks.model.Application;
-import de.csgis.geobricks.model.Plugin;
+import de.csgis.geobricks.model.ApplicationPluginUsage;
 
 /**
  * Builds the json document that configures all the requirejs modules
@@ -45,11 +45,11 @@ public class ConfigServlet extends HttpServlet {
 				.toString();
 		Application app = utils.getApplication(appName);
 
-		Set<Plugin> plugins = app.getPlugins();
+		Set<ApplicationPluginUsage> plugins = app.getPlugins();
 		List<String> modules = new ArrayList<String>();
-		for (Plugin plugin : plugins) {
+		for (ApplicationPluginUsage plugin : plugins) {
 			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
-					.getId());
+					.getPluginId());
 			String[] pluginModules = descriptor.getModules();
 			if (pluginModules != null) {
 				Collections.addAll(modules, pluginModules);
@@ -58,7 +58,7 @@ public class ConfigServlet extends HttpServlet {
 
 		StringBuilder pluginsJson = new StringBuilder();
 		String separator = "";
-		for (Plugin plugin : plugins) {
+		for (ApplicationPluginUsage plugin : plugins) {
 			String configuration = plugin.getConfiguration();
 			if (configuration != null) {
 				pluginsJson.append(separator).append(configuration);

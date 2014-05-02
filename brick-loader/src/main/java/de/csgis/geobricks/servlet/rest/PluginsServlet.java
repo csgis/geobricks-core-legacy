@@ -17,7 +17,7 @@ import de.csgis.geobricks.PersistenceUtils;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginRegistry;
 import de.csgis.geobricks.model.Application;
-import de.csgis.geobricks.model.Plugin;
+import de.csgis.geobricks.model.ApplicationPluginUsage;
 import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
 @Singleton
@@ -41,7 +41,7 @@ public class PluginsServlet extends HttpServlet {
 		String pluginId = request.getAttribute(
 				Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE).toString();
 
-		Plugin plugin = app.getPlugin(pluginId);
+		ApplicationPluginUsage plugin = app.getPlugin(pluginId);
 		if (plugin == null) {
 			throw new HTTPCodeServletException("Cannot find plugin '"
 					+ pluginId + "' for application '" + app.getId() + "'",
@@ -49,7 +49,7 @@ public class PluginsServlet extends HttpServlet {
 		}
 
 		JSONObject json = new JSONObject();
-		json.element("id", plugin.getId());
+		json.element("id", plugin.getPluginId());
 		json.element("configuration",
 				JSONSerializer.toJSON("{" + plugin.getConfiguration() + "}"));
 
@@ -71,7 +71,7 @@ public class PluginsServlet extends HttpServlet {
 					+ pluginId, HttpServletResponse.SC_NOT_FOUND);
 		}
 
-		Plugin plugin = new Plugin(pluginId, app);
+		ApplicationPluginUsage plugin = new ApplicationPluginUsage(pluginId, app);
 		String configurationParameter = req.getParameter("configuration");
 		if (configurationParameter != null) {
 			plugin.setConfiguration(configurationParameter);
@@ -79,7 +79,7 @@ public class PluginsServlet extends HttpServlet {
 			plugin.setConfiguration(pluginDescriptor.getDefaultConfiguration());
 		}
 
-		app.setPlugin(plugin);
+		app.putPlugin(plugin);
 
 		em.getTransaction().begin();
 		em.merge(plugin);
@@ -96,7 +96,7 @@ public class PluginsServlet extends HttpServlet {
 		String pluginId = req
 				.getAttribute(Geobricks.PLUGIN_NAME_HTTP_ATTRIBUTE).toString();
 
-		Plugin plugin = app.getPlugin(pluginId);
+		ApplicationPluginUsage plugin = app.getPlugin(pluginId);
 
 		if (plugin == null) {
 			throw new HTTPCodeServletException("Cannot find plugin '"

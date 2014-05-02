@@ -43,7 +43,6 @@ public class BasicViewerDemo {
 		plugins.doPut(AddressSearchPlugin.ID);
 		plugins.doPut(BaseLayerPlugin.ID);
 		plugins.doPut(FeatureInfoPlugin.ID);
-		plugins.doPut(UIPluginDescriptor.ID);
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to stop server");

@@ -14,7 +14,7 @@ import net.sf.json.JSONArray;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PersistenceUtils;
 import de.csgis.geobricks.model.Application;
-import de.csgis.geobricks.model.Plugin;
+import de.csgis.geobricks.model.ApplicationPluginUsage;
 import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
 @Singleton
@@ -38,9 +38,9 @@ public class PluginListServlet extends HttpServlet {
 
 		JSONArray array = new JSONArray();
 
-		Set<Plugin> plugins = app.getPlugins();
-		for (Plugin plugin : plugins) {
-			array.add(plugin.getId());
+		Set<ApplicationPluginUsage> plugins = app.getPlugins();
+		for (ApplicationPluginUsage plugin : plugins) {
+			array.add(plugin.getPluginId());
 		}
 
 		response.setContentType("application/javascript");

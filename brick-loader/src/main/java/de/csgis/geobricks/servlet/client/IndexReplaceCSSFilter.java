@@ -17,7 +17,7 @@ import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginRegistry;
 import de.csgis.geobricks.model.Application;
-import de.csgis.geobricks.model.Plugin;
+import de.csgis.geobricks.model.ApplicationPluginUsage;
 
 @Singleton
 public class IndexReplaceCSSFilter implements Filter {
@@ -37,11 +37,11 @@ public class IndexReplaceCSSFilter implements Filter {
 
 		Application app = (Application) request
 				.getAttribute(Geobricks.APP_INSTANCE_HTTP_ATTRIBUTE);
-		Set<Plugin> plugins = app.getPlugins();
+		Set<ApplicationPluginUsage> plugins = app.getPlugins();
 		StringBuilder str = new StringBuilder();
-		for (Plugin plugin : plugins) {
+		for (ApplicationPluginUsage plugin : plugins) {
 			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
-					.getId());
+					.getPluginId());
 			String[] styleSheets = descriptor.getStyleSheets();
 			if (styleSheets != null) {
 				for (String styleSheet : styleSheets) {

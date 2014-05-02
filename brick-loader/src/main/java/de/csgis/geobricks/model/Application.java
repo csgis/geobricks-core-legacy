@@ -4,19 +4,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import org.eclipse.persistence.annotations.PrivateOwned;
 
 @Entity
-@Table(name = "apps")
 public class Application {
 	private String id;
 
-	private Set<Plugin> plugins = new HashSet<Plugin>();
+	private Set<ApplicationPluginUsage> plugins = new HashSet<ApplicationPluginUsage>();
 
 	@Id
 	public String getId() {
@@ -27,20 +24,20 @@ public class Application {
 		this.id = id;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "application")
+	@OneToMany(mappedBy = "application")
 	@PrivateOwned
-	public Set<Plugin> getPlugins() {
+	public Set<ApplicationPluginUsage> getPlugins() {
 		return plugins;
 	}
 
-	public void setPlugins(Set<Plugin> plugins) {
+	public void setPlugins(Set<ApplicationPluginUsage> plugins) {
 		this.plugins = plugins;
 	}
 
-	public void setPlugin(Plugin plugin) {
-		Plugin toRemove = null;
-		for (Plugin p : plugins) {
-			if (p.getId().equals(plugin.getId())) {
+	public void putPlugin(ApplicationPluginUsage plugin) {
+		ApplicationPluginUsage toRemove = null;
+		for (ApplicationPluginUsage p : plugins) {
+			if (p.getPluginId().equals(plugin.getPluginId())) {
 				toRemove = p;
 			}
 		}
@@ -52,9 +49,9 @@ public class Application {
 		plugins.add(plugin);
 	}
 
-	public Plugin getPlugin(String id) {
-		for (Plugin plugin : plugins) {
-			if (plugin.getId().equals(id)) {
+	public ApplicationPluginUsage getPlugin(String id) {
+		for (ApplicationPluginUsage plugin : plugins) {
+			if (plugin.getPluginId().equals(id)) {
 				return plugin;
 			}
 		}

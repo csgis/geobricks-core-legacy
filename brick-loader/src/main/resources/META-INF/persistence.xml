@@ -6,7 +6,7 @@
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 		<non-jta-data-source>java:/comp/env/jdbc/app</non-jta-data-source>
 		<class>de.csgis.geobricks.model.Application</class>
-		<class>de.csgis.geobricks.model.Plugin</class>
+		<class>de.csgis.geobricks.model.ApplicationPluginUsage</class>
 		<properties>
 			<!-- Vendor specific -->
 			<property name="eclipselink.ddl-generation" value="create-tables" />
@@ -15,7 +15,7 @@
 	<persistence-unit name="test">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 		<class>de.csgis.geobricks.model.Application</class>
-		<class>de.csgis.geobricks.model.Plugin</class>
+		<class>de.csgis.geobricks.model.ApplicationPluginUsage</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
 			<property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test" />
