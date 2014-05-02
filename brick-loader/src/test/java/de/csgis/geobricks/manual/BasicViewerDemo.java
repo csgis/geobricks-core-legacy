@@ -13,7 +13,6 @@ import de.csgis.geobricks.functional.ServerManager;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
-import de.csgis.geobricks.toolbar.ToolbarPlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
 public class BasicViewerDemo {
@@ -34,10 +33,10 @@ public class BasicViewerDemo {
 				new BasicNameValuePair(
 						"configuration",
 						"ui : { post: ["
-								+ "{ eventName : 'toolbar:create', div : 'mytoolbar', parentDiv : 'layout-center'}, "
-								+ "{ eventName : 'toolbar:add-button', toolbar : 'mytoolbar', id : 'mybutton', image : 'images/close.png'}"
+								+ "{ eventName : 'ui:add-button', parentDiv : 'mytoolbar', div : 'mybutton', css : 'toolbar-button', image : 'images/close.png', sendEventName : 'map-measure-area' }"
 								+ "], "
 								+ "pre : ["
+								+ "{ eventName : 'toolbar:create', div : 'mytoolbar', parentDiv : 'layout-center'},"
 								+ "{ eventName : 'ui-accordion:create', div : 'layers-accordion', parentDiv : 'layout-side'},"
 								+ "{ eventName : 'ui-html', div : 'title', parentDiv : 'layout-header', html: 'Basic viewer'}"
 								+ "]}"));
@@ -48,7 +47,6 @@ public class BasicViewerDemo {
 		plugins.doPut(AddressSearchPlugin.ID);
 		plugins.doPut(BaseLayerPlugin.ID);
 		plugins.doPut(FeatureInfoPlugin.ID);
-		plugins.doPut(ToolbarPlugin.ID);
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to stop server");

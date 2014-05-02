@@ -18,7 +18,6 @@
 		<module>ui</module>
 		<module>admin</module>
 		<module>divstack</module>
-		<module>toolbar</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
