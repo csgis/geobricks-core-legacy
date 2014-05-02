@@ -33,10 +33,10 @@ public class BasicViewerDemo {
 				new BasicNameValuePair(
 						"configuration",
 						"ui : { post: ["
-								+ "{ eventName : 'ui:add-button', parentDiv : 'mytoolbar', div : 'mybutton', css : 'toolbar-button', image : 'images/close.png', sendEventName : 'map-measure-area' }"
+								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'mybutton', css : 'toolbar-button', image : 'images/close.png', sendEventName : 'map-control-measure-area' }"
 								+ "], "
 								+ "pre : ["
-								+ "{ eventName : 'toolbar:create', div : 'mytoolbar', parentDiv : 'layout-center'},"
+								+ "{ eventName : 'ui-toolbar:create', div : 'mytoolbar', parentDiv : 'layout-center'},"
 								+ "{ eventName : 'ui-accordion:create', div : 'layers-accordion', parentDiv : 'layout-side'},"
 								+ "{ eventName : 'ui-html', div : 'title', parentDiv : 'layout-header', html: 'Basic viewer'}"
 								+ "]}"));
