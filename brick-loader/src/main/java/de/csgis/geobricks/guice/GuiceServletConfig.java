@@ -30,8 +30,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 		@Override
 		protected void configureServlets() {
 			// Redirect client app requests to index.html
-			filterRegex(Geobricks.root.apps().any().path(),
-					Geobricks.root.apps().any().path() + "/").through(
+			filterRegex(Geobricks.root.apps().any().path()).through(
 					IndexHTMLRedirectFilter.class);
 
 			// Common application id getter for REST API and client requests
@@ -93,8 +92,10 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			// Application index.html
 			String indexPath = Geobricks.root.apps().any().file("index.html")
 					.path();
-			filterRegex(indexPath).through(IndexReplaceCSSFilter.class);
-			serveRegex(indexPath).with(new StaticServlet("", "index.html"));
+			filterRegex(indexPath, Geobricks.root.apps().any().path() + "/")
+					.through(IndexReplaceCSSFilter.class);
+			serveRegex(indexPath, Geobricks.root.apps().any().path() + "/")
+					.with(new StaticServlet("", "index.html"));
 
 			// Application instance getter
 			filterRegex(Geobricks.root.apps().all().path()).through(

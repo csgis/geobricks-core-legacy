@@ -50,8 +50,24 @@ public class GetApplicationTest {
 
 	@Test
 	public void indexHTML() throws Exception {
-		HttpResponse response = app.doGet();
+		checkIndexHtml(app.doGet("index.html"));
+	}
 
+	@Test
+	public void appWithoutSlash() throws Exception {
+		RestPoint apps = new RestPoint(serverManager, Geobricks.root.apps()
+				.path());
+		checkIndexHtml(apps.doGet(APP_ID));
+	}
+
+	@Test
+	public void appWithSlash() throws Exception {
+		RestPoint apps = new RestPoint(serverManager, Geobricks.root.apps()
+				.path());
+		checkIndexHtml(apps.doGet(APP_ID + "/"));
+	}
+
+	private void checkIndexHtml(HttpResponse response) throws Exception {
 		assertEquals(HttpServletResponse.SC_OK, response.getStatusLine()
 				.getStatusCode());
 

@@ -27,8 +27,8 @@ public class IndexHTMLRedirectFilter implements Filter {
 		if (!uri.endsWith("/")) {
 			uri += "/";
 		}
-		uri += "index.html";
-		((HttpServletResponse) response).sendRedirect(uri);
+		HttpServletResponse resp = (HttpServletResponse) response;
+		resp.sendRedirect(uri);
 	}
 
 	@Override
