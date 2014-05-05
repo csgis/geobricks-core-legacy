@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
@@ -19,17 +17,17 @@ import de.csgis.geobricks.servlet.HTTPCodeServletException;
  * 
  * @author fergonco
  */
-public class StaticServlet extends HttpServlet {
+public abstract class AbstractStaticServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private String folder;
 	private String resource;
 
-	public StaticServlet(String folder) {
+	public AbstractStaticServlet(String folder) {
 		this(folder, null);
 	}
 
-	public StaticServlet(String folder, String resource) {
+	public AbstractStaticServlet(String folder, String resource) {
 		this.folder = folder != null ? folder : "";
 		this.resource = resource;
 	}
@@ -56,13 +54,12 @@ public class StaticServlet extends HttpServlet {
 		}
 
 		try {
-			// We cannot use resp.getWriter() since it is intented to work for
-			// text responses and the static servlet can return binary files
-			// (like images)
-			IOUtils.copy(resourceStream, resp.getOutputStream());
+			write(resourceStream, resp);
 		} finally {
 			resourceStream.close();
 		}
 	}
 
+	protected abstract void write(InputStream stream,
+			HttpServletResponse response) throws IOException;
 }
