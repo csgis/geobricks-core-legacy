@@ -44,7 +44,11 @@ public class BasicViewerDemo {
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNextExtent', css : 'toolbar-button', image : 'images/zoom-next.png', sendEventName : 'extent-history:forward', enableEventName : 'extent-history:forward-enabled', disableEventName : 'extent-history:forward-disabled' }"
 								+ "]"));
 
-		plugins.doPut(OLMapPlugin.ID);
+		String mapConfig = "center: { lat : 40.8, lon : -73.96, zoomLevel : 10},"
+				+ "olmap : { div : 'layout-center' },"
+				+ "'pan-zoom-bar': { mapOffsetX : 10, mapOffsetY : 35 }";
+		plugins.doPut(OLMapPlugin.ID, new BasicNameValuePair("configuration",
+				mapConfig));
 		plugins.doPut(LayoutPlugin.ID);
 		plugins.doPut(LayerListPlugin.ID);
 		plugins.doPut(AddressSearchPlugin.ID);
