@@ -42,7 +42,16 @@ public class BasicViewerDemo {
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnPreviousExtent', css : 'toolbar-button', image : 'images/zoom-previous.png', sendEventName : 'extent-history:back', enableEventName : 'extent-history:back-enabled', disableEventName : 'extent-history:back-disabled' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnFullExtent', css : 'toolbar-button', image : 'images/full-extent.png', sendEventName : 'initial-zoom' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNextExtent', css : 'toolbar-button', image : 'images/zoom-next.png', sendEventName : 'extent-history:forward', enableEventName : 'extent-history:forward-enabled', disableEventName : 'extent-history:forward-disabled' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnCoordinateSearch', css : 'toolbar-button', image : 'images/coordinate-search.png', sendEventName : 'ui-coordinate-input:create', sendEventMessage : { div : 'mydialog', parentDiv : 'layout-center', crs : { 'EPSG:4326' : { useLonLat : true }, 'EPSG:23030' : { useLonLat : false } }, eventName : 'zoomTo'} }"
+
+								+ "{ eventName : 'ui-container:create', parentDiv : 'layout-center', div : 'myform' },"
+								+ "{ eventName : 'ui-choice-field:create', parentDiv : 'myform', div : 'myform-crsselection', label : 'CRS: ', values: [ 'EPSG:4326', 'EPSG:25830' ] },"
+								+ "{ eventName : 'ui-numeric-field:create', parentDiv : 'myform', div : 'myform-lat', label : 'Lat: '},"
+								+ "{ eventName : 'ui-numeric-field:create', parentDiv : 'myform', div : 'myform-lon', label : 'Lon: '},"
+								+ "{ eventName : 'ui-button:create', parentDiv : 'myform', div : 'btnGoToCoordinate', css : 'toolbar-button', image : 'images/zoom-next.png'},"
+								+ "{ eventName : 'ui-form-collector:extend', button: 'btnGoToCoordinate', divs : ['myform-crsselection', 'myform-lat', 'myform-lon'], names : ['crs', 'lat', 'lon']},"
+
+								// +
+								// "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnCoordinateSearch', css : 'toolbar-button', image : 'images/coordinate-search.png', sendEventName : 'ui-coordinate-input:create', sendEventMessage : { div : 'mydialog', parentDiv : 'layout-center', crs : { 'EPSG:4326' : { useLonLat : true }, 'EPSG:23030' : { useLonLat : false } }, eventName : 'zoomTo'} }"
 								+ "]"));
 
 		String mapConfig = "center: { lat : 40.8, lon : -73.96, zoomLevel : 10},"
