@@ -49,10 +49,7 @@ public class BasicViewerDemo {
 								+ "{ eventName : 'ui-numeric-field:create', parentDiv : 'myform', div : 'myform-lat', css : 'coordinate-input', label : 'Lat: '},"
 								+ "{ eventName : 'ui-numeric-field:create', parentDiv : 'myform', div : 'myform-lon', css : 'coordinate-input', label : 'Lon: '},"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'myform', div : 'btnGoToCoordinate', css : 'coordinate-button', text : 'Go!'},"
-								+ "{ eventName : 'ui-form-collector:extend', button: 'btnGoToCoordinate', divs : ['myform-crsselection', 'myform-lat', 'myform-lon'], names : ['crs', 'lat', 'lon']},"
-
-								// +
-								// "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnCoordinateSearch', css : 'toolbar-button', image : 'images/coordinate-search.png', sendEventName : 'ui-coordinate-input:create', sendEventMessage : { div : 'mydialog', parentDiv : 'layout-center', crs : { 'EPSG:4326' : { useLonLat : true }, 'EPSG:23030' : { useLonLat : false } }, eventName : 'zoomTo'} }"
+								+ "{ eventName : 'ui-form-collector:extend', button: 'btnGoToCoordinate', divs : ['myform-crsselection', 'myform-lat', 'myform-lon'], names : ['crs', 'lat', 'lon'], sendEventName : 'zoomTo' }"
 								+ "]"));
 
 		String mapConfig = "center: { lat : 40.8, lon : -73.96, zoomLevel : 10},"
