@@ -24,19 +24,30 @@ public class AdminAppDemo {
 		RestPoint plugins = new RestPoint(serverManager, Geobricks.root.rest()
 				.app(APP).plugins().path());
 
-		String post = "[{ eventName : 'ui-selectable-list:create', div: 'apps_list', parentDiv : 'layout-center', url :'/geobricks/rest/apps'},"
-				+ "{ eventName : 'ui-selectable-list:create', div : 'plugins_list', parentDiv : 'layout-center'},"
-				+ "{ eventName : 'ui-text-area', div : 'plugin_configuration', parentDiv : 'layout-center'}"
-				+ "]";
-		String pre = "[{ eventName : 'ui-html', " + "div : 'title', "
-				+ "parentDiv : 'layout-header', "
-				+ "html: 'Geobricks admin application'}]";
-		plugins.doPut(UIPluginDescriptor.ID, new BasicNameValuePair(
-				"configuration", "ui : { post: " + post + ", " + "pre : " + pre
-						+ "}"));
+		plugins.doPut(
+				UIPluginDescriptor.ID,
+				new BasicNameValuePair(
+						"configuration",
+						"ui : ["//
+								+ "{ eventName : 'ui-container:create', div : 'apps_panel', parentDiv : 'layout-center'},"
+								+ "{ eventName : 'ui-selectable-list:create', div: 'apps_list', parentDiv : 'apps_panel', url :'/geobricks/rest/apps'},"
+
+								+ "{ eventName : 'ui-container:create', div : 'plugins_panel', parentDiv : 'layout-center'},"
+								+ "{ eventName : 'ui-selectable-list:create', div : 'plugins_list', parentDiv : 'plugins_panel'},"
+
+								+ "{ eventName : 'ui-container:create', div : 'configuration_panel', parentDiv : 'layout-center'},"
+								+ "{ eventName : 'ui-text-area-field:create', div : 'plugin_configuration', parentDiv : 'configuration_panel', label : 'Configuration: ', cols : '100', rows : '5'},"
+								+ "{ eventName : 'ui-button:create', div : 'btnAccept', parentDiv : 'configuration_panel', label : 'Accept'},"
+								+ "{ eventName : 'ui-form-collector:extend', button: 'btnAccept', divs : ['plugin_configuration']},"
+								+ "{ eventName : 'ui-button:create', div : 'btnCancel', parentDiv : 'configuration_panel', label : 'Cancel', sendEventName : 'ui-show', sendEventMessage : 'plugins_panel'},"
+
+								+ "{ eventName : 'ui-html', div : 'title', parentDiv : 'layout-header', html: 'Geobricks admin application'}]"));
 		plugins.doPut(LayoutPlugin.ID);
 		plugins.doPut(AdminPluginDescriptor.ID);
-		plugins.doPut(DivStackPluginDescriptor.ID);
+		plugins.doPut(
+				DivStackPluginDescriptor.ID,
+				new BasicNameValuePair("configuration",
+						"\"div-stack\" : [\"apps_panel\", \"plugins_panel\", \"configuration_panel\"]"));
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to stop server");
