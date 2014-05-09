@@ -12,6 +12,8 @@ import de.csgis.geobricks.featureInfo.FeatureInfoPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
+import de.csgis.geobricks.servlet.FilterDescriptor;
+import de.csgis.geobricks.servlet.ServletDescriptor;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
 public class PluginRegistry {
@@ -55,5 +57,27 @@ public class PluginRegistry {
 
 	public List<PluginDescriptor> getPlugins() {
 		return plugins;
+	}
+
+	public List<FilterDescriptor> getFilters() {
+		List<FilterDescriptor> filters = new ArrayList<FilterDescriptor>();
+		for (PluginDescriptor plugin : plugins) {
+			FilterDescriptor[] pluginFilters = plugin.getFilters();
+			if (pluginFilters != null) {
+				Collections.addAll(filters, pluginFilters);
+			}
+		}
+		return filters;
+	}
+
+	public List<ServletDescriptor> getServlets() {
+		List<ServletDescriptor> servlets = new ArrayList<ServletDescriptor>();
+		for (PluginDescriptor plugin : plugins) {
+			ServletDescriptor[] pluginServlets = plugin.getServlets();
+			if (pluginServlets != null) {
+				Collections.addAll(servlets, pluginServlets);
+			}
+		}
+		return servlets;
 	}
 }
