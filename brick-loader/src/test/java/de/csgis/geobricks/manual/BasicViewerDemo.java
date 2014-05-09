@@ -57,7 +57,19 @@ public class BasicViewerDemo {
 
 		String mapConfig = "center: { lat : 49, lon : 11.2, zoomLevel : 7},"
 				+ "olmap : { div : 'layout-center' },"
-				+ "'pan-zoom-bar': { mapOffsetX : 10, mapOffsetY : 35 }";
+				+ "'pan-zoom-bar': { mapOffsetX : 10, mapOffsetY : 35 },"
+				+ "'load-layers' : [" //
+				+ "{ eventName : 'add-layer-group', name : 'Kartendaten', id : 'kartendaten', visibility : true },"
+				+ "{ eventName : 'add-layer-group', name : 'Schutzgebiete', id : 'schutzgebiete', visibility : true },"
+				// Base layers
+				+ "{ eventName : 'add-layer', id : 'osm', isBaseLayer : true, url : 'http://ows.terrestris.de/osm/service', label : 'OpenStreetMap', layerName : 'OSM-WMS', groupId : 'main' },"
+				+ "{ eventName : 'add-layer', id : 'gmaps_roadmap', isBaseLayer : true, type : 'Google', label : 'Google Maps (Karte)', layerName : 'Google Streets', groupId : 'main' }, "
+				+ "{ eventName : 'add-layer', id : 'gmaps_hybrid', isBaseLayer : true, type : 'Google', label : 'Google Maps (Satellit)', layerName : 'Google Hybrid', groupId : 'main', googleType : 'hybrid' }, "
+				// Kartendaten
+				+ "{ eventName : 'add-layer', id : 'flurkarte', url : 'http://80.237.188.118/proxy/goto_vfs_map.cgi', layerName : 'flkgrenzenbayern', groupId : 'kartendaten', label : 'Flurkartenschnitt 1:5.000', visible : false }, "
+				// Schutzgebiete
+				+ "{ eventName : 'add-layer', id : 'naturparke', url : 'http://80.237.188.118/proxy/goto_vfs_map.cgi', layerName : 'naturparke', groupId : 'schutzgebiete', label : 'Naturparke', visible : true },"
+				+ "{ eventName : 'base-layer', id : 'osm'}]";
 		plugins.doPut(OLMapPlugin.ID, new BasicNameValuePair("configuration",
 				mapConfig));
 		plugins.doPut(LayoutPlugin.ID);
