@@ -11,6 +11,7 @@ import de.csgis.geobricks.divstack.DivStackPluginDescriptor;
 import de.csgis.geobricks.featureInfo.FeatureInfoPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
+import de.csgis.geobricks.login.LoginPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
 import de.csgis.geobricks.servlet.FilterDescriptor;
 import de.csgis.geobricks.servlet.ServletDescriptor;
@@ -29,6 +30,7 @@ public class PluginRegistry {
 		plugins.add(new UIPluginDescriptor());
 		plugins.add(new AdminPluginDescriptor());
 		plugins.add(new DivStackPluginDescriptor());
+		plugins.add(new LoginPlugin());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {

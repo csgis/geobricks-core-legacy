@@ -12,6 +12,7 @@ import de.csgis.geobricks.functional.RestPoint;
 import de.csgis.geobricks.functional.ServerManager;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
+import de.csgis.geobricks.login.LoginPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
@@ -49,10 +50,12 @@ public class BasicViewerDemo {
 								+ "{ eventName : 'ui-numeric-field:create', parentDiv : 'myform', div : 'myform-lat', css : 'coordinate-input', label : 'Lat: '},"
 								+ "{ eventName : 'ui-numeric-field:create', parentDiv : 'myform', div : 'myform-lon', css : 'coordinate-input', label : 'Lon: '},"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'myform', div : 'btnGoToCoordinate', css : 'coordinate-button', text : 'Go!'},"
-								+ "{ eventName : 'ui-form-collector:extend', button: 'btnGoToCoordinate', divs : ['myform-crsselection', 'myform-lat', 'myform-lon'], names : ['crs', 'lat', 'lon'], sendEventName : 'zoomTo' }"
+								+ "{ eventName : 'ui-form-collector:extend', button: 'btnGoToCoordinate', divs : ['myform-crsselection', 'myform-lat', 'myform-lon'], names : ['crs', 'lat', 'lon'], sendEventName : 'zoomTo' },"
+
+								+ "{ eventName : 'ui-login:create', div : 'login', parentDiv : 'layout-header', css : 'login' }"
 								+ "]"));
 
-		String mapConfig = "center: { lat : 40.8, lon : -73.96, zoomLevel : 10},"
+		String mapConfig = "center: { lat : 49, lon : 11.2, zoomLevel : 7},"
 				+ "olmap : { div : 'layout-center' },"
 				+ "'pan-zoom-bar': { mapOffsetX : 10, mapOffsetY : 35 }";
 		plugins.doPut(OLMapPlugin.ID, new BasicNameValuePair("configuration",
@@ -62,6 +65,7 @@ public class BasicViewerDemo {
 		plugins.doPut(AddressSearchPlugin.ID);
 		plugins.doPut(BaseLayerPlugin.ID);
 		plugins.doPut(FeatureInfoPlugin.ID);
+		plugins.doPut(LoginPlugin.ID);
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to stop server");
