@@ -6,7 +6,6 @@ import org.apache.http.message.BasicNameValuePair;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.admin.AdminPluginDescriptor;
-import de.csgis.geobricks.divstack.DivStackPluginDescriptor;
 import de.csgis.geobricks.functional.RestPoint;
 import de.csgis.geobricks.functional.ServerManager;
 import de.csgis.geobricks.layout.LayoutPlugin;
@@ -41,13 +40,12 @@ public class AdminAppDemo {
 								+ "{ eventName : 'ui-form-collector:extend', button: 'btnAccept', divs : ['plugin_configuration']},"
 								+ "{ eventName : 'ui-button:create', div : 'btnCancel', parentDiv : 'configuration_panel', label : 'Cancel', sendEventName : 'ui-show', sendEventMessage : 'plugins_panel'},"
 
-								+ "{ eventName : 'ui-html', div : 'title', parentDiv : 'layout-header', html: 'Geobricks admin application'}]"));
+								+ "{ eventName : 'ui-html', div : 'title', parentDiv : 'layout-header', html: 'Geobricks admin application'},"
+
+								+ "{ eventName : 'ui-divstack:create', divs : ['apps_panel', 'plugins_panel', 'configuration_panel' ] },"
+								+ "]"));
 		plugins.doPut(LayoutPlugin.ID);
 		plugins.doPut(AdminPluginDescriptor.ID);
-		plugins.doPut(
-				DivStackPluginDescriptor.ID,
-				new BasicNameValuePair("configuration",
-						"\"div-stack\" : [\"apps_panel\", \"plugins_panel\", \"configuration_panel\"]"));
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to stop server");
