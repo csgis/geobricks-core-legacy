@@ -77,7 +77,16 @@ public class BasicViewerDemo {
 		plugins.doPut(AddressSearchPlugin.ID);
 		plugins.doPut(BaseLayerPlugin.ID);
 		plugins.doPut(FeatureInfoPlugin.ID);
-		plugins.doPut(LoginPlugin.ID);
+		plugins.doPut(
+				LoginPlugin.ID,
+				new BasicNameValuePair(
+						"configuration",
+						"servlet : { loginUrl : 'http://80.237.188.118/vfs/php/login_ext.php',"
+								+ "logoutUrl : 'http://80.237.188.118/vfs/php/logout_ext.php',"
+								+ "userParamName : 'username',"
+								+ "passParamName : 'password',"
+								+ "cookieName : 'PHPSESSID',"
+								+ "cookieSessionParam : 'sid' } "));
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to stop server");
