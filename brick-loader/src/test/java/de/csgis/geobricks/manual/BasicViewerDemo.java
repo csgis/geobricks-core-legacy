@@ -56,7 +56,7 @@ public class BasicViewerDemo {
 								+ "{ eventName : 'ui-login:create', div : 'login', parentDiv : 'layout-header', css : 'login' }"
 								+ "]"));
 
-		String mapConfig = "center: { lat : 49, lon : 11.2, zoomLevel : 7},"
+		String mapConfig = "center: { lat : 49, lon : 11.2, zoomLevel : 7, useLinks : true },"
 				+ "olmap : { div : 'layout-center' },"
 				+ "'pan-zoom-bar': { mapOffsetX : 10, mapOffsetY : 35 },"
 				+ "'load-layers' : [" //
