@@ -66,9 +66,9 @@ public class BasicViewerDemo {
 				+ "{ eventName : 'add-layer', id : 'gmaps_roadmap', isBaseLayer : true, type : 'Google', label : 'Google Maps (Karte)', layerName : 'Google Streets', groupId : 'main' }, "
 				+ "{ eventName : 'add-layer', id : 'gmaps_hybrid', isBaseLayer : true, type : 'Google', label : 'Google Maps (Satellit)', layerName : 'Google Hybrid', groupId : 'main', googleType : 'hybrid' }, "
 				// Kartendaten
-				+ "{ eventName : 'add-layer', id : 'flurkarte', url : 'http://80.237.188.118/proxy/goto_vfs_map.cgi', layerName : 'flkgrenzenbayern', groupId : 'kartendaten', label : 'Flurkartenschnitt 1:5.000', visible : false }, "
+				+ "{ eventName : 'add-layer', id : 'flurkarte', type : 'wms', url : 'http://80.237.188.118/proxy/goto_vfs_map.cgi', layerName : 'flkgrenzenbayern', groupId : 'kartendaten', label : 'Flurkartenschnitt 1:5.000', visible : false, legendUrl : 'http://vfsviewer.vfs-muenchen.de/proxy/goto_vfs_maplegend.cgi?TRANSPARENT=true&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image/png&LAYER=flkgrenzenbayern' }, "
 				// Schutzgebiete
-				+ "{ eventName : 'add-layer', id : 'naturparke', url : 'http://80.237.188.118/proxy/goto_vfs_map.cgi', layerName : 'naturparke', groupId : 'schutzgebiete', label : 'Naturparke', visible : true },"
+				+ "{ eventName : 'add-layer', id : 'naturparke', type : 'wms', url : 'http://80.237.188.118/proxy/goto_vfs_map.cgi', layerName : 'naturparke', groupId : 'schutzgebiete', label : 'Naturparke', visible : true,legendUrl : 'http://vfsviewer.vfs-muenchen.de/proxy/goto_vfs_map.cgi?SCALE=3466752.130795755&TRANSPARENT=true&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image/png&LAYER=naturparke' },"
 				+ "{ eventName : 'base-layer', id : 'osm'}]";
 		plugins.doPut(OLMapPlugin.ID, new BasicNameValuePair("configuration",
 				mapConfig));
