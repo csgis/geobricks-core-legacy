@@ -44,6 +44,7 @@ public class BasicViewerDemo {
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnPreviousExtent', css : 'toolbar-button', image : 'images/zoom-previous.png', sendEventName : 'extent-history:back', enableEventName : 'extent-history:back-enabled', disableEventName : 'extent-history:back-disabled' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnFullExtent', css : 'toolbar-button', image : 'images/full-extent.png', sendEventName : 'initial-zoom' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNextExtent', css : 'toolbar-button', image : 'images/zoom-next.png', sendEventName : 'extent-history:forward', enableEventName : 'extent-history:forward-enabled', disableEventName : 'extent-history:forward-disabled' },"
+								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnZoomRegion', css : 'toolbar-button', image : 'images/zoom-region.png', sendEventName : 'map-control-zoom-region' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnCoordinateSearch', css : 'toolbar-button', image : 'images/coordinate-search.png', sendEventName : 'ui-show', sendEventMessage : 'myform' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnHelp', css : 'toolbar-button', image : 'http://vfsviewer.vfs-muenchen.de/toolicons/help.png', sendEventName : 'ui-open-url', sendEventMessage : {url : 'http://vfsviewer.vfs-muenchen.de/docs/vfshilfe.pdf', target : '_blank' } },"
 
