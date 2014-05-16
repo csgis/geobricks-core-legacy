@@ -7,13 +7,13 @@ import java.util.List;
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.admin.AdminPluginDescriptor;
 import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
-import de.csgis.geobricks.featureInfo.FeatureInfoPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.login.LoginPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
 import de.csgis.geobricks.servlet.FilterDescriptor;
 import de.csgis.geobricks.servlet.ServletDescriptor;
+import de.csgis.geobricks.timeSelector.TimeSelectorPlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
 public class PluginRegistry {
@@ -25,10 +25,11 @@ public class PluginRegistry {
 		plugins.add(new LayerListPlugin());
 		plugins.add(new AddressSearchPlugin());
 		plugins.add(new BaseLayerPlugin());
-		plugins.add(new FeatureInfoPlugin());
+		plugins.add(new TimeSelectorPlugin());
 		plugins.add(new UIPluginDescriptor());
 		plugins.add(new AdminPluginDescriptor());
 		plugins.add(new LoginPlugin());
+		plugins.add(new TimeSelectorPlugin());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {
