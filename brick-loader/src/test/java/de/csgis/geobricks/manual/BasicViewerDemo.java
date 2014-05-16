@@ -46,7 +46,6 @@ public class BasicViewerDemo {
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNextExtent', css : 'toolbar-button', image : 'images/zoom-next.png', sendEventName : 'extent-history:forward', enableEventName : 'extent-history:forward-enabled', disableEventName : 'extent-history:forward-disabled' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnZoomRegion', css : 'toolbar-button', image : 'images/zoom-region.png', sendEventName : 'map-control-zoom-region' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnCoordinateSearch', css : 'toolbar-button', image : 'images/coordinate-search.png', sendEventName : 'ui-show', sendEventMessage : 'myform' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnTimeSelector', css : 'toolbar-button', image : 'images/time.png', sendEventName : 'ui-show', sendEventMessage : 'time-selector' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnHelp', css : 'toolbar-button', image : 'http://vfsviewer.vfs-muenchen.de/toolicons/help.png', sendEventName : 'ui-open-url', sendEventMessage : {url : 'http://vfsviewer.vfs-muenchen.de/docs/vfshilfe.pdf', target : '_blank' } },"
 
 								+ "{ eventName : 'ui-dialog:create', parentDiv : 'layout-center', div : 'myform', css : 'coordinate-dialog', title : 'Coordinate Search', closeButton : true, visible : false },"
@@ -95,6 +94,9 @@ public class BasicViewerDemo {
 								+ "cookieSessionParam : 'sid' } "));
 
 		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter to remove time-selector");
+		sc.nextLine();
+		plugins.doDelete(TimeSelectorPlugin.ID);
 		System.out.println("Enter to stop server");
 		sc.nextLine();
 		sc.close();
