@@ -66,7 +66,7 @@ public class BasicViewerDemo {
 				+ "{ eventName : 'add-layer-group', name : 'Kartendaten', id : 'kartendaten', visibility : true },"
 				+ "{ eventName : 'add-layer-group', name : 'Schutzgebiete', id : 'schutzgebiete', visibility : true },"
 				// Base layers
-				+ "{ eventName : 'add-layer', id : 'osm', isBaseLayer : true, url : 'http://ows.terrestris.de/osm/service', label : 'OpenStreetMap', layerName : 'OSM-WMS', groupId : 'main' },"
+				+ "{ eventName : 'add-layer', id : 'osm', isBaseLayer : true, type: 'wms', url : 'http://ows.terrestris.de/osm/service', label : 'OpenStreetMap', layerName : 'OSM-WMS', groupId : 'main' },"
 				+ "{ eventName : 'add-layer', id : 'gmaps_roadmap', isBaseLayer : true, type : 'Google', label : 'Google Maps (Karte)', layerName : 'Google Streets', groupId : 'main' }, "
 				+ "{ eventName : 'add-layer', id : 'gmaps_hybrid', isBaseLayer : true, type : 'Google', label : 'Google Maps (Satellit)', layerName : 'Google Hybrid', groupId : 'main', googleType : 'hybrid' }, "
 				// Schutzgebiete
