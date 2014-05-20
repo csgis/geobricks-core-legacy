@@ -16,9 +16,11 @@
 		<module>base-layer</module>
 		<module>feature-info</module>
 		<module>ui</module>
-		<module>admin</module>
 		<module>login</module>
 		<module>time-selector</module>
+		<!-- Apps -->
+		<module>admin</module>
+		<module>vfs</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

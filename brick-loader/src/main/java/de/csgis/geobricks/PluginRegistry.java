@@ -15,6 +15,7 @@ import de.csgis.geobricks.servlet.FilterDescriptor;
 import de.csgis.geobricks.servlet.ServletDescriptor;
 import de.csgis.geobricks.timeSelector.TimeSelectorPlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
+import de.csgis.geobricks.vfs.VFSPluginDescriptor;
 
 public class PluginRegistry {
 	private ArrayList<PluginDescriptor> plugins = new ArrayList<>();
@@ -30,6 +31,7 @@ public class PluginRegistry {
 		plugins.add(new AdminPluginDescriptor());
 		plugins.add(new LoginPlugin());
 		plugins.add(new TimeSelectorPlugin());
+		plugins.add(new VFSPluginDescriptor());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {
