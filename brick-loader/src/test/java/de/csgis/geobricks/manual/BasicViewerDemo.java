@@ -39,7 +39,6 @@ public class BasicViewerDemo {
 								+ "{ eventName : 'ui-toolbar:create', div : 'mytoolbar', parentDiv : 'layout-center'},"
 								+ "{ eventName : 'ui-html', div : 'title', parentDiv : 'layout-header', html: 'Basic viewer'},"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNavigate', css : 'toolbar-button', image : 'images/navigate.png', sendEventName : 'map-control-navigate' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnQueryInfo', css : 'toolbar-button', image : 'images/identify.png', sendEventName : 'map-control-query-info' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnMeasureDistance', css : 'toolbar-button', image : 'images/measure-distance.png', sendEventName : 'map-control-measure-distance' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnMeasureArea', css : 'toolbar-button', image : 'images/measure-area.png', sendEventName : 'map-control-measure-area' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnTransparency', css : 'toolbar-button', image : 'images/transparency.png', sendEventName : 'toggle-opacity', sendEventMessage : { layers : [ 'kartiergebiete' ] } },"
