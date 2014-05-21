@@ -13,6 +13,7 @@ import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.login.LoginPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
+import de.csgis.geobricks.queryInfo.QueryInfoPlugin;
 import de.csgis.geobricks.timeSelector.TimeSelectorPlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
@@ -38,6 +39,7 @@ public class BasicViewerDemo {
 								+ "{ eventName : 'ui-toolbar:create', div : 'mytoolbar', parentDiv : 'layout-center'},"
 								+ "{ eventName : 'ui-html', div : 'title', parentDiv : 'layout-header', html: 'Basic viewer'},"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNavigate', css : 'toolbar-button', image : 'images/navigate.png', sendEventName : 'map-control-navigate' },"
+								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnQueryInfo', css : 'toolbar-button', image : 'images/identify.png', sendEventName : 'map-control-query-info' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnMeasureDistance', css : 'toolbar-button', image : 'images/measure-distance.png', sendEventName : 'map-control-measure-distance' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnMeasureArea', css : 'toolbar-button', image : 'images/measure-area.png', sendEventName : 'map-control-measure-area' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnTransparency', css : 'toolbar-button', image : 'images/transparency.png', sendEventName : 'toggle-opacity', sendEventMessage : { layers : [ 'kartiergebiete' ] } },"
@@ -60,7 +62,7 @@ public class BasicViewerDemo {
 
 		String mapConfig = "center: { lat : 49, lon : 11.2, zoomLevel : 7, useLinks : true },"
 				+ "'toggle-opacity' : { opacity : 0.5 },"
-				+ "olmap : { div : 'layout-center' },"
+				+ "olmap : { div : 'layout-center', proxy : '/http_proxy/proxy?url=' },"
 				+ "'pan-zoom-bar': { mapOffsetX : 10, mapOffsetY : 35 },"
 				+ "'load-layers' : [" //
 				+ "{ eventName : 'add-layer-group', name : 'Kartendaten', id : 'kartendaten', visibility : true },"
@@ -74,6 +76,7 @@ public class BasicViewerDemo {
 				// Kartendaten
 				+ "{ eventName : 'add-layer', id : 'flurkarte', type : 'wms', url : 'http://80.237.188.118/proxy/goto_vfs_map.cgi', layerName : 'flkgrenzenbayern', groupId : 'kartendaten', label : 'Flurkartenschnitt 1:5.000', visible : false, legendUrl : 'http://vfsviewer.vfs-muenchen.de/proxy/goto_vfs_maplegend.cgi?TRANSPARENT=true&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image/png&LAYER=flkgrenzenbayern' }, "
 				+ "{ eventName : 'add-layer', id : 'kartiergebiete', type : 'wms', url : 'http://vfsviewer.vfs-muenchen.de/proxy/goto_vfs_maplegend.cgi', layerName : 'waldbesitzer_jahr', groupId : 'kartendaten', label : 'Kartiergebiete', visible : true, legendUrl : 'http://vfsviewer.vfs-muenchen.de/proxy/goto_vfs_maplegend.cgi?TRANSPARENT=true&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image/png&LAYER=waldbesitzer_jahr&SCALE=3466752.130795755', timestamps : [ '1991-01-01T00:00:00.000Z', '1992-01-01T00:00:00.000Z', '1993-01-01T00:00:00.000Z', '1994-01-01T00:00:00.000Z', '1999-01-01T00:00:00.000Z', '2003-01-01T00:00:00.000Z', '2005-01-01T00:00:00.000Z' ], timeAttribute : 'timequery', timeExpression : 'jahr %operator% %time%', timeExpressionDefault : 'true' }, "
+				+ "{ eventName : 'add-layer', id : 'kartiergebiete-query', type : 'wms', url : 'http://vfsviewer.vfs-muenchen.de/proxy/goto_vfs_map.cgi', layerName : 'waldbesitzer_frei', groupId : 'hidden', label : 'Kartiergebiete', visible : false, options : { queryable : true } }, "
 				+ "{ eventName : 'base-layer', id : 'osm'}]";
 		plugins.doPut(OLMapPlugin.ID, new BasicNameValuePair("configuration",
 				mapConfig));
@@ -82,6 +85,7 @@ public class BasicViewerDemo {
 		plugins.doPut(AddressSearchPlugin.ID);
 		plugins.doPut(BaseLayerPlugin.ID);
 		plugins.doPut(TimeSelectorPlugin.ID);
+		plugins.doPut(QueryInfoPlugin.ID);
 		plugins.doPut(
 				LoginPlugin.ID,
 				new BasicNameValuePair(

@@ -11,6 +11,7 @@ import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.login.LoginPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
+import de.csgis.geobricks.queryInfo.QueryInfoPlugin;
 import de.csgis.geobricks.servlet.FilterDescriptor;
 import de.csgis.geobricks.servlet.ServletDescriptor;
 import de.csgis.geobricks.timeSelector.TimeSelectorPlugin;
@@ -32,6 +33,7 @@ public class PluginRegistry {
 		plugins.add(new LoginPlugin());
 		plugins.add(new TimeSelectorPlugin());
 		plugins.add(new VFSPluginDescriptor());
+		plugins.add(new QueryInfoPlugin());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {

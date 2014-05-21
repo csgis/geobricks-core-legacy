@@ -17,6 +17,7 @@
 		<module>feature-info</module>
 		<module>ui</module>
 		<module>login</module>
+		<module>query-info</module>
 		<module>time-selector</module>
 		<!-- Apps -->
 		<module>admin</module>
