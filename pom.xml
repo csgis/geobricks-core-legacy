@@ -19,6 +19,7 @@
 		<module>login</module>
 		<module>query-info</module>
 		<module>time-selector</module>
+		<module>overview-map</module>
 		<!-- Apps -->
 		<module>admin</module>
 		<module>vfs</module>
