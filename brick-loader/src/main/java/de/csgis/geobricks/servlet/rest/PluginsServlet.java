@@ -108,6 +108,7 @@ public class PluginsServlet extends HttpServlet {
 
 		em.getTransaction().begin();
 		em.merge(app);
+		em.remove(plugin);
 		em.getTransaction().commit();
 
 		throw new HTTPCodeServletException(HttpServletResponse.SC_NO_CONTENT);
