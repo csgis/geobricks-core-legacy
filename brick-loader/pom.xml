@@ -105,6 +105,11 @@
 			<artifactId>overview-map</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>de.csgis.geobricks</groupId>
+			<artifactId>printing</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 
 		<!-- apps -->
 		<dependency>

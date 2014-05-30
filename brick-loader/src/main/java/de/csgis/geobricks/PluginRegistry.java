@@ -12,6 +12,7 @@ import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.login.LoginPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
 import de.csgis.geobricks.overviewMap.OverviewMapPlugin;
+import de.csgis.geobricks.printing.PrintingPlugin;
 import de.csgis.geobricks.queryInfo.QueryInfoPlugin;
 import de.csgis.geobricks.servlet.FilterDescriptor;
 import de.csgis.geobricks.servlet.ServletDescriptor;
@@ -36,6 +37,7 @@ public class PluginRegistry {
 		plugins.add(new VFSPluginDescriptor());
 		plugins.add(new QueryInfoPlugin());
 		plugins.add(new OverviewMapPlugin());
+		plugins.add(new PrintingPlugin());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {

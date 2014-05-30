@@ -14,6 +14,7 @@ import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.login.LoginPlugin;
 import de.csgis.geobricks.olmap.OLMapPlugin;
 import de.csgis.geobricks.overviewMap.OverviewMapPlugin;
+import de.csgis.geobricks.printing.PrintingPlugin;
 import de.csgis.geobricks.queryInfo.QueryInfoPlugin;
 import de.csgis.geobricks.timeSelector.TimeSelectorPlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
@@ -91,6 +92,7 @@ public class BasicViewerDemo {
 				"'overview-map' : { width : 250, height : 250, "
 						+ "extent : [1000000, 6000000, 1600000, 6600000],"
 						+ "minZoomLevel : 5," + "maximized : true } "));
+		plugins.doPut(PrintingPlugin.ID);
 		plugins.doPut(
 				LoginPlugin.ID,
 				new BasicNameValuePair(
