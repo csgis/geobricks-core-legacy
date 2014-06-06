@@ -49,16 +49,10 @@ public class BasicViewerDemo {
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnFullExtent', css : 'toolbar-button', image : 'images/full-extent.png', sendEventName : 'initial-zoom' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNextExtent', css : 'toolbar-button', image : 'images/zoom-next.png', sendEventName : 'extent-history:forward', enableEventName : 'extent-history:forward-enabled', disableEventName : 'extent-history:forward-disabled' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnZoomRegion', css : 'toolbar-button', image : 'images/zoom-region.png', sendEventName : 'map-control-zoom-region' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnCoordinateSearch', css : 'toolbar-button', image : 'images/coordinate-search.png', sendEventName : 'ui-show', sendEventMessage : 'myform' },"
+								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnCoordinateSearch', css : 'toolbar-button', image : 'images/coordinate-search.png', sendEventName : 'ui-show', sendEventMessage : 'coordinate-search' },"
 								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnHelp', css : 'toolbar-button', image : 'http://vfsviewer.vfs-muenchen.de/toolicons/help.png', sendEventName : 'ui-open-url', sendEventMessage : {url : 'http://vfsviewer.vfs-muenchen.de/docs/vfshilfe.pdf', target : '_blank' } },"
 
-								+ "{ eventName : 'ui-dialog:create', parentDiv : 'layout-center', div : 'myform', css : 'coordinate-dialog', title : 'Coordinate Search', closeButton : true, visible : false },"
-								+ "{ eventName : 'ui-choice-field:create', parentDiv : 'myform', div : 'myform-crsselection', css : 'coordinate-crs', label : 'CRS: ', values: [ 'EPSG:4326', 'EPSG:25830' ] },"
-								+ "{ eventName : 'ui-numeric-field:create', parentDiv : 'myform', div : 'myform-lat', css : 'coordinate-input', label : 'Lat: '},"
-								+ "{ eventName : 'ui-numeric-field:create', parentDiv : 'myform', div : 'myform-lon', css : 'coordinate-input', label : 'Lon: '},"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'myform', div : 'btnGoToCoordinate', css : 'coordinate-button', text : 'Go!'},"
-								+ "{ eventName : 'ui-form-collector:extend', button: 'btnGoToCoordinate', divs : ['myform-crsselection', 'myform-lat', 'myform-lon'], names : ['crs', 'lat', 'lon'], sendEventName : 'zoomTo' },"
-
+								+ "{ eventName : 'ui-coordinate-input:create', div : 'coordinate-search', parentDiv : 'layout-center', css : 'coordinate-search', title : 'Koordinaten Eingeben', closeButton : true, visible : false },"
 								+ "{ eventName : 'ui-login:create', div : 'login', parentDiv : 'layout-header', css : 'login' }"
 								+ "]"));
 
@@ -104,8 +98,34 @@ public class BasicViewerDemo {
 								+ "passParamName : 'password',"
 								+ "cookieName : 'PHPSESSID',"
 								+ "cookieSessionParam : 'sid' } "));
-		plugins.doPut(CustomizationPlugin.ID, new BasicNameValuePair(
-				"configuration", "customization : {}"));
+		plugins.doPut(
+				CustomizationPlugin.ID,
+				new BasicNameValuePair(
+						"configuration",
+						"customization : { 'address-search.no_results' : 'Keine Ergebnisse gefunden. Bitte prüfen Sie die Eingabe.<br>Die Adresse muss korrekt eingegeben werden.',"
+								+ "'address-search.placeholder' : 'Strasse',"
+								+ "'address-search.results_title' : 'Ergebnisse',"
+								+ "'base-layer.title' : 'Hintergrund',"
+								+ "'login.error_use_https' : 'Bitte benutzen Sie HTTPS',"
+								+ "'login.error_cannot_login' : 'Nicht anmelden' ,"
+								+ "'login.user' : 'Benutzer: ', "
+								+ "'login.pass' : 'Kennwort: ', "
+								+ "'login.login_button' : 'Anmelden', "
+								+ "'login.logout_button' : 'Abmelden', "
+								+ "'login.logged_message' : 'Angemeldet als Benutzer ', "
+								+ "'wms-info.title' : 'Rauminformation',"
+								+ "'time-selector.lower_than' : 'Niedriger als (<)',"
+								+ "'time-selector.greater_than' : 'Größer als (>)',"
+								+ "'time-selector.equals' : 'Gleich (=)',"
+								+ "'time-selector.operator' : 'Betreiber: ',"
+								+ "'time-selector.date' : 'Datum: ',"
+								+ "'time-selector.update' : 'Aktualisierung',"
+								+ "'time-selector.title' : 'Kartiergebiete Abfragen',"
+								+ "'coordinate-input.crs' : 'CRS: ',"
+								+ "'coordinate-input.x' : 'X: ',"
+								+ "'coordinate-input.y' : 'Y: ',"
+								+ "'coordinate-input.search' : 'los gehts',"
+								+ " }"));
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to remove time-selector");
