@@ -21,6 +21,7 @@
 		<module>time-selector</module>
 		<module>overview-map</module>
 		<module>printing</module>
+		<module>customization</module>
 		<!-- Apps -->
 		<module>admin</module>
 		<module>vfs</module>

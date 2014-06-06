@@ -7,6 +7,7 @@ import java.util.List;
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.admin.AdminPluginDescriptor;
 import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
+import de.csgis.geobricks.customization.CustomizationPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
 import de.csgis.geobricks.login.LoginPlugin;
@@ -38,6 +39,7 @@ public class PluginRegistry {
 		plugins.add(new QueryInfoPlugin());
 		plugins.add(new OverviewMapPlugin());
 		plugins.add(new PrintingPlugin());
+		plugins.add(new CustomizationPlugin());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {

@@ -7,6 +7,7 @@ import org.apache.http.message.BasicNameValuePair;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
+import de.csgis.geobricks.customization.CustomizationPlugin;
 import de.csgis.geobricks.functional.RestPoint;
 import de.csgis.geobricks.functional.ServerManager;
 import de.csgis.geobricks.layerList.LayerListPlugin;
@@ -103,6 +104,8 @@ public class BasicViewerDemo {
 								+ "passParamName : 'password',"
 								+ "cookieName : 'PHPSESSID',"
 								+ "cookieSessionParam : 'sid' } "));
+		plugins.doPut(CustomizationPlugin.ID, new BasicNameValuePair(
+				"configuration", "customization : {}"));
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to remove time-selector");
