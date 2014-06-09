@@ -7,6 +7,7 @@ import java.util.List;
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.admin.AdminPluginDescriptor;
 import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
+import de.csgis.geobricks.coordinateSearch.CoordinateSearchPlugin;
 import de.csgis.geobricks.customization.CustomizationPlugin;
 import de.csgis.geobricks.layerList.LayerListPlugin;
 import de.csgis.geobricks.layout.LayoutPlugin;
@@ -18,6 +19,7 @@ import de.csgis.geobricks.queryInfo.QueryInfoPlugin;
 import de.csgis.geobricks.servlet.FilterDescriptor;
 import de.csgis.geobricks.servlet.ServletDescriptor;
 import de.csgis.geobricks.timeSelector.TimeSelectorPlugin;
+import de.csgis.geobricks.toolbar.ToolbarPlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 import de.csgis.geobricks.vfs.VFSPluginDescriptor;
 
@@ -40,6 +42,8 @@ public class PluginRegistry {
 		plugins.add(new OverviewMapPlugin());
 		plugins.add(new PrintingPlugin());
 		plugins.add(new CustomizationPlugin());
+		plugins.add(new ToolbarPlugin());
+		plugins.add(new CoordinateSearchPlugin());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {

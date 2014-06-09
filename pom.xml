@@ -22,6 +22,8 @@
 		<module>overview-map</module>
 		<module>printing</module>
 		<module>customization</module>
+		<module>toolbar</module>
+		<module>coordinate-search</module>
 		<!-- Apps -->
 		<module>admin</module>
 		<module>vfs</module>

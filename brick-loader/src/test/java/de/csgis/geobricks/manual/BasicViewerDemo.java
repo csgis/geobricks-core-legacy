@@ -7,6 +7,7 @@ import org.apache.http.message.BasicNameValuePair;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
+import de.csgis.geobricks.coordinateSearch.CoordinateSearchPlugin;
 import de.csgis.geobricks.customization.CustomizationPlugin;
 import de.csgis.geobricks.functional.RestPoint;
 import de.csgis.geobricks.functional.ServerManager;
@@ -18,6 +19,7 @@ import de.csgis.geobricks.overviewMap.OverviewMapPlugin;
 import de.csgis.geobricks.printing.PrintingPlugin;
 import de.csgis.geobricks.queryInfo.QueryInfoPlugin;
 import de.csgis.geobricks.timeSelector.TimeSelectorPlugin;
+import de.csgis.geobricks.toolbar.ToolbarPlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
 
 public class BasicViewerDemo {
@@ -39,20 +41,7 @@ public class BasicViewerDemo {
 						"configuration",
 						"ui : ["
 								+ "{ eventName : 'ui-accordion:create', div : 'layers-accordion', parentDiv : 'layout-side'},"
-								+ "{ eventName : 'ui-toolbar:create', div : 'mytoolbar', parentDiv : 'layout-center'},"
 								+ "{ eventName : 'ui-html', div : 'title', parentDiv : 'layout-header', html: 'Basic viewer'},"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNavigate', css : 'toolbar-button', image : 'images/navigate.png', sendEventName : 'map-control-navigate' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnMeasureDistance', css : 'toolbar-button', image : 'images/measure-distance.png', sendEventName : 'map-control-measure-distance' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnMeasureArea', css : 'toolbar-button', image : 'images/measure-area.png', sendEventName : 'map-control-measure-area' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnTransparency', css : 'toolbar-button', image : 'images/transparency.png', sendEventName : 'toggle-opacity', sendEventMessage : { layers : [ 'kartiergebiete' ] } },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnPreviousExtent', css : 'toolbar-button', image : 'images/zoom-previous.png', sendEventName : 'extent-history:back', enableEventName : 'extent-history:back-enabled', disableEventName : 'extent-history:back-disabled' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnFullExtent', css : 'toolbar-button', image : 'images/full-extent.png', sendEventName : 'initial-zoom' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnNextExtent', css : 'toolbar-button', image : 'images/zoom-next.png', sendEventName : 'extent-history:forward', enableEventName : 'extent-history:forward-enabled', disableEventName : 'extent-history:forward-disabled' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnZoomRegion', css : 'toolbar-button', image : 'images/zoom-region.png', sendEventName : 'map-control-zoom-region' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnCoordinateSearch', css : 'toolbar-button', image : 'images/coordinate-search.png', sendEventName : 'ui-show', sendEventMessage : 'coordinate-search' },"
-								+ "{ eventName : 'ui-button:create', parentDiv : 'mytoolbar', div : 'btnHelp', css : 'toolbar-button', image : 'http://vfsviewer.vfs-muenchen.de/toolicons/help.png', sendEventName : 'ui-open-url', sendEventMessage : {url : 'http://vfsviewer.vfs-muenchen.de/docs/vfshilfe.pdf', target : '_blank' } },"
-
-								+ "{ eventName : 'ui-coordinate-input:create', div : 'coordinate-search', parentDiv : 'layout-center', css : 'coordinate-search', title : 'Koordinaten Eingeben', closeButton : true, visible : false },"
 								+ "{ eventName : 'ui-login:create', div : 'login', parentDiv : 'layout-header', css : 'login' }"
 								+ "]"));
 
@@ -82,6 +71,8 @@ public class BasicViewerDemo {
 		plugins.doPut(BaseLayerPlugin.ID);
 		plugins.doPut(TimeSelectorPlugin.ID);
 		plugins.doPut(QueryInfoPlugin.ID);
+		plugins.doPut(ToolbarPlugin.ID);
+		plugins.doPut(CoordinateSearchPlugin.ID);
 		plugins.doPut(OverviewMapPlugin.ID, new BasicNameValuePair(
 				"configuration",
 				"'overview-map' : { width : 250, height : 250, "
@@ -121,10 +112,11 @@ public class BasicViewerDemo {
 								+ "'time-selector.date' : 'Datum: ',"
 								+ "'time-selector.update' : 'Aktualisierung',"
 								+ "'time-selector.title' : 'Kartiergebiete Abfragen',"
-								+ "'coordinate-input.crs' : 'CRS: ',"
-								+ "'coordinate-input.x' : 'X: ',"
-								+ "'coordinate-input.y' : 'Y: ',"
-								+ "'coordinate-input.search' : 'los gehts',"
+								+ "'coordinate-search.crs' : 'CRS: ',"
+								+ "'coordinate-search.x' : 'X: ',"
+								+ "'coordinate-search.y' : 'Y: ',"
+								+ "'coordinate-search.button' : 'los gehts',"
+								+ "'coordinate-search.title' : 'Koordinaten Eingeben',"
 								+ " }"));
 
 		Scanner sc = new Scanner(System.in);
