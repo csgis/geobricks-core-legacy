@@ -8,7 +8,6 @@ import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.addressSearch.AddressSearchPlugin;
 import de.csgis.geobricks.baseLayer.BaseLayerPlugin;
 import de.csgis.geobricks.coordinateSearch.CoordinateSearchPlugin;
-import de.csgis.geobricks.customization.CustomizationPlugin;
 import de.csgis.geobricks.functional.RestPoint;
 import de.csgis.geobricks.functional.ServerManager;
 import de.csgis.geobricks.layerList.LayerListPlugin;
@@ -42,8 +41,7 @@ public class BasicViewerDemo {
 						"ui : ["
 								+ "{ eventName : 'ui-accordion:create', div : 'layers-accordion', parentDiv : 'layout-side', css: 'layers-accordion'},"
 								+ "{ eventName : 'ui-html', div : 'title', parentDiv : 'layout-header', html: 'Basic viewer'},"
-								+ "{ eventName : 'ui-autocomplete:create', div : 'gemeinde_autocomplete', parentDiv : 'layout-header', sendEventName : 'search-gemeinde', options : ['gemeinde', 'another_gemeinde']},"
-								+ "{ eventName : 'ui-login:create', div : 'login', parentDiv : 'layout-header', css : 'login' }"
+								+ "{ eventName : 'ui-autocomplete:create', div : 'gemeinde_autocomplete', parentDiv : 'layout-header', sendEventName : 'search-gemeinde', options : ['gemeinde', 'another_gemeinde']}"
 								+ "]"));
 
 		String mapConfig = "center: { lat : 49, lon : 11.2, zoomLevel : 7, useLinks : true },"
@@ -80,45 +78,7 @@ public class BasicViewerDemo {
 						+ "extent : [1000000, 6000000, 1600000, 6600000],"
 						+ "minZoomLevel : 5," + "maximized : true } "));
 		plugins.doPut(PrintingPlugin.ID);
-		plugins.doPut(
-				LoginPlugin.ID,
-				new BasicNameValuePair(
-						"configuration",
-						"servlet : { loginUrl : 'http://80.237.188.118/vfs/php/login_ext.php',"
-								+ "logoutUrl : 'http://80.237.188.118/vfs/php/logout_ext.php',"
-								+ "userParamName : 'username',"
-								+ "passParamName : 'password',"
-								+ "cookieName : 'PHPSESSID',"
-								+ "cookieSessionParam : 'sid' } "));
-		plugins.doPut(
-				CustomizationPlugin.ID,
-				new BasicNameValuePair(
-						"configuration",
-						"customization : { 'address-search.no_results' : 'Keine Ergebnisse gefunden. Bitte prüfen Sie die Eingabe.<br>Die Adresse muss korrekt eingegeben werden.',"
-								+ "'address-search.placeholder' : 'Strasse',"
-								+ "'address-search.results_title' : 'Ergebnisse',"
-								+ "'base-layer.title' : 'Hintergrund',"
-								+ "'login.error_use_https' : 'Bitte benutzen Sie HTTPS',"
-								+ "'login.error_cannot_login' : 'Nicht anmelden' ,"
-								+ "'login.user' : 'Benutzer: ', "
-								+ "'login.pass' : 'Kennwort: ', "
-								+ "'login.login_button' : 'Anmelden', "
-								+ "'login.logout_button' : 'Abmelden', "
-								+ "'login.logged_message' : 'Angemeldet als Benutzer ', "
-								+ "'wms-info.title' : 'Rauminformation',"
-								+ "'time-selector.lower_than' : 'Niedriger als (<)',"
-								+ "'time-selector.greater_than' : 'Größer als (>)',"
-								+ "'time-selector.equals' : 'Gleich (=)',"
-								+ "'time-selector.operator' : 'Betreiber: ',"
-								+ "'time-selector.date' : 'Datum: ',"
-								+ "'time-selector.update' : 'Aktualisierung',"
-								+ "'time-selector.title' : 'Kartiergebiete Abfragen',"
-								+ "'coordinate-search.crs' : 'CRS: ',"
-								+ "'coordinate-search.x' : 'X: ',"
-								+ "'coordinate-search.y' : 'Y: ',"
-								+ "'coordinate-search.button' : 'los gehts',"
-								+ "'coordinate-search.title' : 'Koordinaten Eingeben',"
-								+ " }"));
+		plugins.doPut(LoginPlugin.ID);
 
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter to remove time-selector");
