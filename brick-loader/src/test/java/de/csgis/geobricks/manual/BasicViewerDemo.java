@@ -42,6 +42,7 @@ public class BasicViewerDemo {
 						"ui : ["
 								+ "{ eventName : 'ui-accordion:create', div : 'layers-accordion', parentDiv : 'layout-side'},"
 								+ "{ eventName : 'ui-html', div : 'title', parentDiv : 'layout-header', html: 'Basic viewer'},"
+								+ "{ eventName : 'ui-autocomplete:create', div : 'gemeinde_autocomplete', parentDiv : 'layout-header', sendEventName : 'search-gemeinde', options : ['gemeinde', 'another_gemeinde']},"
 								+ "{ eventName : 'ui-login:create', div : 'login', parentDiv : 'layout-header', css : 'login' }"
 								+ "]"));
 
