@@ -45,7 +45,12 @@ public class BasicViewerDemo {
 								+ "]"));
 
 		String mapConfig = "center: { lat : 49, lon : 11.2, zoomLevel : 7, useLinks : true },"
-				+ "'toggle-opacity' : { opacity : 0.5 },"
+				+ "'toggle-opacity' : { opacity : 0.5, enabled : true },"
+				+ "'measure-area' : { enabled : true },"
+				+ "'measure-distance' : { enabled : true },"
+				+ "'zoom-region' : { enabled : true },"
+				+ "'extent-history' : { enabled : true },"
+				+ "'query-info' : { enabled : true, filter : { property : 'queryable', match : true }},"
 				+ "olmap : { div : 'layout-center', proxy : '/http_proxy/proxy?url=' },"
 				+ "'pan-zoom-bar': { mapOffsetX : 10, mapOffsetY : 35 },"
 				+ "'load-layers' : [" //
