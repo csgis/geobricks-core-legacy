@@ -26,6 +26,8 @@ require.onError = function(err) {
 
 	body.appendChild(shade);
 	body.appendChild(text);
+
+	console.error(err);
 }
 
 define([ "module", "message-bus" ], function(module, bus) {
