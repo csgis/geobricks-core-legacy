@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -56,17 +57,20 @@ public class ConfigServlet extends HttpServlet {
 			}
 		}
 
-		StringBuilder pluginsJson = new StringBuilder();
-		String separator = "";
+		JSONObject moduleConfig = new JSONObject();
 		for (ApplicationPluginUsage plugin : plugins) {
-			String configuration = plugin.getConfiguration();
-			if (configuration != null) {
-				pluginsJson.append(separator).append(configuration);
-				separator = ",";
+			String pluginConfiguration = plugin.getConfiguration();
+			if (pluginConfiguration != null) {
+				JSONObject pluginConfigurationJSON = (JSONObject) JSONSerializer
+						.toJSON(pluginConfiguration);
+				Iterator<?> iterator = pluginConfigurationJSON.keys();
+				while (iterator.hasNext()) {
+					String propertyName = (String) iterator.next();
+					moduleConfig.element(propertyName,
+							pluginConfigurationJSON.get(propertyName));
+				}
 			}
 		}
-		JSONObject moduleConfig = (JSONObject) JSONSerializer.toJSON("{"
-				+ pluginsJson + "}");
 		moduleConfig.element("main",
 				modules.toArray(new String[modules.size()]));
 

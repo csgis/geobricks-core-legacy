@@ -10,8 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
+import net.sf.json.JSON;
+import net.sf.json.JSONException;
 import net.sf.json.JSONSerializer;
+
+import org.apache.commons.io.IOUtils;
+
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PersistenceUtils;
 import de.csgis.geobricks.PluginDescriptor;
@@ -48,14 +52,11 @@ public class PluginsServlet extends HttpServlet {
 					HttpServletResponse.SC_NOT_FOUND);
 		}
 
-		JSONObject json = new JSONObject();
-		json.element("id", plugin.getPluginId());
-		json.element("configuration",
-				JSONSerializer.toJSON("{" + plugin.getConfiguration() + "}"));
+		JSON json = JSONSerializer.toJSON(plugin.getConfiguration());
 
-		response.setContentType("application/javascript");
+		response.setContentType("application/json");
 		response.setCharacterEncoding("utf8");
-		response.getWriter().write(json.toString());
+		response.getWriter().write(json.toString(3));
 	}
 
 	@Override
@@ -71,10 +72,17 @@ public class PluginsServlet extends HttpServlet {
 					+ pluginId, HttpServletResponse.SC_NOT_FOUND);
 		}
 
-		ApplicationPluginUsage plugin = new ApplicationPluginUsage(pluginId, app);
-		String configurationParameter = req.getParameter("configuration");
-		if (configurationParameter != null) {
-			plugin.setConfiguration(configurationParameter);
+		ApplicationPluginUsage plugin = new ApplicationPluginUsage(pluginId,
+				app);
+		String configurationString = IOUtils.toString(req.getInputStream());
+		if (configurationString.length() > 0) {
+			try {
+				JSONSerializer.toJSON(configurationString);
+			} catch (JSONException e) {
+				throw new HTTPCodeServletException(
+						HttpServletResponse.SC_BAD_REQUEST);
+			}
+			plugin.setConfiguration(configurationString);
 		} else {
 			plugin.setConfiguration(pluginDescriptor.getDefaultConfiguration());
 		}
