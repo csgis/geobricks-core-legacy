@@ -3,14 +3,15 @@ package de.csgis.geobricks.functional;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.URIUtil;
@@ -40,10 +41,11 @@ public class ServerManager {
 		server.stop();
 	}
 
-	public HttpResponse doPut(String path, NameValuePair... params)
-			throws IOException, ClientProtocolException {
+	public HttpResponse doPut(String path, String content) throws IOException,
+			ClientProtocolException {
+		HttpEntity entity = new StringEntity(content);
 		RequestBuilder request = RequestBuilder.create("put")
-				.setUri(getPath(path)).addParameters(params);
+				.setUri(getPath(path)).setEntity(entity);
 		return execute(request.build());
 	}
 

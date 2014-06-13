@@ -7,8 +7,10 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -110,10 +112,35 @@ public class PluginManagementTest {
 	public void getPlugin() throws Exception {
 		plugins.doPut(OLMapPlugin.ID);
 
-		JSONObject plugin = TestUtils.parseJsonObject(plugins
-				.doGet(OLMapPlugin.ID));
-		assertTrue(plugin.has("id"));
-		assertEquals(OLMapPlugin.ID, plugin.get("id"));
+		HttpResponse doGet = plugins.doGet(OLMapPlugin.ID);
+
+		assertTrue(doGet.getEntity().getContentType().toString()
+				.contains("json"));
+		String pluginConfiguration = JSONSerializer.toJSON(
+				IOUtils.toString(doGet.getEntity().getContent())).toString();
+		String defaultPluginConfiguration = JSONSerializer.toJSON(
+				new OLMapPlugin().getDefaultConfiguration()).toString();
+		assertEquals(pluginConfiguration, defaultPluginConfiguration);
+	}
+
+	@Test
+	public void putOnlyValidJSON() throws Exception {
+		HttpResponse response = plugins.doPut(OLMapPlugin.ID, "{invalidjson:}");
+		int statusCode = response.getStatusLine().getStatusCode();
+		assertTrue(statusCode == 400);
+	}
+
+	@Test
+	public void whatYouPUTIsWhatYouGET() throws Exception {
+		String jsonRequest = "{center: { lat : 40.8, lon : -73.96, zoomLevel : 10},"
+				+ "olmap : { div : 'layout-center' }}";
+		plugins.doPut(OLMapPlugin.ID, jsonRequest);
+
+		HttpResponse doGet = plugins.doGet(OLMapPlugin.ID);
+
+		JSON jsonResponse = JSONSerializer.toJSON(IOUtils.toString(doGet
+				.getEntity().getContent()));
+		assertEquals(jsonResponse, JSONSerializer.toJSON(jsonRequest));
 	}
 
 	@Test
