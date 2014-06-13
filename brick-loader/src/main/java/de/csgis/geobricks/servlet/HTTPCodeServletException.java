@@ -17,14 +17,24 @@ public class HTTPCodeServletException extends ServletException {
 
 	public HTTPCodeServletException(String string, int statusCode) {
 		super(string);
-		if (statusCode == 204 && string != null) {
+		setStatusCode(statusCode);
+	}
+
+	private void setStatusCode(int statusCode) {
+		if (statusCode == 204 && getMessage() != null) {
 			throw new IllegalArgumentException("204 -> no content");
 		}
 		this.statusCode = statusCode;
 	}
 
 	public HTTPCodeServletException(int statusCode) {
-		this.statusCode = statusCode;
+		setStatusCode(statusCode);
+	}
+
+	public HTTPCodeServletException(String message, Throwable cause,
+			int statusCode) {
+		super(message, cause);
+		setStatusCode(statusCode);
 	}
 
 	public int getStatusCode() {

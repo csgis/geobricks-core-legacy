@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import de.csgis.geobricks.Geobricks;
@@ -23,6 +24,7 @@ import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginRegistry;
 import de.csgis.geobricks.model.Application;
 import de.csgis.geobricks.model.ApplicationPluginUsage;
+import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
 /**
  * Builds the json document that configures all the requirejs modules
@@ -61,8 +63,15 @@ public class ConfigServlet extends HttpServlet {
 		for (ApplicationPluginUsage plugin : plugins) {
 			String pluginConfiguration = plugin.getConfiguration();
 			if (pluginConfiguration != null) {
-				JSONObject pluginConfigurationJSON = (JSONObject) JSONSerializer
-						.toJSON(pluginConfiguration);
+				JSONObject pluginConfigurationJSON;
+				try {
+					pluginConfigurationJSON = (JSONObject) JSONSerializer
+							.toJSON(pluginConfiguration);
+				} catch (JSONException e) {
+					throw new HTTPCodeServletException(
+							"Error in plugin configuration: "
+									+ plugin.getPluginId(), e, 500);
+				}
 				Iterator<?> iterator = pluginConfigurationJSON.keys();
 				while (iterator.hasNext()) {
 					String propertyName = (String) iterator.next();
