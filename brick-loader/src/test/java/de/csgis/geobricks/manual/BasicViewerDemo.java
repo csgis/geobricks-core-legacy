@@ -46,6 +46,7 @@ public class BasicViewerDemo {
 				+ "'measure-distance' : { enabled : true },"
 				+ "'zoom-region' : { enabled : true },"
 				+ "'zoom' : { enabled : true },"
+				+ "'full-extent' : { enabled : true },"
 				+ "'extent-history' : { enabled : true },"
 				+ "'query-info' : { enabled : true, filter : { property : 'queryable', match : true }},"
 				+ "olmap : { div : 'layout-center', proxy : '/http_proxy/proxy?url=' },"
