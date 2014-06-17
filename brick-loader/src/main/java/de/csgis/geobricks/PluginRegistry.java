@@ -17,6 +17,7 @@ import de.csgis.geobricks.printing.PrintingPlugin;
 import de.csgis.geobricks.queryInfo.QueryInfoPlugin;
 import de.csgis.geobricks.servlet.FilterDescriptor;
 import de.csgis.geobricks.servlet.ServletDescriptor;
+import de.csgis.geobricks.sis.SISPluginDescriptor;
 import de.csgis.geobricks.timeSelector.TimeSelectorPlugin;
 import de.csgis.geobricks.toolbar.ToolbarPlugin;
 import de.csgis.geobricks.ui.UIPluginDescriptor;
@@ -26,6 +27,7 @@ public class PluginRegistry {
 	private ArrayList<PluginDescriptor> plugins = new ArrayList<>();
 
 	public PluginRegistry() {
+		// Plugins
 		plugins.add(new OLMapPlugin());
 		plugins.add(new LayoutPlugin());
 		plugins.add(new LayerListPlugin());
@@ -33,15 +35,18 @@ public class PluginRegistry {
 		plugins.add(new BaseLayerPlugin());
 		plugins.add(new TimeSelectorPlugin());
 		plugins.add(new UIPluginDescriptor());
-		plugins.add(new AdminPluginDescriptor());
 		plugins.add(new LoginPlugin());
 		plugins.add(new TimeSelectorPlugin());
-		plugins.add(new VFSPluginDescriptor());
 		plugins.add(new QueryInfoPlugin());
 		plugins.add(new OverviewMapPlugin());
 		plugins.add(new PrintingPlugin());
 		plugins.add(new ToolbarPlugin());
 		plugins.add(new CoordinateSearchPlugin());
+
+		// Apps
+		plugins.add(new AdminPluginDescriptor());
+		plugins.add(new VFSPluginDescriptor());
+		plugins.add(new SISPluginDescriptor());
 	}
 
 	public NonRequireDependency[] getNonRequireDependencies() {
