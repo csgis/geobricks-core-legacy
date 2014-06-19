@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Context docBase="brick-loader" path="/brick-loader" reloadable="false"
-	source="org.eclipse.jst.j2ee.server:brick-loader">
-	<Resource name="jdbc/app" auth="Container" type="javax.sql.DataSource"
-		driverClassName="org.postgresql.Driver" url="jdbc:postgresql://<host>:<port>/<db>"
-		username="" password="" />
-</Context>
