@@ -37,7 +37,7 @@ public class RuntimeModule implements Module {
 		}
 	}
 
-	private Map<String, String> getConnectionProperties() throws IOException {
+	protected Map<String, String> getConnectionProperties() throws IOException {
 		String confPath = System.getProperty("GEOBRICKS_CONF_DIR");
 		if (confPath == null) {
 			confPath = Geobricks.DEFAULT_GEOBRICKS_CONF_DIR;
