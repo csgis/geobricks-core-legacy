@@ -73,7 +73,7 @@ public class GetApplicationTest {
 
 		String content = IOUtils.toString(response.getEntity().getContent());
 
-		assertTrue(content.trim().startsWith("<html>"));
+		assertTrue(content.trim().startsWith("<!DOCTYPE html>"));
 		assertTrue(content.contains("config.js"));
 	}
 
