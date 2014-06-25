@@ -7,6 +7,8 @@
 	<version>1.0-SNAPSHOT</version>
 	<name>Geobricks</name>
 	<modules>
+		<module>commons-webapp</module>
+		<module>commons-test</module>
 		<module>brick-loader</module>
 		<module>olmap</module>
 		<module>loader-core</module>
@@ -24,6 +26,7 @@
 		<module>toolbar</module>
 		<module>coordinate-search</module>
 		<!-- Apps -->
+		<module>geobricks-rest</module>
 		<module>admin</module>
 		<module>vfs</module>
 		<module>sis</module>
