@@ -13,30 +13,18 @@
 	<artifactId>brick-loader</artifactId>
 	<name>brick-loader</name>
 
-	<repositories>
-		<repository>
-			<id>EclipseLink</id>
-			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
-		<!-- J2EE -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
-
-		<!-- Geobricks commons -->
 		<dependency>
-			<groupId>de.csgis</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>commons-webapp</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-		<!-- Database -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -52,27 +40,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>1.9.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
-			<version>9.1.2.v20140210</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-webapp</artifactId>
-			<version>9.1.2.v20140210</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.3.2</version>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tests-commons</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -81,14 +51,8 @@
 			<version>1.3.170</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>de.csgis</groupId>
-			<artifactId>commons-test</artifactId>
-			<version>${project.version}</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -104,12 +68,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<instrumentation>
-						<excludes>
-						</excludes>
-					</instrumentation>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

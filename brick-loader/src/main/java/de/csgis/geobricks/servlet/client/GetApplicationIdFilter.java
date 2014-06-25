@@ -14,19 +14,18 @@ import de.csgis.geobricks.Geobricks;
 
 @Singleton
 public class GetApplicationIdFilter implements Filter {
-	private String app;
-
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		app = filterConfig.getServletContext().getContextPath();
-		if (app.startsWith("/")) {
-			app = app.substring(1);
-		}
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
+		String app = request.getServletContext().getContextPath();
+		if (app.startsWith("/")) {
+			app = app.substring(1);
+		}
+
 		request.setAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE, app);
 		chain.doFilter(request, response);
 

@@ -8,7 +8,6 @@
 	<name>Geobricks</name>
 	<modules>
 		<module>commons-webapp</module>
-		<module>commons-test</module>
 		<module>brick-loader</module>
 		<module>olmap</module>
 		<module>loader-core</module>
@@ -30,6 +29,10 @@
 		<module>admin</module>
 		<module>vfs</module>
 		<module>sis</module>
+
+		<!-- Testing -->
+		<module>tests-commons</module>
+		<module>tests-functional</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
