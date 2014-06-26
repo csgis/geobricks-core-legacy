@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>loader-core</module>
+		<module>core</module>
 		<module>commons-webapp</module>
 		<module>brick-loader</module>
 		<module>geobricks-rest</module>
