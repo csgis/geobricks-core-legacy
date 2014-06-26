@@ -1,8 +1,5 @@
 package de.csgis.geobricks;
 
-import de.csgis.geobricks.servlet.FilterDescriptor;
-import de.csgis.geobricks.servlet.ServletDescriptor;
-
 public interface PluginDescriptor {
 
 	/**
@@ -46,8 +43,4 @@ public interface PluginDescriptor {
 	 * @return
 	 */
 	String[] getModules();
-
-	FilterDescriptor[] getFilters();
-
-	ServletDescriptor[] getServlets();
 }

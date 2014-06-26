@@ -1,14 +1,9 @@
 package de.csgis.geobricks.guice;
 
-import javax.inject.Inject;
-
 import com.google.inject.servlet.ServletModule;
 
 import de.csgis.geobricks.Geobricks;
-import de.csgis.geobricks.PluginRegistry;
-import de.csgis.geobricks.servlet.FilterDescriptor;
 import de.csgis.geobricks.servlet.GetApplicationInstanceFilter;
-import de.csgis.geobricks.servlet.ServletDescriptor;
 import de.csgis.geobricks.servlet.client.ConfigServlet;
 import de.csgis.geobricks.servlet.client.GetApplicationIdFilter;
 import de.csgis.geobricks.servlet.client.IndexHTMLRedirectFilter;
@@ -18,9 +13,6 @@ import de.csgis.geobricks.servlet.client.StaticBinaryServlet;
 import de.csgis.geobricks.servlet.client.StaticTextServlet;
 
 public class ClientServletModule extends ServletModule {
-	@Inject
-	private PluginRegistry pluginRegistry;
-
 	@Override
 	protected void configureServlets() {
 		// Redirect client app requests to index.html
@@ -62,20 +54,5 @@ public class ClientServletModule extends ServletModule {
 		// Application instance getter
 		filterRegex(Geobricks.root.all().path()).through(
 				GetApplicationInstanceFilter.class);
-
-		/*
-		 * PLUGINS
-		 */
-		// Filters from plugins
-		for (FilterDescriptor filter : pluginRegistry.getFilters()) {
-			filterRegex(filter.getRegex(), filter.getRegexes()).through(
-					filter.getServletClass());
-		}
-
-		// Servlets from plugins
-		for (ServletDescriptor servlet : pluginRegistry.getServlets()) {
-			serveRegex(servlet.getRegex(), servlet.getRegexes()).with(
-					servlet.getServletClass());
-		}
 	}
 }
