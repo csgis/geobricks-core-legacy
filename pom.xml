@@ -26,7 +26,6 @@
 		<module>coordinate-search</module>
 		<!-- Apps -->
 		<module>geobricks-rest</module>
-		<module>admin</module>
 
 		<!-- Testing -->
 		<module>tests-commons</module>
