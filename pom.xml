@@ -28,7 +28,6 @@
 		<module>geobricks-rest</module>
 		<module>admin</module>
 		<module>vfs</module>
-		<module>sis</module>
 
 		<!-- Testing -->
 		<module>tests-commons</module>
