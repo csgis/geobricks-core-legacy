@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -21,14 +22,11 @@ public class GetApplicationIdFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
-		String app = request.getServletContext().getContextPath();
-		if (app.startsWith("/")) {
-			app = app.substring(1);
-		}
+		ServletContext context = request.getServletContext();
+		request.setAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE,
+				context.getInitParameter("geobricks-app-id"));
 
-		request.setAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE, app);
 		chain.doFilter(request, response);
-
 	}
 
 	@Override
