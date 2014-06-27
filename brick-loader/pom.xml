@@ -5,137 +5,31 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
+		<groupId>de.csgis.geobricks</groupId>
 		<artifactId>geobricks</artifactId>
-		<groupId>de.csgis</groupId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>brick-loader</artifactId>
 	<name>brick-loader</name>
-	<packaging>war</packaging>
-
-	<repositories>
-		<repository>
-			<id>EclipseLink</id>
-			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
-		</repository>
-	</repositories>
 
 	<dependencies>
-		<!-- J2EE -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
-
-		<!-- Database -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>commons-webapp</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.3-1100-jdbc4</version>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.3.170</version>
-			<scope>runtime</scope>
-		</dependency>
-
-		<!-- Plugins -->
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>loader-core</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>olmap</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>layout</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>layer-list</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>address-search</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>base-layer</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>feature-info</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>ui</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>login</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>time-selector</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>query-info</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>overview-map</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>printing</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>toolbar</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>coordinate-search</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-
-		<!-- apps -->
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>admin</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>vfs</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.csgis.geobricks</groupId>
-			<artifactId>sis</artifactId>
-			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Testing -->
@@ -146,26 +40,20 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>1.9.5</version>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tests-commons</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
-			<version>9.1.2.v20140210</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-webapp</artifactId>
-			<version>9.1.2.v20140210</version>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.3.170</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 	<build>
-		<finalName>geobricks-${version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -180,12 +68,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<instrumentation>
-						<excludes>
-						</excludes>
-					</instrumentation>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

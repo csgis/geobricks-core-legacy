@@ -19,7 +19,6 @@ import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import de.csgis.geobricks.Geobricks;
-import de.csgis.geobricks.PersistenceUtils;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginRegistry;
 import de.csgis.geobricks.model.Application;
@@ -36,17 +35,13 @@ public class ConfigServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Inject
-	private PersistenceUtils utils;
-
-	@Inject
 	private PluginRegistry pluginRegistry;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String appName = req.getAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE)
-				.toString();
-		Application app = utils.getApplication(appName);
+		Application app = (Application) req
+				.getAttribute(Geobricks.APP_INSTANCE_HTTP_ATTRIBUTE);
 
 		Set<ApplicationPluginUsage> plugins = app.getPlugins();
 		List<String> modules = new ArrayList<String>();

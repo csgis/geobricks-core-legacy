@@ -4,13 +4,14 @@ import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.Scanner;
 
-import org.apache.commons.io.IOUtils;
-
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+
+import org.apache.commons.io.IOUtils;
+
 import de.csgis.geobricks.Geobricks;
-import de.csgis.geobricks.functional.RestPoint;
-import de.csgis.geobricks.functional.ServerManager;
+import de.csgis.geobricks.tests.RestPoint;
+import de.csgis.geobricks.tests.ServerManager;
 
 public class GBAppRunner {
 
