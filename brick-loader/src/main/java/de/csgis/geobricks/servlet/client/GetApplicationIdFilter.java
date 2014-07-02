@@ -12,6 +12,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.WebAppUtils;
 
 @Singleton
 public class GetApplicationIdFilter implements Filter {
@@ -24,13 +25,7 @@ public class GetApplicationIdFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 		ServletContext context = request.getServletContext();
-		String id = context.getInitParameter("geobricks-app-id");
-		if (id == null) {
-			id = context.getContextPath();
-			if (id.startsWith("/")) {
-				id = id.substring(1);
-			}
-		}
+		String id = WebAppUtils.getApplicationId(context);
 		request.setAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE, id);
 
 		chain.doFilter(request, response);

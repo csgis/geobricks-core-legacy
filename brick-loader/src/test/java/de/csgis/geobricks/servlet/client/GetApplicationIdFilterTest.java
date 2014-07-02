@@ -1,6 +1,5 @@
 package de.csgis.geobricks.servlet.client;
 
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,6 +15,13 @@ import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
 
+/**
+ * Just check the JEE part, that the id is on the request. The logic is tested
+ * elsewhere. I wouldn't test this, but thus we have a template. Remove if there
+ * is more JEE tests
+ * 
+ * @author fergonco
+ */
 public class GetApplicationIdFilterTest {
 
 	private ServletResponse response = mock(ServletResponse.class);
@@ -47,40 +53,5 @@ public class GetApplicationIdFilterTest {
 
 		verify(request).setAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE,
 				configuredid);
-	}
-
-	@Test
-	public void testFromURLId() throws Exception {
-		when(servletContext.getInitParameter("geobricks-app-id")).thenReturn(
-				null);
-		when(servletContext.getContextPath()).thenReturn("/myapp");
-
-		filter.init(filterConfig);
-		filter.doFilter(request, response, chain);
-
-		verify(request).setAttribute(Geobricks.APP_ID_HTTP_ATTRIBUTE, "myapp");
-	}
-
-	/*
-	 * In GBAppRunner only one filter is used, so it has to work with two
-	 * ServletContexts
-	 */
-	@Test
-	public void testTwoAppsFromURLId() throws Exception {
-		when(servletContext.getInitParameter("geobricks-app-id")).thenReturn(
-				null);
-		String firstApp = "firstapp";
-		String secondApp = "secondapp";
-		when(servletContext.getContextPath()).thenReturn("/" + firstApp)
-				.thenReturn("/" + secondApp);
-
-		filter.init(filterConfig);
-		filter.doFilter(request, response, chain);
-		filter.doFilter(request, response, chain);
-
-		verify(request, atLeastOnce()).setAttribute(
-				Geobricks.APP_ID_HTTP_ATTRIBUTE, firstApp);
-		verify(request, atLeastOnce()).setAttribute(
-				Geobricks.APP_ID_HTTP_ATTRIBUTE, secondApp);
 	}
 }
