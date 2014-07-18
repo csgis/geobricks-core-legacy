@@ -11,11 +11,8 @@
 
 	<modules>
 		<module>core</module>
-		<module>commons-webapp</module>
 		<module>brick-loader</module>
-		<module>geobricks-rest</module>
 		<module>plugins</module>
-		<module>tests-commons</module>
 		<module>tests-functional</module>
 		<module>geobricks-full</module>
 	</modules>
