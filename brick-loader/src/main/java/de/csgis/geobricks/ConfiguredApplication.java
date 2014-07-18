@@ -1,5 +1,6 @@
 package de.csgis.geobricks;
 
+import java.io.File;
 import java.io.InputStream;
 
 import javax.inject.Singleton;
@@ -53,6 +54,22 @@ public class ConfiguredApplication implements ServletContextListener {
 
 			servletContext
 					.setAttribute(ATTR_PLUGINS_CONF, pluginConfigurations);
+
+			// Configure Geobricks configuration directory
+			String conf = System.getProperty("GEOBRICKS_CONF_DIR");
+			if (conf == null || !new File(conf).exists()) {
+				// If the system property is not specified, the configuration
+				// is directly in the WEB-INF/default_config directory
+				conf = servletContext.getRealPath("/") + File.separator
+						+ "WEB-INF" + File.separator + "default_config";
+			} else {
+				// If the system property is specified, the configuration is
+				// in GEOBRICKS_CONF_DIR/<app>/
+				conf += File.separator
+						+ WebAppUtils.getApplicationId(servletContext);
+			}
+
+			servletContext.setAttribute(Geobricks.CONF_DIR_ATTRIBUTE, conf);
 		} catch (Exception e) {
 			// The application will not be shown so we need to tell at least
 			// the developer
