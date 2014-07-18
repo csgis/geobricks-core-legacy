@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,15 +14,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.ConfiguredApplication;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginRegistry;
-import de.csgis.geobricks.model.Application;
-import de.csgis.geobricks.model.ApplicationPluginUsage;
-import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
 /**
  * Builds the json document that configures all the requirejs modules
@@ -40,14 +34,13 @@ public class ConfigServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		Application app = (Application) req
-				.getAttribute(Geobricks.APP_INSTANCE_HTTP_ATTRIBUTE);
+		JSONObject pluginsConfiguration = (JSONObject) getServletContext()
+				.getAttribute(ConfiguredApplication.ATTR_PLUGINS_CONF);
 
-		Set<ApplicationPluginUsage> plugins = app.getPlugins();
 		List<String> modules = new ArrayList<String>();
-		for (ApplicationPluginUsage plugin : plugins) {
+		for (Object plugin : pluginsConfiguration.keySet()) {
 			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
-					.getPluginId());
+					.toString());
 			String[] pluginModules = descriptor.getModules();
 			if (pluginModules != null) {
 				Collections.addAll(modules, pluginModules);
@@ -55,26 +48,17 @@ public class ConfigServlet extends HttpServlet {
 		}
 
 		JSONObject moduleConfig = new JSONObject();
-		for (ApplicationPluginUsage plugin : plugins) {
-			String pluginConfiguration = plugin.getConfiguration();
-			if (pluginConfiguration != null) {
-				JSONObject pluginConfigurationJSON;
-				try {
-					pluginConfigurationJSON = (JSONObject) JSONSerializer
-							.toJSON(pluginConfiguration);
-				} catch (JSONException e) {
-					throw new HTTPCodeServletException(
-							"Error in plugin configuration: "
-									+ plugin.getPluginId(), e, 500);
-				}
-				Iterator<?> iterator = pluginConfigurationJSON.keys();
-				while (iterator.hasNext()) {
-					String propertyName = (String) iterator.next();
-					moduleConfig.element(propertyName,
-							pluginConfigurationJSON.get(propertyName));
-				}
+		for (Object plugin : pluginsConfiguration.keySet()) {
+			JSONObject pluginConfiguration = pluginsConfiguration
+					.getJSONObject(plugin.toString());
+			Iterator<?> iterator = pluginConfiguration.keys();
+			while (iterator.hasNext()) {
+				String propertyName = (String) iterator.next();
+				moduleConfig.element(propertyName,
+						pluginConfiguration.get(propertyName));
 			}
 		}
+
 		moduleConfig.element("main",
 				modules.toArray(new String[modules.size()]));
 

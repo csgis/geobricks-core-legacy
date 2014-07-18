@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.Path;
 import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
 /**
@@ -45,7 +45,7 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 					+ folder.length() + 1);
 		}
 
-		InputStream resourceStream = Geobricks.root.file(folder).file(resource)
+		InputStream resourceStream = Path.root.file(folder).file(resource)
 				.getResourceAsStream();
 
 		if (resourceStream == null) {

@@ -1,7 +1,6 @@
 package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,19 +12,22 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import de.csgis.geobricks.Geobricks;
+import net.sf.json.JSONObject;
+import de.csgis.geobricks.ConfiguredApplication;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginRegistry;
-import de.csgis.geobricks.model.Application;
-import de.csgis.geobricks.model.ApplicationPluginUsage;
 
 @Singleton
 public class IndexReplaceCSSFilter implements Filter {
 	@Inject
 	private PluginRegistry pluginRegistry;
 
+	private JSONObject pluginsConfiguration;
+
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
+		pluginsConfiguration = (JSONObject) filterConfig.getServletContext()
+				.getAttribute(ConfiguredApplication.ATTR_PLUGINS_CONF);
 	}
 
 	@Override
@@ -35,13 +37,12 @@ public class IndexReplaceCSSFilter implements Filter {
 				(HttpServletResponse) response);
 		chain.doFilter(request, wrapper);
 
-		Application app = (Application) request
-				.getAttribute(Geobricks.APP_INSTANCE_HTTP_ATTRIBUTE);
-		Set<ApplicationPluginUsage> plugins = app.getPlugins();
+		pluginsConfiguration.keySet();
+
 		StringBuilder str = new StringBuilder();
-		for (ApplicationPluginUsage plugin : plugins) {
+		for (Object plugin : pluginsConfiguration.keySet()) {
 			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
-					.getPluginId());
+					.toString());
 			String[] styleSheets = descriptor.getStyleSheets();
 			if (styleSheets != null) {
 				for (String styleSheet : styleSheets) {
