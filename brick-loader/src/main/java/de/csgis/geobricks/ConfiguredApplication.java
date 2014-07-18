@@ -1,7 +1,6 @@
 package de.csgis.geobricks;
 
 import java.io.InputStream;
-import java.util.Iterator;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
@@ -16,11 +15,10 @@ import org.apache.log4j.Logger;
 
 import com.google.inject.Injector;
 
-import de.csgis.geobricks.restapi.ApplicationPlugins;
-import de.csgis.geobricks.restapi.Applications;
-
 @Singleton
 public class ConfiguredApplication implements ServletContextListener {
+	public static final String ATTR_PLUGINS_CONF = "plugins-conf";
+
 	private static final Logger logger = Logger
 			.getLogger(ConfiguredApplication.class);
 
@@ -33,26 +31,28 @@ public class ConfiguredApplication implements ServletContextListener {
 			String jsonText = IOUtils.toString(stream);
 			stream.close();
 
-			String appId = WebAppUtils.getApplicationId(servletContext);
-			Injector injector = (Injector) servletContext
-					.getAttribute(Injector.class.getCanonicalName());
-			Applications applications = injector
-					.getInstance(Applications.class);
-			applications.put(appId);
-			ApplicationPlugins applicationPlugins = applications
-					.getApplicationPlugins(appId);
-
-			JSONObject plugins = (JSONObject) JSONSerializer.toJSON(jsonText);
-			Iterator<?> pluginIdIterator = plugins.keys();
-			while (pluginIdIterator.hasNext()) {
-				String id = (String) pluginIdIterator.next();
-				JSONObject pluginConfiguration = plugins.getJSONObject(id);
-				if (!pluginConfiguration.isEmpty()) {
-					applicationPlugins.put(id, pluginConfiguration.toString());
-				} else {
-					applicationPlugins.put(id);
+			JSONObject pluginConfigurations = (JSONObject) JSONSerializer
+					.toJSON(jsonText);
+			for (Object key : pluginConfigurations.keySet()) {
+				String pluginId = key.toString();
+				JSONObject pluginConf = pluginConfigurations
+						.getJSONObject(pluginId);
+				if (pluginConf.isEmpty()) {
+					Injector injector = (Injector) servletContext
+							.getAttribute(Injector.class.getCanonicalName());
+					PluginRegistry registry = injector
+							.getInstance(PluginRegistry.class);
+					PluginDescriptor descriptor = registry.getPlugin(pluginId);
+					String defaultConf = descriptor.getDefaultConfiguration();
+					if (defaultConf != null) {
+						pluginConfigurations.put(pluginId,
+								JSONObject.fromObject(defaultConf));
+					}
 				}
 			}
+
+			servletContext
+					.setAttribute(ATTR_PLUGINS_CONF, pluginConfigurations);
 		} catch (Exception e) {
 			// The application will not be shown so we need to tell at least
 			// the developer
@@ -62,7 +62,5 @@ public class ConfiguredApplication implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
-
 	}
-
 }

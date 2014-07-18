@@ -2,6 +2,8 @@ package de.csgis.geobricks;
 
 import java.io.InputStream;
 
+import com.google.inject.servlet.ServletModule;
+
 /**
  * Class that holds all the folder structure of the rest API and the web
  * applications
@@ -9,6 +11,7 @@ import java.io.InputStream;
  * @author fergonco
  */
 public class Path {
+	public static Path root = new Path("");
 
 	public static final String APPS = "apps";
 	public static final String PLUGINS = "plugins";
