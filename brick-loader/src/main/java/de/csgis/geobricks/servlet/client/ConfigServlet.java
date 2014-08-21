@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 import de.csgis.geobricks.ConfiguredApplication;
+import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginRegistry;
 
@@ -37,6 +38,7 @@ public class ConfigServlet extends HttpServlet {
 		JSONObject pluginsConfiguration = (JSONObject) getServletContext()
 				.getAttribute(ConfiguredApplication.ATTR_PLUGINS_CONF);
 
+		JSONObject moduleConfig = new JSONObject();
 		List<String> modules = new ArrayList<String>();
 		for (Object plugin : pluginsConfiguration.keySet()) {
 			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
@@ -45,10 +47,7 @@ public class ConfigServlet extends HttpServlet {
 			if (pluginModules != null) {
 				Collections.addAll(modules, pluginModules);
 			}
-		}
 
-		JSONObject moduleConfig = new JSONObject();
-		for (Object plugin : pluginsConfiguration.keySet()) {
 			JSONObject pluginConfiguration = pluginsConfiguration
 					.getJSONObject(plugin.toString());
 			Iterator<?> iterator = pluginConfiguration.keys();
@@ -57,6 +56,14 @@ public class ConfigServlet extends HttpServlet {
 				moduleConfig.element(propertyName,
 						pluginConfiguration.get(propertyName));
 			}
+		}
+
+		String confDir = getServletContext().getAttribute(
+				Geobricks.CONF_DIR_ATTRIBUTE).toString();
+		for (Object plugin : pluginsConfiguration.keySet()) {
+			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
+					.toString());
+			descriptor.config(req, resp, moduleConfig, confDir);
 		}
 
 		moduleConfig.element("main",
