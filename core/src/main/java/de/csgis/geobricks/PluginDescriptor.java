@@ -1,5 +1,10 @@
 package de.csgis.geobricks;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONObject;
+
 public interface PluginDescriptor {
 
 	/**
@@ -43,4 +48,7 @@ public interface PluginDescriptor {
 	 * @return
 	 */
 	String[] getModules();
+
+	void config(HttpServletRequest request, HttpServletResponse response,
+			JSONObject staticConfig, String confDir);
 }
