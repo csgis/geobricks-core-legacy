@@ -12,7 +12,6 @@
 	<modules>
 		<module>core</module>
 		<module>brick-loader</module>
-		<module>tests-functional</module>
 		<module>geobricks-full</module>
 		<module>plugins</module>
 		<module>apps</module>
