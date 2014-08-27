@@ -24,11 +24,12 @@ public class IndexHTMLRedirectFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 		String uri = ((HttpServletRequest) request).getRequestURI();
-		if (!uri.endsWith("/")) {
-			uri += "/";
+		if (uri.endsWith("/")) {
+			chain.doFilter(request, response);
+		} else {
+			HttpServletResponse resp = (HttpServletResponse) response;
+			resp.sendRedirect(uri + "/");
 		}
-		HttpServletResponse resp = (HttpServletResponse) response;
-		resp.sendRedirect(uri);
 	}
 
 	@Override

@@ -31,6 +31,10 @@ public class MainModuleContentProcessor implements Filter {
 		CharResponseWrapper wrapper = new CharResponseWrapper(
 				(HttpServletResponse) response);
 		chain.doFilter(request, wrapper);
+		response.getWriter().write(process(wrapper.toString()));
+	}
+
+	public String process(String content) {
 		NonRequireDependency[] dependencies = pluginRegistry
 				.getNonRequireDependencies();
 		StringBuilder str = new StringBuilder();
@@ -44,10 +48,7 @@ public class MainModuleContentProcessor implements Filter {
 
 		// remove last comma
 		str.setLength(str.lastIndexOf(","));
-		String returnCode = wrapper.toString().replace(
-				"$nonRequireJSDependencies", str.toString());
-
-		response.getWriter().write(returnCode);
+		return content.replace("$nonRequireJSDependencies", str.toString());
 	}
 
 	@Override
