@@ -43,4 +43,12 @@ public class StaticServletTest extends AbstractFunctionalTest {
 		assertEquals(HttpServletResponse.SC_OK, response.getStatusLine()
 				.getStatusCode());
 	}
+
+	@Test
+	public void getNonExistingResource() throws Exception {
+		HttpResponse response = app.doGet("jslib/non_existing");
+		assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatusLine()
+				.getStatusCode());
+	}
+
 }

@@ -3,6 +3,7 @@ package de.csgis.geobricks.guice;
 import com.google.inject.servlet.ServletModule;
 
 import de.csgis.geobricks.Path;
+import de.csgis.geobricks.servlet.OutputFilter;
 import de.csgis.geobricks.servlet.client.ConfigServlet;
 import de.csgis.geobricks.servlet.client.IndexHTMLRedirectFilter;
 import de.csgis.geobricks.servlet.client.IndexReplaceCSSFilter;
@@ -13,6 +14,9 @@ import de.csgis.geobricks.servlet.client.StaticTextServlet;
 public class ClientServletModule extends ServletModule {
 	@Override
 	protected void configureServlets() {
+		// Output filter
+		filterRegex(Path.root.all().path()).through(OutputFilter.class);
+
 		// Redirect client app requests to index.html
 		filterRegex(Path.root.path()).through(IndexHTMLRedirectFilter.class);
 

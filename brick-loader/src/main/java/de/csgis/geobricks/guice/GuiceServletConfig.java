@@ -29,10 +29,6 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 		}
 
 		injector = Guice.createInjector(module, new ClientServletModule());
-
-		// This can be used by future listeners to obtain the injector
-		context.setAttribute(Injector.class.getCanonicalName(), injector);
-
 		super.contextInitialized(servletContextEvent);
 	}
 

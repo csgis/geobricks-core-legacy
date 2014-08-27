@@ -35,11 +35,11 @@ public class PluginRegistry {
 		return null;
 	}
 
-	public Set<PluginDescriptor> getPlugins() {
-		return plugins;
-	}
-
 	public void putPlugin(PluginDescriptor plugin) {
 		plugins.add(plugin);
+	}
+
+	public Set<PluginDescriptor> getPlugins() {
+		return plugins;
 	}
 }
