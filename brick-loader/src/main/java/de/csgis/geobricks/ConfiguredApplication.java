@@ -1,6 +1,7 @@
 package de.csgis.geobricks;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.inject.Singleton;
@@ -9,7 +10,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -25,56 +25,58 @@ public class ConfiguredApplication implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
-		ServletContext servletContext = sce.getServletContext();
 		try {
-			InputStream stream = servletContext
-					.getResourceAsStream("/WEB-INF/conf/gbapp-conf.json");
-			String jsonText = IOUtils.toString(stream);
-			stream.close();
-
-			JSONObject pluginConfigurations = (JSONObject) JSONSerializer
-					.toJSON(jsonText);
-			for (Object key : pluginConfigurations.keySet()) {
-				String pluginId = key.toString();
-				JSONObject pluginConf = pluginConfigurations
-						.getJSONObject(pluginId);
-				if (pluginConf.isEmpty()) {
-					Injector injector = (Injector) servletContext
-							.getAttribute(Injector.class.getCanonicalName());
-					PluginRegistry registry = injector
-							.getInstance(PluginRegistry.class);
-					PluginDescriptor descriptor = registry.getPlugin(pluginId);
-					String defaultConf = descriptor.getDefaultConfiguration();
-					if (defaultConf != null) {
-						pluginConfigurations.put(pluginId,
-								JSONObject.fromObject(defaultConf));
-					}
-				}
-			}
-
-			servletContext
-					.setAttribute(ATTR_PLUGINS_CONF, pluginConfigurations);
-
-			// Configure Geobricks configuration directory
-			String conf = System.getProperty("GEOBRICKS_CONF_DIR");
-			if (conf == null || !new File(conf).exists()) {
-				// If the system property is not specified, the configuration
-				// is directly in the WEB-INF/default_config directory
-				conf = servletContext.getRealPath("/") + File.separator
-						+ "WEB-INF" + File.separator + "default_config";
-			} else {
-				// If the system property is specified, the configuration is
-				// in GEOBRICKS_CONF_DIR/<app>/
-				conf += File.separator
-						+ WebAppUtils.getApplicationId(servletContext);
-			}
-
-			servletContext.setAttribute(Geobricks.CONF_DIR_ATTRIBUTE, conf);
+			configureContext(sce.getServletContext());
 		} catch (Exception e) {
 			// The application will not be shown so we need to tell at least
 			// the developer
 			logger.error("The application could not be loaded", e);
 		}
+	}
+
+	public void configureContext(ServletContext context) throws IOException {
+		Injector injector = (Injector) context.getAttribute(Injector.class
+				.getCanonicalName());
+		PluginRegistry registry = injector.getInstance(PluginRegistry.class);
+
+		InputStream stream = context
+				.getResourceAsStream("/WEB-INF/conf/gbapp-conf.json");
+		String json = IOUtils.toString(stream);
+		stream.close();
+
+		// Default plugin configurations when empty
+		JSONObject pluginConfigurations = JSONObject.fromObject(json);
+		for (Object key : pluginConfigurations.keySet()) {
+			String pluginId = key.toString();
+			JSONObject pluginConf = pluginConfigurations
+					.getJSONObject(pluginId);
+			String defaultConf = registry.getPlugin(pluginId)
+					.getDefaultConfiguration();
+			if (pluginConf.isEmpty() && defaultConf != null) {
+				pluginConfigurations.put(pluginId,
+						JSONObject.fromObject(defaultConf));
+			}
+		}
+		context.setAttribute(ATTR_PLUGINS_CONF, pluginConfigurations);
+
+		// Configure Geobricks configuration directory
+		String conf = System.getProperty("GEOBRICKS_CONF_DIR");
+
+		// If the system property is not specified, the configuration
+		// is directly in the WEB-INF/default_config directory
+		String appConf = context.getRealPath("/") + File.separator + "WEB-INF"
+				+ File.separator + "default_config";
+		if (conf != null && new File(conf).exists()) {
+			// If the system property is specified and the app subdirectory
+			// exists,
+			// the configuration is in GEOBRICKS_CONF_DIR/<app>/
+			String appId = WebAppUtils.getApplicationId(context);
+			File appDir = new File(conf, appId);
+			if (appDir.exists()) {
+				appConf = conf + File.separator + appId;
+			}
+		}
+		context.setAttribute(Geobricks.CONF_DIR_ATTRIBUTE, appConf);
 	}
 
 	@Override

@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,46 +35,53 @@ public class ConfigServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		JSONObject pluginsConfiguration = (JSONObject) getServletContext()
-				.getAttribute(ConfiguredApplication.ATTR_PLUGINS_CONF);
-
-		JSONObject moduleConfig = new JSONObject();
-		List<String> modules = new ArrayList<String>();
-		for (Object plugin : pluginsConfiguration.keySet()) {
-			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
-					.toString());
-			String[] pluginModules = descriptor.getModules();
-			if (pluginModules != null) {
-				Collections.addAll(modules, pluginModules);
-			}
-
-			JSONObject pluginConfiguration = pluginsConfiguration
-					.getJSONObject(plugin.toString());
-			Iterator<?> iterator = pluginConfiguration.keys();
-			while (iterator.hasNext()) {
-				String propertyName = (String) iterator.next();
-				moduleConfig.element(propertyName,
-						pluginConfiguration.get(propertyName));
-			}
-		}
-
-		String confDir = getServletContext().getAttribute(
-				Geobricks.CONF_DIR_ATTRIBUTE).toString();
-		for (Object plugin : pluginsConfiguration.keySet()) {
-			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
-					.toString());
-			descriptor.config(req, resp, moduleConfig, confDir);
-		}
-
-		moduleConfig.element("main",
-				modules.toArray(new String[modules.size()]));
-
-		String json = new JSONObject().element("config", moduleConfig)
-				.toString();
+		String json = getConfig(req, resp, getServletContext());
 
 		resp.setContentType("application/javascript");
 		resp.setCharacterEncoding("utf8");
 		PrintWriter writer = resp.getWriter();
 		writer.write("var require = " + json);
+	}
+
+	public String getConfig(HttpServletRequest request,
+			HttpServletResponse response, ServletContext context) {
+		JSONObject pluginsConfiguration = (JSONObject) context
+				.getAttribute(ConfiguredApplication.ATTR_PLUGINS_CONF);
+
+		JSONObject moduleConfig = new JSONObject();
+		List<String> modules = new ArrayList<String>();
+
+		for (Object plugin : pluginsConfiguration.keySet()) {
+			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
+					.toString());
+
+			// Add plugin modules
+			String[] pluginModules = descriptor.getModules();
+			if (pluginModules != null) {
+				Collections.addAll(modules, pluginModules);
+			}
+
+			// Add configuration for each module within plugin configuration
+			JSONObject pluginConfiguration = pluginsConfiguration
+					.getJSONObject(plugin.toString());
+			for (Object key : pluginConfiguration.keySet()) {
+				String module = key.toString();
+				moduleConfig.element(module, pluginConfiguration.get(module));
+			}
+		}
+
+		// Manage custom configuration for each plugin
+		String confDir = context.getAttribute(Geobricks.CONF_DIR_ATTRIBUTE)
+				.toString();
+		for (Object plugin : pluginsConfiguration.keySet()) {
+			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
+					.toString());
+			descriptor.config(request, response, moduleConfig, confDir);
+		}
+
+		moduleConfig.element("main",
+				modules.toArray(new String[modules.size()]));
+
+		return new JSONObject().element("config", moduleConfig).toString();
 	}
 }

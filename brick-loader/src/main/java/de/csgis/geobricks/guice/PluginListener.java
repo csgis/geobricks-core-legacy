@@ -16,13 +16,15 @@ import de.csgis.geobricks.PluginRegistry;
 public class PluginListener implements ServletContextListener {
 	private static final Logger logger = Logger.getLogger(PluginListener.class);
 
-	private static final String CONTEXT_PARAM_PREFIX = "geobricks-plugin-";
+	public static final String CONTEXT_PARAM_PREFIX = "geobricks-plugin-";
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void contextInitialized(ServletContextEvent sce) {
-		ServletContext context = sce.getServletContext();
+		configurePluginRegistry(sce.getServletContext());
+	}
 
+	@SuppressWarnings("unchecked")
+	public void configurePluginRegistry(ServletContext context) {
 		Injector injector = (Injector) context.getAttribute(Injector.class
 				.getCanonicalName());
 		PluginRegistry pluginRegistry = injector

@@ -36,9 +36,11 @@ public class IndexReplaceCSSFilter implements Filter {
 		CharResponseWrapper wrapper = new CharResponseWrapper(
 				(HttpServletResponse) response);
 		chain.doFilter(request, wrapper);
+		response.getWriter().print(
+				process(wrapper.toString(), pluginsConfiguration));
+	}
 
-		pluginsConfiguration.keySet();
-
+	public String process(String content, JSONObject pluginsConfiguration) {
 		StringBuilder str = new StringBuilder();
 		for (Object plugin : pluginsConfiguration.keySet()) {
 			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
@@ -52,10 +54,7 @@ public class IndexReplaceCSSFilter implements Filter {
 			}
 		}
 
-		String indexHtmlContent = wrapper.toString().replace("$styleSheets",
-				str.toString());
-
-		response.getWriter().print(indexHtmlContent);
+		return content.replace("$styleSheets", str.toString());
 	}
 
 	@Override
