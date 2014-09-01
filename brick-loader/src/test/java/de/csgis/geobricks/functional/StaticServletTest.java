@@ -21,7 +21,7 @@ public class StaticServletTest extends AbstractFunctionalTest {
 
 		File original = File.createTempFile("close", ".png");
 		InputStream originalStream = getClass().getResourceAsStream(
-				"/de/csgis/geobricks/webapp/images/" + img);
+				"/webapp/images/" + img);
 		IOUtils.copy(originalStream, new FileOutputStream(original));
 
 		HttpResponse response = app.doGet("images/" + img);

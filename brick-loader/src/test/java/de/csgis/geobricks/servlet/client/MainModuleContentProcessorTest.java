@@ -13,6 +13,8 @@ import org.junit.Test;
 import de.csgis.geobricks.PluginDescriptor;
 
 public class MainModuleContentProcessorTest {
+	private static final String MAIN = "/webapp/modules/main.js";
+
 	private MainModuleContentProcessor processor;
 
 	@Before
@@ -24,8 +26,7 @@ public class MainModuleContentProcessorTest {
 	public void replaceNonRequireJSDependencies() throws IOException {
 		String name = "dependency";
 		String path = "jslib/OpenLayers";
-		String content = IOUtils.toString(getClass().getResourceAsStream(
-				"/de/csgis/geobricks/webapp/modules/main.js"));
+		String content = IOUtils.toString(getClass().getResourceAsStream(MAIN));
 
 		PluginDescriptor descriptor = new PluginDescriptor();
 		descriptor.getDependencies().put(name, path);
@@ -41,8 +42,7 @@ public class MainModuleContentProcessorTest {
 
 	@Test
 	public void noDependencies() throws Exception {
-		String content = IOUtils.toString(getClass().getResourceAsStream(
-				"/de/csgis/geobricks/webapp/modules/main.js"));
+		String content = IOUtils.toString(getClass().getResourceAsStream(MAIN));
 
 		PluginDescriptor descriptor = new PluginDescriptor();
 		String processed = processor.process(content,

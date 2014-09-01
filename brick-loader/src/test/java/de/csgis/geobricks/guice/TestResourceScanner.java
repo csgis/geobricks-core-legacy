@@ -51,7 +51,7 @@ public class TestResourceScanner implements PluginScanner {
 	public void scanDir(File root) {
 		entries = new HashSet<String>();
 
-		File[] confs = new File(root, "geobricks").listFiles(new FileFilter() {
+		File[] confs = new File(root, "conf").listFiles(new FileFilter() {
 			@Override
 			public boolean accept(File file) {
 				return file.getName().matches(
@@ -70,9 +70,7 @@ public class TestResourceScanner implements PluginScanner {
 			}
 		}
 
-		String path = "de" + File.separator + "csgis" + File.separator
-				+ "geobricks" + File.separator + "webapp" + File.separator
-				+ "modules";
+		String path = "webapp" + File.separator + "modules";
 		File[] moduleFiles = new File(root, path).listFiles();
 		for (File file : moduleFiles) {
 			entries.add(path + File.separator + file.getName());

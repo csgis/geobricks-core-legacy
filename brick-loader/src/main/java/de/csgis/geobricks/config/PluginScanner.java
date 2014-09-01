@@ -14,7 +14,7 @@ import net.sf.json.JSONObject;
  * 
  */
 public interface PluginScanner {
-	String MODULES_PATH = "de/csgis/geobricks/webapp/modules";
+	String MODULES_PATH = "webapp/modules";
 
 	/**
 	 * Initializes the scanner.

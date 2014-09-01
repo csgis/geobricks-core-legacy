@@ -13,6 +13,8 @@ import org.junit.Test;
 import de.csgis.geobricks.PluginDescriptor;
 
 public class IndexReplaceCSSFilterTest {
+	private static final String INDEX = "/webapp/index.html";
+
 	private IndexReplaceCSSFilter filter;
 
 	@Before
@@ -26,8 +28,8 @@ public class IndexReplaceCSSFilterTest {
 		PluginDescriptor descriptor = new PluginDescriptor();
 		Collections.addAll(descriptor.getStyles(), styles);
 
-		String content = IOUtils.toString(getClass().getResourceAsStream(
-				"/de/csgis/geobricks/webapp/index.html"));
+		String content = IOUtils
+				.toString(getClass().getResourceAsStream(INDEX));
 		String processed = filter.process(content,
 				new PluginDescriptor[] { descriptor });
 
@@ -40,8 +42,8 @@ public class IndexReplaceCSSFilterTest {
 
 	@Test
 	public void noCSS() throws Exception {
-		String content = IOUtils.toString(getClass().getResourceAsStream(
-				"/de/csgis/geobricks/webapp/index.html"));
+		String content = IOUtils
+				.toString(getClass().getResourceAsStream(INDEX));
 		String processed = filter.process(content,
 				new PluginDescriptor[] { new PluginDescriptor() });
 

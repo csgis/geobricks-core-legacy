@@ -71,7 +71,6 @@ public class Path {
 	}
 
 	public InputStream getResourceAsStream() {
-		return this.getClass().getResourceAsStream(
-				"/de/csgis/geobricks/webapp" + path());
+		return this.getClass().getResourceAsStream("/webapp" + path());
 	}
 }

@@ -49,8 +49,8 @@ public class GetApplicationTest extends AbstractFunctionalTest {
 		assertEquals(HttpServletResponse.SC_OK, response.getStatusLine()
 				.getStatusCode());
 
-		InputStream original = getClass().getResourceAsStream(
-				"/de/csgis/geobricks/webapp/" + path);
+		InputStream original = getClass()
+				.getResourceAsStream("/webapp/" + path);
 		InputStream responseContent = response.getEntity().getContent();
 
 		assertEquals(HttpServletResponse.SC_OK, response.getStatusLine()
