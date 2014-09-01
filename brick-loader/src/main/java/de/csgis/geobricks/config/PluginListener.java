@@ -1,6 +1,7 @@
 package de.csgis.geobricks.config;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -106,7 +107,7 @@ public class PluginListener implements ServletContextListener {
 		}
 
 		if (conf.has("css")) {
-			Set<String> styles = descriptor.getStyles();
+			List<String> styles = descriptor.getStyles();
 			styles.clear();
 
 			JSONArray array = conf.getJSONArray("css");
