@@ -5,8 +5,7 @@ import java.io.InputStream;
 import com.google.inject.servlet.ServletModule;
 
 /**
- * Class that holds all the folder structure of the rest API and the web
- * applications
+ * Class that holds all the folder structure of the web applications.
  * 
  * @author fergonco
  */
@@ -75,5 +74,4 @@ public class Path {
 		return this.getClass().getResourceAsStream(
 				"/de/csgis/geobricks/webapp" + path());
 	}
-
 }

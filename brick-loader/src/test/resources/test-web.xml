@@ -25,6 +25,6 @@
 
 	<!-- Configured application -->
 	<listener>
-		<listener-class>de.csgis.geobricks.config.ConfiguredApplication</listener-class>
+		<listener-class>de.csgis.geobricks.config.ApplicationListener</listener-class>
 	</listener>
 </web-app>

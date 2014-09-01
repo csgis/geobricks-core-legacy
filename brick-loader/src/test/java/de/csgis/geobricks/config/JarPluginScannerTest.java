@@ -39,7 +39,7 @@ public class JarPluginScannerTest {
 
 		Set<String> entries = scanner.entries();
 		assertEquals(1, entries.size());
-		assertEquals(PluginListener.modulesDir + File.separator + "mock.css",
+		assertEquals(PluginScanner.MODULES_PATH + File.separator + "mock.css",
 				entries.iterator().next());
 	}
 
@@ -88,9 +88,9 @@ public class JarPluginScannerTest {
 
 		ServletContext context = mock(ServletContext.class);
 		when(context.getResourcePaths(anyString())).thenReturn(resources);
-		when(context.getResourceAsStream(anyString()))
-				.thenReturn(getClass().getResourceAsStream("/resources.jar"))
-				.thenReturn(getClass().getResourceAsStream("/resources2.jar"));
+		when(context.getResourceAsStream(anyString())).thenReturn(
+				getClass().getResourceAsStream("/resources.jar")).thenReturn(
+				getClass().getResourceAsStream("/resources2.jar"));
 
 		JarPluginScanner scanner = new JarPluginScanner();
 		scanner.init(context);

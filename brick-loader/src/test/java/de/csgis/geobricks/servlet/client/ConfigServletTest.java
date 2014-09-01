@@ -24,7 +24,6 @@ import org.junit.Test;
 import de.csgis.geobricks.CustomConfigurator;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.config.ConfiguredApplication;
 
 public class ConfigServletTest {
 	private static final String PLUGIN_ID = "myplugin";
@@ -98,7 +97,7 @@ public class ConfigServletTest {
 		ServletContext context = context(
 				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"),
 				new String[0]);
-		when(context.getAttribute(eq(Geobricks.CONFIGURATORS_ATTRIBUTE)))
+		when(context.getAttribute(eq(Geobricks.ATTR_CONFIGURATORS)))
 				.thenReturn(new CustomConfigurator[] { configurator });
 
 		servlet.getConfig(request, response, context);
@@ -109,18 +108,17 @@ public class ConfigServletTest {
 
 	private ServletContext context(JSONObject pluginsConf, String[] modules) {
 		ServletContext context = mock(ServletContext.class);
-		when(context.getAttribute(eq(ConfiguredApplication.ATTR_PLUGINS_CONF)))
-				.thenReturn(pluginsConf);
-		when(context.getAttribute(eq(Geobricks.CONF_DIR_ATTRIBUTE)))
-				.thenReturn("");
+		when(context.getAttribute(eq(Geobricks.ATTR_PLUGINS_CONF))).thenReturn(
+				pluginsConf);
+		when(context.getAttribute(eq(Geobricks.ATTR_CONF_DIR))).thenReturn("");
 
 		PluginDescriptor descriptor = new PluginDescriptor();
 		Collections.addAll(descriptor.getModules(), modules);
 
-		when(context.getAttribute(eq(Geobricks.CONFIGURATORS_ATTRIBUTE)))
+		when(context.getAttribute(eq(Geobricks.ATTR_CONFIGURATORS)))
 				.thenReturn(new CustomConfigurator[0]);
-		when(context.getAttribute(eq(Geobricks.DESCRIPTORS_ATTRIBUTE)))
-				.thenReturn(new PluginDescriptor[] { descriptor });
+		when(context.getAttribute(eq(Geobricks.ATTR_PLUGINS_DESC))).thenReturn(
+				new PluginDescriptor[] { descriptor });
 
 		return context;
 	}

@@ -23,7 +23,7 @@ import org.mockito.ArgumentCaptor;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 
-public class ConfiguredApplicationTest {
+public class ApplicationListenerTest {
 	private static final String REAL_PATH = "";
 	private static final String DEFAULT_CONFIG_PATH = REAL_PATH
 			+ File.separator + "WEB-INF" + File.separator + "default_config";
@@ -31,17 +31,17 @@ public class ConfiguredApplicationTest {
 	private static final String APP_NAME = "geobricks_testing_app_conf_dir";
 
 	private ServletContext context;
-	private ConfiguredApplication listener;
+	private ApplicationListener listener;
 	private PluginDescriptor descriptor;
 
 	@Before
 	public void setup() {
-		listener = new ConfiguredApplication();
+		listener = new ApplicationListener();
 		context = mock(ServletContext.class);
 
 		descriptor = new PluginDescriptor();
 		descriptor.setId(PLUGIN_ID);
-		when(context.getAttribute(Geobricks.DESCRIPTORS_ATTRIBUTE)).thenReturn(
+		when(context.getAttribute(Geobricks.ATTR_PLUGINS_DESC)).thenReturn(
 				new PluginDescriptor[] { descriptor });
 		when(context.getRealPath(anyString())).thenReturn(REAL_PATH);
 		when(context.getContextPath()).thenReturn(APP_NAME);
@@ -53,7 +53,7 @@ public class ConfiguredApplicationTest {
 		when(context.getResourceAsStream(anyString())).thenReturn(
 				new ByteArrayInputStream(json.getBytes()));
 
-		JSONObject conf = configure(ConfiguredApplication.ATTR_PLUGINS_CONF,
+		JSONObject conf = configure(Geobricks.ATTR_PLUGINS_CONF,
 				JSONObject.class);
 		assertTrue(conf.getJSONObject(PLUGIN_ID).getJSONObject("mymodule")
 				.getBoolean("enabled"));
@@ -68,7 +68,7 @@ public class ConfiguredApplicationTest {
 		when(context.getResourceAsStream(anyString())).thenReturn(
 				new ByteArrayInputStream(json.getBytes()));
 
-		JSONObject conf = configure(ConfiguredApplication.ATTR_PLUGINS_CONF,
+		JSONObject conf = configure(Geobricks.ATTR_PLUGINS_CONF,
 				JSONObject.class);
 
 		assertFalse(conf.getJSONObject(PLUGIN_ID).getJSONObject("mymodule")
@@ -81,7 +81,7 @@ public class ConfiguredApplicationTest {
 		when(context.getResourceAsStream(anyString())).thenReturn(
 				new ByteArrayInputStream(json.getBytes()));
 
-		String conf = configure(Geobricks.CONF_DIR_ATTRIBUTE, String.class);
+		String conf = configure(Geobricks.ATTR_CONF_DIR, String.class);
 		assertEquals(DEFAULT_CONFIG_PATH, conf);
 	}
 
@@ -92,7 +92,7 @@ public class ConfiguredApplicationTest {
 				new ByteArrayInputStream(json.getBytes()));
 
 		System.setProperty("GEOBRICKS_CONF_DIR", "non_existing");
-		String conf = configure(Geobricks.CONF_DIR_ATTRIBUTE, String.class);
+		String conf = configure(Geobricks.ATTR_CONF_DIR, String.class);
 		assertEquals(DEFAULT_CONFIG_PATH, conf);
 	}
 
@@ -104,7 +104,7 @@ public class ConfiguredApplicationTest {
 
 		System.setProperty("GEOBRICKS_CONF_DIR",
 				System.getProperty("java.io.tmpdir"));
-		String conf = configure(Geobricks.CONF_DIR_ATTRIBUTE, String.class);
+		String conf = configure(Geobricks.ATTR_CONF_DIR, String.class);
 		assertEquals(DEFAULT_CONFIG_PATH, conf);
 	}
 
@@ -118,7 +118,7 @@ public class ConfiguredApplicationTest {
 		dir.mkdir();
 
 		System.setProperty("GEOBRICKS_CONF_DIR", dir.getParent());
-		String conf = configure(Geobricks.CONF_DIR_ATTRIBUTE, String.class);
+		String conf = configure(Geobricks.ATTR_CONF_DIR, String.class);
 		assertEquals(dir.getAbsolutePath(), conf);
 
 		dir.delete();
@@ -153,15 +153,15 @@ public class ConfiguredApplicationTest {
 		PluginDescriptor p2 = new PluginDescriptor();
 		p2.setId(id2);
 
-		when(context.getAttribute(Geobricks.DESCRIPTORS_ATTRIBUTE)).thenReturn(
+		when(context.getAttribute(Geobricks.ATTR_PLUGINS_DESC)).thenReturn(
 				new PluginDescriptor[] { p1, p2 });
 
 		String json = "{" + id2 + ": {}, " + id1 + " :{}}";
 		when(context.getResourceAsStream(anyString())).thenReturn(
 				new ByteArrayInputStream(json.getBytes()));
 
-		PluginDescriptor[] descriptors = configure(
-				Geobricks.DESCRIPTORS_ATTRIBUTE, PluginDescriptor[].class);
+		PluginDescriptor[] descriptors = configure(Geobricks.ATTR_PLUGINS_DESC,
+				PluginDescriptor[].class);
 		assertEquals(id2, descriptors[0].getId());
 		assertEquals(id1, descriptors[1].getId());
 	}

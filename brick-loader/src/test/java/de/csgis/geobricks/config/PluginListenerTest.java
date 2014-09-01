@@ -137,7 +137,7 @@ public class PluginListenerTest {
 	public void processCSSEntry() {
 		PluginDescriptor descriptor = new PluginDescriptor();
 		Set<String> entries = new HashSet<String>();
-		entries.add(PluginListener.modulesDir + File.separator + "mock.css");
+		entries.add(PluginScanner.MODULES_PATH + File.separator + "mock.css");
 
 		PluginListener listener = new PluginListener();
 		listener.processEntries(entries, descriptor);
@@ -152,7 +152,7 @@ public class PluginListenerTest {
 	public void processJSEntry() {
 		PluginDescriptor descriptor = new PluginDescriptor();
 		Set<String> entries = new HashSet<String>();
-		entries.add(PluginListener.modulesDir + File.separator + "mock.js");
+		entries.add(PluginScanner.MODULES_PATH + File.separator + "mock.js");
 
 		PluginListener listener = new PluginListener();
 		listener.processEntries(entries, descriptor);

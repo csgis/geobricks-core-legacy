@@ -16,7 +16,6 @@ import net.sf.json.JSONObject;
 import de.csgis.geobricks.CustomConfigurator;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.config.ConfiguredApplication;
 
 /**
  * Builds the json document that configures all the requirejs modules
@@ -41,13 +40,13 @@ public class ConfigServlet extends HttpServlet {
 	public String getConfig(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context) {
 		JSONObject pluginsConfiguration = (JSONObject) context
-				.getAttribute(ConfiguredApplication.ATTR_PLUGINS_CONF);
+				.getAttribute(Geobricks.ATTR_PLUGINS_CONF);
 
 		JSONObject config = new JSONObject();
 		Set<String> modules = new HashSet<String>();
 
 		PluginDescriptor[] descriptors = (PluginDescriptor[]) context
-				.getAttribute(Geobricks.DESCRIPTORS_ATTRIBUTE);
+				.getAttribute(Geobricks.ATTR_PLUGINS_DESC);
 		for (PluginDescriptor descriptor : descriptors) {
 			modules.addAll(descriptor.getModules());
 		}
@@ -66,8 +65,8 @@ public class ConfigServlet extends HttpServlet {
 
 		// Custom configuration
 		CustomConfigurator[] configurators = (CustomConfigurator[]) context
-				.getAttribute(Geobricks.CONFIGURATORS_ATTRIBUTE);
-		String confDir = context.getAttribute(Geobricks.CONF_DIR_ATTRIBUTE)
+				.getAttribute(Geobricks.ATTR_CONFIGURATORS);
+		String confDir = context.getAttribute(Geobricks.ATTR_CONF_DIR)
 				.toString();
 		for (CustomConfigurator configurator : configurators) {
 			configurator.config(request, response, config, confDir);

@@ -22,7 +22,7 @@ public class IndexReplaceCSSFilter implements Filter {
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		descriptors = (PluginDescriptor[]) filterConfig.getServletContext()
-				.getAttribute(Geobricks.DESCRIPTORS_ATTRIBUTE);
+				.getAttribute(Geobricks.ATTR_PLUGINS_DESC);
 	}
 
 	@Override

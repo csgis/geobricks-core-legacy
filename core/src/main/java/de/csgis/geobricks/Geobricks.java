@@ -1,8 +1,15 @@
 package de.csgis.geobricks;
 
 public interface Geobricks {
-	String CONF_DIR_ATTRIBUTE = "de.csgis.geobricks.conf_dir";
+	// Servlet init parameters
+	String INIT_PARAM_ID = "geobricks-app-id";
 
-	String DESCRIPTORS_ATTRIBUTE = "de.csgis.geobricks.plugin_descriptors";
-	String CONFIGURATORS_ATTRIBUTE = "de.csgis.geobricks.plugin_configurators";
+	// Environment variables
+	String ENV_GEOBRICKS_CONF = "GEOBRICKS_CONF_DIR";
+
+	// Servlet attributes
+	String ATTR_CONF_DIR = "de.csgis.geobricks.conf_dir";
+	String ATTR_PLUGINS_CONF = "de.csgis.geobricks.plugins-conf";
+	String ATTR_PLUGINS_DESC = "de.csgis.geobricks.plugin_descriptors";
+	String ATTR_CONFIGURATORS = "de.csgis.geobricks.plugin_configurators";
 }

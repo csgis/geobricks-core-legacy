@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -19,10 +20,26 @@ import de.csgis.geobricks.CustomConfigurator;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 
+/**
+ * Reads the plugin description for all plugins and sets:
+ * 
+ * <ul>
+ * <li>{@link Geobricks#ATTR_PLUGINS_DESC} ({@link PluginDescriptor}[]): Plugin
+ * descriptors.
+ * <li>{@link Geobricks#ATTR_CONFIGURATORS} ({@link CustomConfigurator}[]):
+ * Custom application configurators.</li>
+ * </ul>
+ * .
+ * 
+ * It uses an injected instance of {@link PluginScanner} to obtain all available
+ * plugin descriptors.
+ * 
+ * @author vicgonco
+ * 
+ */
+@Singleton
 public class PluginListener implements ServletContextListener {
 	private static final Logger logger = Logger.getLogger(PluginListener.class);
-
-	public static final String modulesDir = "de/csgis/geobricks/webapp/modules";
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
@@ -47,27 +64,48 @@ public class PluginListener implements ServletContextListener {
 			descriptors.add(descriptor);
 		}
 
-		context.setAttribute(Geobricks.DESCRIPTORS_ATTRIBUTE,
+		context.setAttribute(Geobricks.ATTR_PLUGINS_DESC,
 				descriptors.toArray(new PluginDescriptor[descriptors.size()]));
-		context.setAttribute(Geobricks.CONFIGURATORS_ATTRIBUTE, configurators
+		context.setAttribute(Geobricks.ATTR_CONFIGURATORS, configurators
 				.toArray(new CustomConfigurator[configurators.size()]));
 	}
 
+	/**
+	 * Adds the provided modules and styles to the plugin descriptor.
+	 * 
+	 * @param entries
+	 *            The module and style entries to process. Only <i>.css</i> and
+	 *            <i>.js</i> entries are handled.
+	 * @param descriptor
+	 *            The descriptor where the modules and styles must be added.
+	 */
 	public void processEntries(Set<String> entries, PluginDescriptor descriptor) {
+		int length = PluginScanner.MODULES_PATH.length();
+
 		for (String entry : entries) {
-			if (entry.startsWith(modulesDir) && entry.endsWith(".css")) {
-				descriptor.getStyles().add(
-						"modules/" + entry.substring(modulesDir.length() + 1));
-			} else {
-				if (entry.startsWith(modulesDir) && entry.endsWith(".js")) {
-					String moduleName = entry.substring(
-							modulesDir.length() + 1, entry.length() - 3);
-					descriptor.getModules().add(moduleName);
-				}
+			if (entry.startsWith(PluginScanner.MODULES_PATH)
+					&& entry.endsWith(".css")) {
+				String style = "modules/" + entry.substring(length + 1);
+				descriptor.getStyles().add(style);
+			} else if (entry.startsWith(PluginScanner.MODULES_PATH)
+					&& entry.endsWith(".js")) {
+				String module = entry.substring(length + 1, entry.length() - 3);
+				descriptor.getModules().add(module);
 			}
 		}
 	}
 
+	/**
+	 * Updates the plugin descriptor and the set of custom configurators with
+	 * the provided plugin configuration.
+	 * 
+	 * @param conf
+	 *            The plugin configuration
+	 * @param descriptor
+	 *            The plugin descriptor to update.
+	 * @param configurators
+	 *            The set of custom configurators.
+	 */
 	@SuppressWarnings("unchecked")
 	public void processPluginConf(JSONObject conf, PluginDescriptor descriptor,
 			Set<CustomConfigurator> configurators) {
