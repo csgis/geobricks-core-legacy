@@ -1,5 +1,8 @@
 package de.csgis.geobricks;
 
-public class Geobricks {
-	public static final String CONF_DIR_ATTRIBUTE = "de.csgis.geobricks.conf_dir";
+public interface Geobricks {
+	String CONF_DIR_ATTRIBUTE = "de.csgis.geobricks.conf_dir";
+
+	String DESCRIPTORS_ATTRIBUTE = "de.csgis.geobricks.plugin_descriptors";
+	String CONFIGURATORS_ATTRIBUTE = "de.csgis.geobricks.plugin_configurators";
 }

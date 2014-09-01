@@ -20,16 +20,11 @@
 
 	<!-- Plugins configuration -->
 	<listener>
-		<listener-class>de.csgis.geobricks.guice.PluginListener</listener-class>
+		<listener-class>de.csgis.geobricks.config.PluginListener</listener-class>
 	</listener>
 
 	<!-- Configured application -->
 	<listener>
-		<listener-class>de.csgis.geobricks.ConfiguredApplication</listener-class>
+		<listener-class>de.csgis.geobricks.config.ConfiguredApplication</listener-class>
 	</listener>
-
-	<context-param>
-		<param-name>geobricks-plugin-mock</param-name>
-		<param-value>de.csgis.geobricks.functional.MockPlugin</param-value>
-	</context-param>
 </web-app>

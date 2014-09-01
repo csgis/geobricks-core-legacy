@@ -9,6 +9,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,37 +21,28 @@ import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
-import de.csgis.geobricks.ConfiguredApplication;
+import de.csgis.geobricks.CustomConfigurator;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.PluginRegistry;
-import de.csgis.geobricks.guice.RuntimeModule;
+import de.csgis.geobricks.config.ConfiguredApplication;
 
 public class ConfigServletTest {
 	private static final String PLUGIN_ID = "myplugin";
 	private ConfigServlet servlet;
-	private PluginRegistry pluginRegistry;
 
 	@Before
 	public void setup() {
-		Injector injector = Guice.createInjector(new RuntimeModule());
-		servlet = injector.getInstance(ConfigServlet.class);
-		pluginRegistry = injector.getInstance(PluginRegistry.class);
+		servlet = new ConfigServlet();
 	}
 
 	@Test
 	public void modules() {
 		String[] modules = new String[] { "a", "b" };
-		PluginDescriptor plugin = plugin(modules);
-		pluginRegistry.putPlugin(plugin);
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
-		ServletContext context = context(JSONObject.fromObject("{'" + PLUGIN_ID
-				+ "' : {}}"));
+		ServletContext context = context(
+				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"), modules);
 
 		String config = servlet.getConfig(request, response, context);
 		JSONObject json = JSONObject.fromObject(config);
@@ -58,20 +51,19 @@ public class ConfigServletTest {
 				"main");
 		assertEquals(modules.length, configModules.size());
 		for (int i = 0; i < modules.length; i++) {
-			assertEquals(modules[i], configModules.getString(i));
+			assertTrue(configModules.contains(modules[i]));
 		}
 	}
 
 	@Test
 	public void moduleConfig() {
 		String[] modules = new String[] { "a" };
-		PluginDescriptor plugin = plugin(modules);
-		pluginRegistry.putPlugin(plugin);
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
-		ServletContext context = context(JSONObject.fromObject("{'" + PLUGIN_ID
-				+ "' : { a : {enabled : true}}}"));
+		ServletContext context = context(
+				JSONObject.fromObject("{'" + PLUGIN_ID
+						+ "' : { a : {enabled : true}}}"), modules);
 
 		String config = servlet.getConfig(request, response, context);
 		JSONObject json = JSONObject.fromObject(config);
@@ -82,13 +74,11 @@ public class ConfigServletTest {
 
 	@Test
 	public void noModules() {
-		PluginDescriptor plugin = plugin(null);
-		pluginRegistry.putPlugin(plugin);
-
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
-		ServletContext context = context(JSONObject.fromObject("{'" + PLUGIN_ID
-				+ "' : {}}"));
+		ServletContext context = context(
+				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"),
+				new String[0]);
 
 		String config = servlet.getConfig(request, response, context);
 		JSONObject json = JSONObject.fromObject(config);
@@ -99,38 +89,39 @@ public class ConfigServletTest {
 	}
 
 	@Test
-	public void customPluginConfig() {
-		String[] modules = new String[] { "a", "b" };
-		PluginDescriptor plugin = plugin(modules);
-		pluginRegistry.putPlugin(plugin);
-
+	public void customConfigurator() {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
-		ServletContext context = context(JSONObject.fromObject("{'" + PLUGIN_ID
-				+ "' : {}}"));
+
+		CustomConfigurator configurator = mock(CustomConfigurator.class);
+
+		ServletContext context = context(
+				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"),
+				new String[0]);
+		when(context.getAttribute(eq(Geobricks.CONFIGURATORS_ATTRIBUTE)))
+				.thenReturn(new CustomConfigurator[] { configurator });
 
 		servlet.getConfig(request, response, context);
 
-		verify(plugin).config(eq(request), eq(response), any(JSONObject.class),
-				anyString());
+		verify(configurator).config(eq(request), eq(response),
+				any(JSONObject.class), anyString());
 	}
 
-	private PluginDescriptor plugin(String[] modules) {
-		PluginDescriptor plugin = mock(PluginDescriptor.class);
-		when(plugin.getId()).thenReturn(PLUGIN_ID);
-		when(plugin.getModules()).thenReturn(modules);
-
-		return plugin;
-	}
-
-	private ServletContext context(JSONObject pluginsConf) {
+	private ServletContext context(JSONObject pluginsConf, String[] modules) {
 		ServletContext context = mock(ServletContext.class);
 		when(context.getAttribute(eq(ConfiguredApplication.ATTR_PLUGINS_CONF)))
 				.thenReturn(pluginsConf);
 		when(context.getAttribute(eq(Geobricks.CONF_DIR_ATTRIBUTE)))
 				.thenReturn("");
 
-		return context;
+		PluginDescriptor descriptor = new PluginDescriptor();
+		Collections.addAll(descriptor.getModules(), modules);
 
+		when(context.getAttribute(eq(Geobricks.CONFIGURATORS_ATTRIBUTE)))
+				.thenReturn(new CustomConfigurator[0]);
+		when(context.getAttribute(eq(Geobricks.DESCRIPTORS_ATTRIBUTE)))
+				.thenReturn(new PluginDescriptor[] { descriptor });
+
+		return context;
 	}
 }

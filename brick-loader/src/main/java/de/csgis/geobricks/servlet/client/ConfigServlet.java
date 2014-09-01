@@ -2,11 +2,9 @@ package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -15,10 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
-import de.csgis.geobricks.ConfiguredApplication;
+import de.csgis.geobricks.CustomConfigurator;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.PluginRegistry;
+import de.csgis.geobricks.config.ConfiguredApplication;
 
 /**
  * Builds the json document that configures all the requirejs modules
@@ -28,9 +26,6 @@ import de.csgis.geobricks.PluginRegistry;
 @Singleton
 public class ConfigServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	private PluginRegistry pluginRegistry;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -48,40 +43,36 @@ public class ConfigServlet extends HttpServlet {
 		JSONObject pluginsConfiguration = (JSONObject) context
 				.getAttribute(ConfiguredApplication.ATTR_PLUGINS_CONF);
 
-		JSONObject moduleConfig = new JSONObject();
-		List<String> modules = new ArrayList<String>();
+		JSONObject config = new JSONObject();
+		Set<String> modules = new HashSet<String>();
+
+		PluginDescriptor[] descriptors = (PluginDescriptor[]) context
+				.getAttribute(Geobricks.DESCRIPTORS_ATTRIBUTE);
+		for (PluginDescriptor descriptor : descriptors) {
+			modules.addAll(descriptor.getModules());
+		}
 
 		for (Object plugin : pluginsConfiguration.keySet()) {
-			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
-					.toString());
-
-			// Add plugin modules
-			String[] pluginModules = descriptor.getModules();
-			if (pluginModules != null) {
-				Collections.addAll(modules, pluginModules);
-			}
-
 			// Add configuration for each module within plugin configuration
 			JSONObject pluginConfiguration = pluginsConfiguration
 					.getJSONObject(plugin.toString());
 			for (Object key : pluginConfiguration.keySet()) {
 				String module = key.toString();
-				moduleConfig.element(module, pluginConfiguration.get(module));
+				config.element(module, pluginConfiguration.get(module));
 			}
 		}
 
-		// Manage custom configuration for each plugin
+		config.element("main", modules);
+
+		// Custom configuration
+		CustomConfigurator[] configurators = (CustomConfigurator[]) context
+				.getAttribute(Geobricks.CONFIGURATORS_ATTRIBUTE);
 		String confDir = context.getAttribute(Geobricks.CONF_DIR_ATTRIBUTE)
 				.toString();
-		for (Object plugin : pluginsConfiguration.keySet()) {
-			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
-					.toString());
-			descriptor.config(request, response, moduleConfig, confDir);
+		for (CustomConfigurator configurator : configurators) {
+			configurator.config(request, response, config, confDir);
 		}
 
-		moduleConfig.element("main",
-				modules.toArray(new String[modules.size()]));
-
-		return new JSONObject().element("config", moduleConfig).toString();
+		return new JSONObject().element("config", config).toString();
 	}
 }

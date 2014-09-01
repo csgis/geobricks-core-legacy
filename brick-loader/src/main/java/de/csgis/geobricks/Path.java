@@ -38,24 +38,8 @@ public class Path {
 		return ret;
 	}
 
-	public Path rest() {
-		return copy().append("/" + "rest");
-	}
-
-	public Path apps() {
-		return copy().append("/" + APPS);
-	}
-
-	public Path any() {
-		return copy().append("/[^/]+");
-	}
-
 	public Path all() {
 		return copy().append(".*");
-	}
-
-	public Path plugins() {
-		return copy().append("/" + PLUGINS);
 	}
 
 	public Path jslib() {
@@ -72,10 +56,6 @@ public class Path {
 
 	public Path module(String moduleName) {
 		return copy().append("/modules/" + moduleName);
-	}
-
-	public Path app(String appId) {
-		return copy().append("/apps/" + appId);
 	}
 
 	public Path file(String fileName) {

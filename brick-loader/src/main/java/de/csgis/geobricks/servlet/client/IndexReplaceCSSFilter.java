@@ -2,7 +2,6 @@ package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -12,22 +11,18 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-import de.csgis.geobricks.ConfiguredApplication;
+import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.PluginRegistry;
 
 @Singleton
 public class IndexReplaceCSSFilter implements Filter {
-	@Inject
-	private PluginRegistry pluginRegistry;
 
-	private JSONObject pluginsConfiguration;
+	private PluginDescriptor[] descriptors;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		pluginsConfiguration = (JSONObject) filterConfig.getServletContext()
-				.getAttribute(ConfiguredApplication.ATTR_PLUGINS_CONF);
+		descriptors = (PluginDescriptor[]) filterConfig.getServletContext()
+				.getAttribute(Geobricks.DESCRIPTORS_ATTRIBUTE);
 	}
 
 	@Override
@@ -36,21 +31,15 @@ public class IndexReplaceCSSFilter implements Filter {
 		CharResponseWrapper wrapper = new CharResponseWrapper(
 				(HttpServletResponse) response);
 		chain.doFilter(request, wrapper);
-		response.getWriter().print(
-				process(wrapper.toString(), pluginsConfiguration));
+		response.getWriter().print(process(wrapper.toString(), descriptors));
 	}
 
-	public String process(String content, JSONObject pluginsConfiguration) {
+	public String process(String content, PluginDescriptor[] descriptors) {
 		StringBuilder str = new StringBuilder();
-		for (Object plugin : pluginsConfiguration.keySet()) {
-			PluginDescriptor descriptor = pluginRegistry.getPlugin(plugin
-					.toString());
-			String[] styleSheets = descriptor.getStyleSheets();
-			if (styleSheets != null) {
-				for (String styleSheet : styleSheets) {
-					str.append("<link rel=\"stylesheet\" href=\"" + styleSheet
-							+ "\"/>\n");
-				}
+		for (PluginDescriptor descriptor : descriptors) {
+			for (String style : descriptor.getStyles()) {
+				str.append("<link rel=\"stylesheet\" href=\"" + style
+						+ "\"/>\n");
 			}
 		}
 

@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.junit.Test;
@@ -80,8 +82,7 @@ public class GetApplicationTest extends AbstractFunctionalTest {
 	public void indexHTMLContainsCSS() throws Exception {
 		HttpResponse response = app.doGet();
 		String content = IOUtils.toString(response.getEntity().getContent());
-		Pattern pattern = Pattern.compile("<link[^>]*" + MockPlugin.CSS
-				+ "[^>]/>");
+		Pattern pattern = Pattern.compile("<link[^>]*mock.css[^>]/>");
 		assertTrue(pattern.matcher(content).find());
 	}
 
@@ -91,5 +92,15 @@ public class GetApplicationTest extends AbstractFunctionalTest {
 		String content = IOUtils.toString(response.getEntity().getContent());
 		Pattern pattern = Pattern.compile("<link[^>]*bootstrap.*[^>]/>");
 		assertFalse(pattern.matcher(content).find());
+	}
+
+	@Test
+	public void getConfig() throws Exception {
+		HttpResponse response = app.doGet("config.js");
+		String content = IOUtils.toString(response.getEntity().getContent());
+		assertTrue(content.startsWith("var require = "));
+		JSONObject json = JSONObject.fromObject(content
+				.substring("var require = ".length()));
+		assertTrue(json.getJSONObject("config").has("main"));
 	}
 }

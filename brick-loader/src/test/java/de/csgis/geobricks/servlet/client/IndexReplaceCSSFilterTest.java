@@ -2,73 +2,48 @@ package de.csgis.geobricks.servlet.client;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.regex.Pattern;
-
-import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.PluginRegistry;
-import de.csgis.geobricks.guice.RuntimeModule;
 
 public class IndexReplaceCSSFilterTest {
-	private Injector injector;
 	private IndexReplaceCSSFilter filter;
-	private PluginRegistry pluginRegistry;
 
 	@Before
 	public void setup() {
-		injector = Guice.createInjector(new RuntimeModule());
-		filter = injector.getInstance(IndexReplaceCSSFilter.class);
-		pluginRegistry = injector.getInstance(PluginRegistry.class);
+		filter = new IndexReplaceCSSFilter();
 	}
 
 	@Test
 	public void replaceCSS() throws Exception {
-		String id = "myplugin";
-		String[] styleSheets = new String[] { "a.css", "b.css" };
-
-		PluginDescriptor plugin = mock(PluginDescriptor.class);
-		when(plugin.getStyleSheets()).thenReturn(styleSheets);
-		when(plugin.getId()).thenReturn(id);
-
-		pluginRegistry.putPlugin(plugin);
+		String[] styles = new String[] { "a.css", "b.css" };
+		PluginDescriptor descriptor = new PluginDescriptor();
+		Collections.addAll(descriptor.getStyles(), styles);
 
 		String content = IOUtils.toString(getClass().getResourceAsStream(
 				"/de/csgis/geobricks/webapp/index.html"));
 		String processed = filter.process(content,
-				JSONObject.fromObject("{'" + id + "' : {}}"));
+				new PluginDescriptor[] { descriptor });
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
-		for (String css : styleSheets) {
+		for (String css : styles) {
 			checkCSS(processed, css);
 		}
 	}
 
 	@Test
-	public void pluginWithoutCSS() throws Exception {
-		String id = "myplugin";
-
-		PluginDescriptor plugin = mock(PluginDescriptor.class);
-		when(plugin.getStyleSheets()).thenReturn(null);
-		when(plugin.getId()).thenReturn(id);
-
-		pluginRegistry.putPlugin(plugin);
-
+	public void noCSS() throws Exception {
 		String content = IOUtils.toString(getClass().getResourceAsStream(
 				"/de/csgis/geobricks/webapp/index.html"));
 		String processed = filter.process(content,
-				JSONObject.fromObject("{'" + id + "' : {}}"));
+				new PluginDescriptor[] { new PluginDescriptor() });
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
