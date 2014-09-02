@@ -75,7 +75,7 @@ public class JarPluginScanner implements PluginScanner {
 			if (name.matches(MODULES_PATH + File.separator + ".+")) {
 				entries.add(name);
 			} else if (name.matches("conf" + File.separator
-					+ "[^/]+.pluginconf")) {
+					+ "[^/]+-pluginconf.json")) {
 				pluginConf = JSONObject.fromObject(IOUtils.toString(jar));
 			}
 		}

@@ -42,7 +42,7 @@ public interface PluginScanner {
 
 	/**
 	 * Returns the JSON plugin configuration defined in
-	 * <i>/geobricks/&lt;plugin&gt;.pluginconf</i>.
+	 * <i>/conf/&lt;plugin&gt;-pluginconf.json</i>.
 	 * 
 	 * @return
 	 */

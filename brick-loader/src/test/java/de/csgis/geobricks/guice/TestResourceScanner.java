@@ -55,7 +55,7 @@ public class TestResourceScanner implements PluginScanner {
 			@Override
 			public boolean accept(File file) {
 				return file.getName().matches(
-						"[^" + File.separator + "]+.pluginconf");
+						"[^" + File.separator + "]+-pluginconf.json");
 			}
 		});
 
