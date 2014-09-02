@@ -32,8 +32,13 @@ define([ "jquery" ], function($) {
 		messageBus.bind(name, callBack);
 	}
 
+	function unbind() {
+		messageBus.unbind();
+	}
+
 	return {
 		send : send,
-		listen : listen
+		listen : listen,
+		unbind : unbind
 	};
 });
