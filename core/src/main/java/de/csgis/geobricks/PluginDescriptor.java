@@ -16,6 +16,13 @@ public class PluginDescriptor {
 	private List<String> styles = new ArrayList<String>();
 	private Map<String, String> dependencies = new HashMap<String, String>();
 
+	public PluginDescriptor() {
+	}
+
+	public PluginDescriptor(String id) {
+		this.id = id;
+	}
+
 	public String getId() {
 		return id;
 	}

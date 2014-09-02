@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -64,7 +64,7 @@ public class ApplicationListener implements ServletContextListener {
 				.getAttribute(Geobricks.ATTR_PLUGINS_DESC);
 
 		List<String> order = configurePluginConfs(descriptors, context);
-		sortDescriptors(descriptors, order, context);
+		filterAndSortDescriptors(descriptors, order, context);
 		configureConfDir(context);
 	}
 
@@ -132,24 +132,37 @@ public class ApplicationListener implements ServletContextListener {
 
 	/**
 	 * Sets the {@link Geobricks#ATTR_PLUGINS_DESC} attribute with the ordered
-	 * plugin descriptors.
+	 * plugin descriptors. It also removes all the plugins that are not defined
+	 * in the application descriptor.
 	 * 
 	 * @param descriptors
 	 *            The plugins descriptors.
 	 * @param order
-	 *            An ordered list of plugin identifiers.
+	 *            An ordered list of plugin identifiers from the application
+	 *            descriptor.
 	 * @param context
 	 *            The servlet context where the attribute must be set.
 	 */
-	private void sortDescriptors(PluginDescriptor[] descriptors,
+	private void filterAndSortDescriptors(PluginDescriptor[] descriptors,
 			final List<String> order, ServletContext context) {
-		Arrays.sort(descriptors, new Comparator<PluginDescriptor>() {
+		// Filter
+		List<PluginDescriptor> filtered = new ArrayList<PluginDescriptor>();
+		for (PluginDescriptor descriptor : descriptors) {
+			if (order.contains(descriptor.getId())) {
+				filtered.add(descriptor);
+			}
+		}
+
+		// Sort
+		Collections.sort(filtered, new Comparator<PluginDescriptor>() {
 			@Override
 			public int compare(PluginDescriptor o1, PluginDescriptor o2) {
 				return order.indexOf(o1.getId()) - order.indexOf(o2.getId());
 			}
 		});
-		context.setAttribute(Geobricks.ATTR_PLUGINS_DESC, descriptors);
+
+		context.setAttribute(Geobricks.ATTR_PLUGINS_DESC,
+				filtered.toArray(new PluginDescriptor[filtered.size()]));
 	}
 
 	/**

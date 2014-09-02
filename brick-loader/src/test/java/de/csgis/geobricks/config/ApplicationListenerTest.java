@@ -145,25 +145,39 @@ public class ApplicationListenerTest {
 
 	@Test
 	public void pluginDescriptorOrder() throws Exception {
-		String id1 = "p1";
-		String id2 = "p2";
-
-		PluginDescriptor p1 = new PluginDescriptor();
-		p1.setId(id1);
-		PluginDescriptor p2 = new PluginDescriptor();
-		p2.setId(id2);
+		PluginDescriptor p1 = new PluginDescriptor("p1");
+		PluginDescriptor p2 = new PluginDescriptor("p2");
 
 		when(context.getAttribute(Geobricks.ATTR_PLUGINS_DESC)).thenReturn(
 				new PluginDescriptor[] { p1, p2 });
 
-		String json = "{" + id2 + ": {}, " + id1 + " :{}}";
+		String json = "{" + p2.getId() + ": {}, " + p1.getId() + " :{}}";
 		when(context.getResourceAsStream(anyString())).thenReturn(
 				new ByteArrayInputStream(json.getBytes()));
 
 		PluginDescriptor[] descriptors = configure(Geobricks.ATTR_PLUGINS_DESC,
 				PluginDescriptor[].class);
-		assertEquals(id2, descriptors[0].getId());
-		assertEquals(id1, descriptors[1].getId());
+		assertEquals(p2.getId(), descriptors[0].getId());
+		assertEquals(p1.getId(), descriptors[1].getId());
+	}
+
+	@Test
+	public void onlyIncludePluginsOnAppConf() throws Exception {
+		// Only PLUGIN_ID defined
+		String json = "{" + PLUGIN_ID + ": {}}";
+		when(context.getResourceAsStream(anyString())).thenReturn(
+				new ByteArrayInputStream(json.getBytes()));
+
+		// Several plugins on classpath
+		PluginDescriptor p1 = new PluginDescriptor(PLUGIN_ID);
+		PluginDescriptor p2 = new PluginDescriptor(PLUGIN_ID + "2");
+		when(context.getAttribute(Geobricks.ATTR_PLUGINS_DESC)).thenReturn(
+				new PluginDescriptor[] { p1, p2 });
+
+		PluginDescriptor[] descriptors = configure(Geobricks.ATTR_PLUGINS_DESC,
+				PluginDescriptor[].class);
+		assertEquals(1, descriptors.length);
+		assertEquals(PLUGIN_ID, descriptors[0].getId());
 	}
 
 	private <T extends Object> T configure(String attribute, Class<T> clazz)
