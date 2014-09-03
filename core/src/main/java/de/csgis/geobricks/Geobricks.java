@@ -5,7 +5,7 @@ public interface Geobricks {
 	String INIT_PARAM_ID = "geobricks-app-id";
 
 	// Environment variables
-	String ENV_GEOBRICKS_CONF = "GEOBRICKS_CONF_DIR";
+	String PROP_GEOBRICKS_CONF = "GEOBRICKS_CONF_DIR";
 
 	// Servlet attributes
 	String ATTR_CONF_DIR = "de.csgis.geobricks.conf_dir";
