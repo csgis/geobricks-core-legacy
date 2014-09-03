@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Context docBase="brick-loader" path="/brick-loader" reloadable="true"
-	source="org.eclipse.jst.j2ee.server:brick-loader">
-	<Resource name="jdbc/app" auth="Container" type="javax.sql.DataSource"
-		driverClassName="org.h2.Driver" url="jdbc:h2:mem:" username="sa"
-		password="" />
-</Context>

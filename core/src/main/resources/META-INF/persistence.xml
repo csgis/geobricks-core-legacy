@@ -1,0 +1,26 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+	version="2.0">
+	<persistence-unit name="geobricks">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>de.csgis.geobricks.model.Application</class>
+		<class>de.csgis.geobricks.model.ApplicationPluginUsage</class>
+		<properties>
+			<!-- Vendor specific -->
+			<property name="eclipselink.ddl-generation" value="create-tables" />
+		</properties>
+	</persistence-unit>
+	<persistence-unit name="test">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>de.csgis.geobricks.model.Application</class>
+		<class>de.csgis.geobricks.model.ApplicationPluginUsage</class>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+			<property name="javax.persistence.jdbc.user" value="sa" />
+			<property name="javax.persistence.jdbc.password" value="" />
+			<!-- Vendor specific -->
+			<property name="eclipselink.ddl-generation" value="create-tables" />
+		</properties>
+	</persistence-unit>
+</persistence>
