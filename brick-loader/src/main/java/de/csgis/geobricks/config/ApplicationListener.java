@@ -30,7 +30,7 @@ import de.csgis.geobricks.PluginDescriptor;
  * <li>Sets {@link Geobricks#ATTR_PLUGINS_CONF} with the app-specific plugin
  * configuration.</li>
  * <li>Sets {@link Geobricks#ATTR_CONF_DIR} with the application configuration
- * dir. If the {@link Geobricks#ENV_GEOBRICKS_CONF} environment variable has
+ * dir. If the {@link Geobricks#PROP_GEOBRICKS_CONF} environment variable has
  * been set as an existing directory and a subdirectory for this application
  * exists, that subdirectory will be used. If not, a default directory under
  * WEB-INF will be used.</li>
@@ -167,15 +167,15 @@ public class ApplicationListener implements ServletContextListener {
 
 	/**
 	 * Configures the {@link Geobricks#ATTR_CONF_DIR} attribute with the
-	 * application conf directory. ${{@link Geobricks#ENV_GEOBRICKS_CONF}
-	 * /&lt;app&gt; or a <i>WEB-INF/default_config</i> if the environment
-	 * variable is not set or the directory does not exist.
+	 * application conf directory. ${{@link Geobricks#PROP_GEOBRICKS_CONF}
+	 * /&lt;app&gt; or a <i>WEB-INF/default_config</i> if the system property is
+	 * not set or the directory does not exist.
 	 * 
 	 * @param context
 	 *            The servlet context where the attribute must be set.
 	 */
 	private void configureConfDir(ServletContext context) {
-		String conf = System.getProperty(Geobricks.ENV_GEOBRICKS_CONF);
+		String conf = System.getProperty(Geobricks.PROP_GEOBRICKS_CONF);
 
 		// If the system property is not specified, the configuration
 		// is directly in the WEB-INF/default_config directory
