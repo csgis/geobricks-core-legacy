@@ -1,46 +1,53 @@
 package de.csgis.geobricks;
 
-public interface PluginDescriptor {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-	/**
-	 * @return the paths for the plugin dependencies that are not RequireJS
-	 *         modules. If a path for the aplication is specified, the library
-	 *         must be included as a resource in the classpath. null if none
-	 */
-	NonRequireDependency[] getNonRequireDependencies();
+import net.sf.json.JSONObject;
 
-	/**
-	 * @return the configuration that will be passed to the requirejs modules.
-	 *         The string must contain a JSON object with one property with the
-	 *         name of each module that is to be configured.
-	 * 
-	 *         It can return null if no configuration is necessary
-	 */
-	String getDefaultConfiguration();
+public class PluginDescriptor {
+	private String id;
+	private JSONObject defaultConfiguration;
+	private Set<String> modules = new HashSet<String>();
+	private List<String> styles = new ArrayList<String>();
+	private Map<String, String> dependencies = new HashMap<String, String>();
 
-	/**
-	 * @return the paths for the CSS files required by this plugin. null if none
-	 */
-	String[] getStyleSheets();
+	public PluginDescriptor() {
+	}
 
-	/**
-	 * Human readable name to be displayed.
-	 * 
-	 * @return
-	 */
-	String getName();
+	public PluginDescriptor(String id) {
+		this.id = id;
+	}
 
-	/**
-	 * Unique identifier for the plugin.
-	 * 
-	 * @return
-	 */
-	String getId();
+	public String getId() {
+		return id;
+	}
 
-	/**
-	 * Get the requireJS modules in this plugin. null if none.
-	 * 
-	 * @return
-	 */
-	String[] getModules();
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Set<String> getModules() {
+		return modules;
+	}
+
+	public List<String> getStyles() {
+		return styles;
+	}
+
+	public Map<String, String> getDependencies() {
+		return dependencies;
+	}
+
+	public JSONObject getDefaultConfiguration() {
+		return defaultConfiguration;
+	}
+
+	public void setDefaultConfiguration(JSONObject defaultConfiguration) {
+		this.defaultConfiguration = defaultConfiguration;
+	}
 }

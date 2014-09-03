@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.Path;
 import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
 /**
@@ -35,17 +35,24 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String requestURI = req.getRequestURI();
+		InputStream resourceStream = getResource(req.getRequestURI());
 
+		try {
+			write(resourceStream, resp);
+		} finally {
+			resourceStream.close();
+		}
+	}
+
+	public InputStream getResource(String uri) throws HTTPCodeServletException {
 		String resource;
 		if (this.resource != null) {
 			resource = this.resource;
 		} else {
-			resource = requestURI.substring(requestURI.indexOf(folder)
-					+ folder.length() + 1);
+			resource = uri.substring(uri.indexOf(folder) + folder.length() + 1);
 		}
 
-		InputStream resourceStream = Geobricks.root.file(folder).file(resource)
+		InputStream resourceStream = Path.root.file(folder).file(resource)
 				.getResourceAsStream();
 
 		if (resourceStream == null) {
@@ -53,11 +60,7 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 					+ resource, HttpServletResponse.SC_NOT_FOUND);
 		}
 
-		try {
-			write(resourceStream, resp);
-		} finally {
-			resourceStream.close();
-		}
+		return resourceStream;
 	}
 
 	protected abstract void write(InputStream stream,
