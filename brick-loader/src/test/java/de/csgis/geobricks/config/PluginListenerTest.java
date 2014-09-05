@@ -4,12 +4,25 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipInputStream;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -136,11 +149,11 @@ public class PluginListenerTest {
 	@Test
 	public void processCSSEntry() {
 		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<String> entries = new HashSet<String>();
-		entries.add(PluginScanner.MODULES_PATH + File.separator + "mock.css");
+		String entry = PluginListener.MODULES_PATH + File.separator
+				+ "mock.css";
 
 		PluginListener listener = new PluginListener();
-		listener.processEntries(entries, descriptor);
+		listener.processEntry(entry, descriptor);
 
 		assertEquals(0, descriptor.getModules().size());
 		assertEquals(1, descriptor.getStyles().size());
@@ -151,11 +164,10 @@ public class PluginListenerTest {
 	@Test
 	public void processJSEntry() {
 		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<String> entries = new HashSet<String>();
-		entries.add(PluginScanner.MODULES_PATH + File.separator + "mock.js");
+		String entry = PluginListener.MODULES_PATH + File.separator + "mock.js";
 
 		PluginListener listener = new PluginListener();
-		listener.processEntries(entries, descriptor);
+		listener.processEntry(entry, descriptor);
 
 		assertEquals(1, descriptor.getModules().size());
 		assertEquals(0, descriptor.getStyles().size());
@@ -165,14 +177,40 @@ public class PluginListenerTest {
 	@Test
 	public void processInvalidEntry() {
 		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<String> entries = new HashSet<String>();
-		entries.add("invalid_entry");
 
 		PluginListener listener = new PluginListener();
-		listener.processEntries(entries, descriptor);
+		listener.processEntry("invalid_entry", descriptor);
 
 		assertEquals(0, descriptor.getModules().size());
 		assertEquals(0, descriptor.getStyles().size());
+	}
+
+	@Test
+	public void processEntriesFromJar() throws IOException {
+		ZipInputStream jar = new ZipInputStream(getClass().getResourceAsStream(
+				"/resources.jar"));
+		PluginListener listener = new PluginListener();
+		PluginDescriptor descriptor = listener.getModulesAndStylesFromJar(jar);
+
+		List<String> styles = descriptor.getStyles();
+		assertEquals(1, styles.size());
+		assertEquals("modules/mock.css", styles.get(0));
+	}
+
+	@Test
+	public void getPluginDescriptorFromJar() throws Exception {
+		InputStream stream = mock(InputStream.class);
+		ServletContext context = mock(ServletContext.class);
+		URL pluginConf = new URL(
+				"jar:file:/tmp/mock.jar!/conf/mock-pluginconf.json");
+		when(context.getResourceAsStream(anyString())).thenReturn(stream);
+
+		PluginListener listener = spy(new PluginListener());
+		doReturn(new PluginDescriptor()).when(listener)
+				.getModulesAndStylesFromJar(any(ZipInputStream.class));
+		listener.getModulesAndStyles(context, pluginConf);
+
+		verify(listener).getModulesAndStylesFromJar(any(ZipInputStream.class));
 	}
 
 	@Test

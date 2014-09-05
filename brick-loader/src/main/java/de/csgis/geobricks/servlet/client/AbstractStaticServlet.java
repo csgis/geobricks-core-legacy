@@ -35,10 +35,18 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		InputStream resourceStream = getResource(req.getRequestURI());
+		String requestURI = req.getRequestURI();
+		InputStream resourceStream = getResource(requestURI);
 
 		try {
 			write(resourceStream, resp);
+			if (requestURI.endsWith(".js")) {
+				resp.setContentType("application/javascript");
+				resp.setCharacterEncoding("UTF-8");
+			} else if (requestURI.endsWith(".html")) {
+				resp.setContentType("text/html");
+				resp.setCharacterEncoding("UTF-8");
+			}
 		} finally {
 			resourceStream.close();
 		}

@@ -13,13 +13,16 @@
 		<module>core</module>
 		<module>brick-loader</module>
 		<module>geobricks-full</module>
+		<module>tests-commons</module>
 		<module>plugins</module>
 		<module>apps</module>
 	</modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+        <jasmine.version>2.0-alpha-01</jasmine.version>
+        <saga.version>1.4.0</saga.version>
+    </properties>
 
 	<build>
 		<plugins>

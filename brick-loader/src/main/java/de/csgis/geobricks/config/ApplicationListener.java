@@ -2,7 +2,6 @@ package de.csgis.geobricks.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,7 +14,6 @@ import javax.servlet.ServletContextListener;
 
 import net.sf.json.JSONObject;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import de.csgis.geobricks.Geobricks;
@@ -44,7 +42,6 @@ import de.csgis.geobricks.PluginDescriptor;
  */
 @Singleton
 public class ApplicationListener implements ServletContextListener {
-	private static final String APP_CONF_PATH = "/WEB-INF/conf/gbapp-conf.json";
 	private static final Logger logger = Logger
 			.getLogger(ApplicationListener.class);
 
@@ -84,14 +81,11 @@ public class ApplicationListener implements ServletContextListener {
 	 */
 	private List<String> configurePluginConfs(PluginDescriptor[] descriptors,
 			ServletContext context) throws IOException {
-		InputStream stream = context.getResourceAsStream(APP_CONF_PATH);
-		String json = IOUtils.toString(stream);
-		stream.close();
-
 		List<String> pluginOrder = new ArrayList<String>();
 
 		// Default plugin configurations when empty
-		JSONObject pluginConfigurations = JSONObject.fromObject(json);
+		JSONObject pluginConfigurations = (JSONObject) context
+				.getAttribute(Geobricks.ATTR_PLUGINS_CONF);
 		for (Object key : pluginConfigurations.keySet()) {
 			String pluginId = key.toString();
 

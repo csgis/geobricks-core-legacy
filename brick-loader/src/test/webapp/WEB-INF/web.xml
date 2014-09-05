@@ -15,7 +15,7 @@
 
 	<!-- Guice servlet configuration -->
 	<listener>
-		<listener-class>de.csgis.geobricks.guice.TestGuiceServletConfig</listener-class>
+		<listener-class>de.csgis.geobricks.guice.GuiceServletConfig</listener-class>
 	</listener>
 
 	<!-- Plugins configuration -->
