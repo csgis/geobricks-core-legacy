@@ -1,6 +1,7 @@
 package de.csgis.geobricks.config;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -114,9 +115,9 @@ public class PluginListener implements ServletContextListener {
 		if (protocol.equals("jar")) {
 			try {
 				String path = new URL(pluginConf.getFile()).getPath();
-				ZipInputStream jar = new ZipInputStream(
-						context.getResourceAsStream(path.substring(0,
-								path.indexOf('!'))));
+				logger.debug("Getting path: " + path);
+				ZipInputStream jar = new ZipInputStream(new FileInputStream(
+						path.substring(0, path.indexOf('!'))));
 				return getModulesAndStylesFromJar(jar);
 			} catch (MalformedURLException e) {
 				throw new IOException(e);

@@ -201,8 +201,9 @@ public class PluginListenerTest {
 	public void getPluginDescriptorFromJar() throws Exception {
 		InputStream stream = mock(InputStream.class);
 		ServletContext context = mock(ServletContext.class);
-		URL pluginConf = new URL(
-				"jar:file:/tmp/mock.jar!/conf/mock-pluginconf.json");
+		URL pluginConf = new URL("jar:file:"
+				+ getClass().getResource("/resources.jar").getFile()
+				+ "!/conf/mock-pluginconf.json");
 		when(context.getResourceAsStream(anyString())).thenReturn(stream);
 
 		PluginListener listener = spy(new PluginListener());
