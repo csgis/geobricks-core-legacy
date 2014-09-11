@@ -20,9 +20,23 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jasmine.version>2.0-alpha-01</jasmine.version>
-        <saga.version>1.5.3</saga.version>
-    </properties>
+		<jasmine.version>2.0-alpha-01</jasmine.version>
+		<saga.version>1.5.3</saga.version>
+	</properties>
+
+	<distributionManagement>
+		<!-- 80.237.188.123 is geo-service -->
+		<repository>
+			<id>gbnexus</id>
+			<name>Geobricks Nexus</name>
+			<url>http://80.237.188.123/nexus/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>gbnexus</id>
+			<name>Geobricks nexus</name>
+			<url>http://80.237.188.123/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<build>
 		<plugins>
