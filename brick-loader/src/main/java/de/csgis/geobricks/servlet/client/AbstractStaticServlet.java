@@ -36,30 +36,38 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String requestURI = req.getRequestURI();
-		InputStream resourceStream = getResource(requestURI);
+		InputStream resourceStream = getResourceStream(requestURI);
 
 		try {
 			write(resourceStream, resp);
-			if (requestURI.endsWith(".js")) {
-				resp.setContentType("application/javascript");
-				resp.setCharacterEncoding("UTF-8");
-			} else if (requestURI.endsWith(".html")) {
-				resp.setContentType("text/html");
-				resp.setCharacterEncoding("UTF-8");
-			}
+			setContentTypeAndEncoding(resp, requestURI);
 		} finally {
 			resourceStream.close();
 		}
 	}
 
-	public InputStream getResource(String uri) throws HTTPCodeServletException {
-		String resource;
-		if (this.resource != null) {
-			resource = this.resource;
-		} else {
-			resource = uri.substring(uri.indexOf(folder) + folder.length() + 1);
+	public void setContentTypeAndEncoding(HttpServletResponse resp, String uri) {
+		String resource = getResource(uri);
+		if (resource.endsWith(".js")) {
+			resp.setContentType("application/javascript");
+			resp.setCharacterEncoding("UTF-8");
+		} else if (resource.endsWith(".html")) {
+			resp.setContentType("text/html");
+			resp.setCharacterEncoding("UTF-8");
 		}
+	}
 
+	public String getResource(String uri) {
+		if (this.resource != null) {
+			return this.resource;
+		} else {
+			return uri.substring(uri.indexOf(folder) + folder.length() + 1);
+		}
+	}
+
+	public InputStream getResourceStream(String uri)
+			throws HTTPCodeServletException {
+		String resource = getResource(uri);
 		InputStream resourceStream = Path.root.file(folder).file(resource)
 				.getResourceAsStream();
 
