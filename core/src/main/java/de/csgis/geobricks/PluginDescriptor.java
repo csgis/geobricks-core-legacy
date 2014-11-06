@@ -14,7 +14,8 @@ public class PluginDescriptor {
 	private JSONObject defaultConfiguration;
 	private Set<String> modules = new HashSet<String>();
 	private List<String> styles = new ArrayList<String>();
-	private Map<String, String> dependencies = new HashMap<String, String>();
+	private Map<String, String> requirePaths = new HashMap<String, String>();
+	private Map<String, String[]> requireShim = new HashMap<String, String[]>();
 
 	public PluginDescriptor() {
 	}
@@ -39,8 +40,12 @@ public class PluginDescriptor {
 		return styles;
 	}
 
-	public Map<String, String> getDependencies() {
-		return dependencies;
+	public Map<String, String> getRequirePaths() {
+		return requirePaths;
+	}
+
+	public Map<String, String[]> getRequireShim() {
+		return requireShim;
 	}
 
 	public JSONObject getDefaultConfiguration() {

@@ -1,12 +1,9 @@
 require.config({
 	baseUrl : "modules",
-	paths : {
-		$nonRequireJSDependencies
-	},
-	shim : {},
+	$paths,
+	$shim,
 	waitSeconds : 15
 });
-
 
 var defaultOnError = require.onError;
 

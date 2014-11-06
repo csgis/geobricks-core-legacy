@@ -74,7 +74,7 @@ public class PluginListener implements ServletContextListener {
 
 		for (Object key : appConf.keySet()) {
 			URL pluginConfUrl = getClass().getResource(
-					"/conf/" + key + "-pluginconf.json");
+					"/conf/" + key + "-conf.json");
 			PluginDescriptor pluginDescriptor = getModulesAndStyles(context,
 					pluginConfUrl);
 
@@ -233,11 +233,27 @@ public class PluginListener implements ServletContextListener {
 			descriptor.setDefaultConfiguration(defaultConf);
 		}
 
-		JSONObject deps = conf.getJSONObject("non-require-deps");
-		if (deps != null && !deps.isNullObject()) {
-			for (Object key : deps.keySet()) {
-				String name = key.toString();
-				descriptor.getDependencies().put(name, deps.getString(name));
+		JSONObject requirejs = conf.getJSONObject("requirejs");
+		if (requirejs != null && !requirejs.isNullObject()) {
+			JSONObject paths = requirejs.getJSONObject("paths");
+			if (paths != null && !paths.isNullObject()) {
+				for (Object key : paths.keySet()) {
+					String name = key.toString();
+					descriptor.getRequirePaths().put(name,
+							paths.getString(name));
+				}
+			}
+			JSONObject shim = requirejs.getJSONObject("shim");
+			if (shim != null && !shim.isNullObject()) {
+				for (Object key : shim.keySet()) {
+					String name = key.toString();
+					JSONArray array = shim.getJSONArray(name);
+					String[] shimDeps = new String[array.size()];
+					for (int i = 0; i < shimDeps.length; i++) {
+						shimDeps[i] = array.getString(i);
+					}
+					descriptor.getRequireShim().put(name, shimDeps);
+				}
 			}
 		}
 
