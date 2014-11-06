@@ -12,14 +12,14 @@ import org.junit.Test;
 
 import de.csgis.geobricks.PluginDescriptor;
 
-public class IndexReplaceCSSFilterTest {
+public class IndexHTMLContentProcessorTest {
 	private static final String INDEX = "/webapp/index.html";
 
-	private IndexReplaceCSSFilter filter;
+	private IndexHTMLContentProcessor filter;
 
 	@Before
 	public void setup() {
-		filter = new IndexReplaceCSSFilter();
+		filter = new IndexHTMLContentProcessor();
 	}
 
 	@Test
@@ -31,7 +31,7 @@ public class IndexReplaceCSSFilterTest {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
 		String processed = filter.process(content,
-				new PluginDescriptor[] { descriptor });
+				new PluginDescriptor[] { descriptor }, false);
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -45,11 +45,35 @@ public class IndexReplaceCSSFilterTest {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
 		String processed = filter.process(content,
-				new PluginDescriptor[] { new PluginDescriptor() });
+				new PluginDescriptor[] { new PluginDescriptor() }, false);
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
 		assertFalse(processed.contains("<link"));
+	}
+
+	@Test
+	public void minifiedJS() throws Exception {
+		String content = IOUtils
+				.toString(getClass().getResourceAsStream(INDEX));
+		String processed = filter.process(content,
+				new PluginDescriptor[] { new PluginDescriptor() }, true);
+
+		assertTrue(content.contains("$mainModule"));
+		assertFalse(processed.contains("$mainModule"));
+		assertFalse(processed.contains("\"main\" : \"optimized/portal\""));
+	}
+
+	@Test
+	public void notMinifiedJS() throws Exception {
+		String content = IOUtils
+				.toString(getClass().getResourceAsStream(INDEX));
+		String processed = filter.process(content,
+				new PluginDescriptor[] { new PluginDescriptor() }, false);
+
+		assertTrue(content.contains("$mainModule"));
+		assertFalse(processed.contains("$mainModule"));
+		assertFalse(processed.contains("\"main\" : \"modules/main\""));
 	}
 
 	private void checkCSS(String content, String css) {

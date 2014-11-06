@@ -3,7 +3,15 @@
 <head>
 $styleSheets
 <script src="config.js"></script>
-<script src="jslib/require.js" data-main="modules/main"></script>
+<script src="jslib/require.js"></script>
+<script>
+	require.config({
+		paths : {
+			"main" : "$mainModule"
+		}
+	});
+	require([ "main" ]);
+</script>
 </head>
 <body>
 </body>
