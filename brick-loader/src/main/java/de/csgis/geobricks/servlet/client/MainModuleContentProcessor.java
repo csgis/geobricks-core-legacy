@@ -42,8 +42,6 @@ public class MainModuleContentProcessor implements Filter {
 		StringBuilder paths = new StringBuilder();
 		StringBuilder shim = new StringBuilder();
 
-		paths.append("\"jquery\" : \"../jslib/jquery-1.11.0.min\",");
-
 		for (PluginDescriptor descriptor : descriptors) {
 			Map<String, String> requirePaths = descriptor.getRequirePaths();
 			for (Object key : requirePaths.keySet()) {
