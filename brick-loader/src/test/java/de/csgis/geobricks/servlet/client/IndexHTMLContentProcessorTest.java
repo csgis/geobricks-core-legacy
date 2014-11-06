@@ -60,8 +60,11 @@ public class IndexHTMLContentProcessorTest {
 				new PluginDescriptor[] { new PluginDescriptor() }, true);
 
 		assertTrue(content.contains("$mainModule"));
+		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$mainModule"));
+		assertFalse(processed.contains("$styleSheets"));
 		assertFalse(processed.contains("\"main\" : \"optimized/portal\""));
+		checkCSS(processed, "optimized/portal-style.css");
 	}
 
 	@Test
@@ -72,8 +75,11 @@ public class IndexHTMLContentProcessorTest {
 				new PluginDescriptor[] { new PluginDescriptor() }, false);
 
 		assertTrue(content.contains("$mainModule"));
+		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$mainModule"));
-		assertFalse(processed.contains("\"main\" : \"modules/main\""));
+		assertFalse(processed.contains("$styleSheets"));
+		assertFalse(processed.contains("\"main\" : \"optimized/portal\""));
+		assertFalse(processed.contains("optimized/portal-style.css"));
 	}
 
 	private void checkCSS(String content, String css) {

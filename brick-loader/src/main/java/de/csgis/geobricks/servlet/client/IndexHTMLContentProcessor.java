@@ -33,7 +33,7 @@ public class IndexHTMLContentProcessor implements Filter {
 		ServletContext context = filterConfig.getServletContext();
 		descriptors = (PluginDescriptor[]) context
 				.getAttribute(Geobricks.ATTR_PLUGINS_DESC);
-		String confDir = context.getAttribute(Geobricks.ATTR_PLUGINS_DESC)
+		String confDir = context.getAttribute(Geobricks.ATTR_CONF_DIR)
 				.toString();
 		appProperties = new File(confDir, "app.properties");
 	}
@@ -49,8 +49,7 @@ public class IndexHTMLContentProcessor implements Filter {
 		try {
 			Properties properties = new Properties();
 			properties.load(new FileInputStream(appProperties));
-			minified = Boolean.parseBoolean(properties
-					.getProperty("minified_js"));
+			minified = Boolean.parseBoolean(properties.getProperty("minified"));
 		} catch (IOException e) {
 			logger.error(
 					"Error reading app.properties file: "
@@ -63,19 +62,20 @@ public class IndexHTMLContentProcessor implements Filter {
 
 	public String process(String content, PluginDescriptor[] descriptors,
 			boolean minified) {
-		StringBuilder str = new StringBuilder();
-		for (PluginDescriptor descriptor : descriptors) {
-			for (String style : descriptor.getStyles()) {
-				str.append("<link rel=\"stylesheet\" href=\"" + style
-						+ "\"/>\n");
-			}
-		}
-
-		content = content.replace("$styleSheets", str.toString());
 		if (minified) {
-			return content.replace("$mainModule", "modules/main");
-		} else {
+			String css = "<link rel=\"stylesheet\" href=\"optimized/portal-style.css\"/>\n";
+			content = content.replace("$styleSheets", css);
 			return content.replace("$mainModule", "optimized/portal.js");
+		} else {
+			StringBuilder str = new StringBuilder();
+			for (PluginDescriptor descriptor : descriptors) {
+				for (String style : descriptor.getStyles()) {
+					str.append("<link rel=\"stylesheet\" href=\"" + style
+							+ "\"/>\n");
+				}
+			}
+			content = content.replace("$styleSheets", str.toString());
+			return content.replace("$mainModule", "modules/main");
 		}
 	}
 
