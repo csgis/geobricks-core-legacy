@@ -34,7 +34,7 @@ public class MainModuleContentProcessorTest {
 				new PluginDescriptor[] { descriptor });
 
 		Pattern pattern = Pattern.compile("paths\\s*:\\s*\\{.*\"" + name
-				+ "\"\\s*:\\s*\"../" + path + "\"", Pattern.DOTALL);
+				+ "\"\\s*:\\s*\"" + path + "\"", Pattern.DOTALL);
 		assertTrue(content.contains("$paths"));
 		assertFalse(processed.contains("$paths"));
 		assertTrue(pattern.matcher(processed).find());
@@ -48,9 +48,7 @@ public class MainModuleContentProcessorTest {
 		String processed = processor.process(content,
 				new PluginDescriptor[] { descriptor });
 
-		// Only jquery dependency
-		Pattern pattern = Pattern.compile(
-				"paths\\s*:\\s*\\{[^\\}]*\"jquery\"\\s*:\\s*[^\\}]+\\}",
+		Pattern pattern = Pattern.compile("paths\\s*:\\s*\\{\\s*\\}",
 				Pattern.DOTALL);
 		assertTrue(content.contains("$paths"));
 		assertFalse(processed.contains("$paths"));

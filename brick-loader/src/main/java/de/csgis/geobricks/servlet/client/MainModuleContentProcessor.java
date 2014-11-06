@@ -49,9 +49,7 @@ public class MainModuleContentProcessor implements Filter {
 
 				paths.append('"').append(name).append('"');
 				paths.append(':');
-				// Paths are relative to modules so we go up one level
-				paths.append("\"../").append(requirePaths.get(name))
-						.append('"');
+				paths.append("\"").append(requirePaths.get(name)).append('"');
 				paths.append(",\n\t\t");
 			}
 
