@@ -47,7 +47,7 @@ public class ConfigServletTest {
 		JSONObject json = JSONObject.fromObject(config);
 
 		JSONArray configModules = json.getJSONObject("config").getJSONArray(
-				"main");
+				"load-modules");
 		assertEquals(modules.length, configModules.size());
 		for (int i = 0; i < modules.length; i++) {
 			assertTrue(configModules.contains(modules[i]));
@@ -83,7 +83,7 @@ public class ConfigServletTest {
 		JSONObject json = JSONObject.fromObject(config);
 
 		JSONArray configModules = json.getJSONObject("config").getJSONArray(
-				"main");
+				"load-modules");
 		assertEquals(0, configModules.size());
 	}
 

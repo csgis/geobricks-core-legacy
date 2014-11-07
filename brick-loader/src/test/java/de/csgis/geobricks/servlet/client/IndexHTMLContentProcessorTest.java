@@ -63,7 +63,7 @@ public class IndexHTMLContentProcessorTest {
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$mainModule"));
 		assertFalse(processed.contains("$styleSheets"));
-		assertFalse(processed.contains("\"main\" : \"optimized/portal\""));
+		assertTrue(processed.contains("\"main\" : \"optimized/portal\""));
 		checkCSS(processed, "optimized/portal-style.css");
 	}
 

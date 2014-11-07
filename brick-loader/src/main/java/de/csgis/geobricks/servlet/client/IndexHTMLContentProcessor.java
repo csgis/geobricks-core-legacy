@@ -65,7 +65,7 @@ public class IndexHTMLContentProcessor implements Filter {
 		if (minified) {
 			String css = "<link rel=\"stylesheet\" href=\"optimized/portal-style.css\"/>\n";
 			content = content.replace("$styleSheets", css);
-			return content.replace("$mainModule", "optimized/portal.js");
+			return content.replace("$mainModule", "optimized/portal");
 		} else {
 			StringBuilder str = new StringBuilder();
 			for (PluginDescriptor descriptor : descriptors) {
