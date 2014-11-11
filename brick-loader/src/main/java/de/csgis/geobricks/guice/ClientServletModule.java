@@ -39,6 +39,8 @@ public class ClientServletModule extends ServletModule {
 		// Static content
 		serveRegex(Path.root.modules().all().path()).with(
 				new StaticBinaryServlet("modules"));
+		serveRegex(Path.root.styles().all().path()).with(
+				new StaticBinaryServlet("styles"));
 		serveRegex(Path.root.jslib().all().path()).with(
 				new StaticBinaryServlet("jslib"));
 		serveRegex(Path.root.images().all().path()).with(
