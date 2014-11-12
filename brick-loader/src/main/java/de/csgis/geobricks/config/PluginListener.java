@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -49,6 +48,7 @@ public class PluginListener implements ServletContextListener {
 	private static final Logger logger = Logger.getLogger(PluginListener.class);
 
 	public static final String MODULES_PATH = "webapp/modules";
+	public static final String STYLES_PATH = "webapp/styles";
 	public static final String APP_CONF_PATH = "/WEB-INF/conf/gbapp-conf.json";
 
 	@Override
@@ -183,11 +183,13 @@ public class PluginListener implements ServletContextListener {
 	/**
 	 * Processes the given entry.
 	 * 
-	 * If it's a <code>.js</code> file within the {@link #MODULES_PATH}
-	 * directory it will be added to the modules set of the plugin descriptor.
+	 * If it's a <code>.js</code> file within the {@link #MODULES_PATH} or the
+	 * {@link #STYLES_PATH} directory it will be added to the modules set of the
+	 * plugin descriptor.
 	 * 
-	 * If it's a <code>.css</code> file within the {@link #MODULES_PATH}
-	 * directory it will be added to the styles list of the plugin descriptor.
+	 * If it's a <code>.css</code> file within the {@link #MODULES_PATH} or the
+	 * {@link #STYLES_PATH} directory it will be added to the styles list of the
+	 * plugin descriptor.
 	 * 
 	 * @param entry
 	 *            The entry to process.
@@ -195,15 +197,21 @@ public class PluginListener implements ServletContextListener {
 	 *            The descriptor where the module or style should be added.
 	 */
 	public void processEntry(String entry, PluginDescriptor descriptor) {
-		int length = PluginListener.MODULES_PATH.length();
+		int modulesLength = PluginListener.MODULES_PATH.length();
 
-		if (entry.startsWith(PluginListener.MODULES_PATH)
-				&& entry.endsWith(".css")) {
-			String style = "modules/" + entry.substring(length + 1);
-			descriptor.getStyles().add(style);
-		} else if (entry.startsWith(PluginListener.MODULES_PATH)
-				&& entry.endsWith(".js")) {
-			String module = entry.substring(length + 1, entry.length() - 3);
+		if (entry.endsWith(".css")) {
+			int stylesLength = PluginListener.STYLES_PATH.length();
+			if (entry.startsWith(PluginListener.MODULES_PATH)) {
+				String style = "modules/" + entry.substring(modulesLength + 1);
+				descriptor.getStyles().add(style);
+			} else if (entry.startsWith(PluginListener.STYLES_PATH)) {
+				String style = "styles/" + entry.substring(stylesLength + 1);
+				descriptor.getStyles().add(style);
+			}
+		} else if (entry.endsWith(".js")
+				&& entry.startsWith(PluginListener.MODULES_PATH)) {
+			String module = entry.substring(modulesLength + 1,
+					entry.length() - 3);
 			descriptor.getModules().add(module);
 		}
 	}
@@ -219,7 +227,6 @@ public class PluginListener implements ServletContextListener {
 	 * @param configurators
 	 *            The set of custom configurators.
 	 */
-	@SuppressWarnings("unchecked")
 	public void processPluginConf(JSONObject conf, PluginDescriptor descriptor,
 			Set<CustomConfigurator> configurators) {
 		if (!conf.has("id")) {
@@ -271,14 +278,6 @@ public class PluginListener implements ServletContextListener {
 				logger.error("Cannot instantiate custom configurator: "
 						+ configurator + ". Ignoring.", e);
 			}
-		}
-
-		if (conf.has("css")) {
-			List<String> styles = descriptor.getStyles();
-			styles.clear();
-
-			JSONArray array = conf.getJSONArray("css");
-			styles.addAll(JSONArray.toCollection(array));
 		}
 	}
 

@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -188,6 +187,20 @@ public class PluginListenerTest {
 	}
 
 	@Test
+	public void processCSSFromStylesDirectory() {
+		PluginDescriptor descriptor = new PluginDescriptor();
+		String entry = PluginListener.STYLES_PATH + File.separator + "mock.css";
+
+		PluginListener listener = new PluginListener();
+		listener.processEntry(entry, descriptor);
+
+		assertEquals(0, descriptor.getModules().size());
+		assertEquals(1, descriptor.getStyles().size());
+		assertEquals("styles/mock.css", descriptor.getStyles().iterator()
+				.next());
+	}
+
+	@Test
 	public void processJSEntry() {
 		PluginDescriptor descriptor = new PluginDescriptor();
 		String entry = PluginListener.MODULES_PATH + File.separator + "mock.js";
@@ -251,25 +264,6 @@ public class PluginListenerTest {
 		PluginListener listener = new PluginListener();
 		listener.processPluginConf(conf, descriptor, configurators);
 		assertEquals(id, descriptor.getId());
-	}
-
-	@Test
-	public void css() {
-		String[] css1 = new String[] { "a.css" };
-		String[] css2 = new String[] { "b.css", "c.css" };
-
-		PluginDescriptor descriptor = new PluginDescriptor();
-		Collections.addAll(descriptor.getStyles(), css1);
-
-		JSONObject conf = new JSONObject();
-		conf.element("id", "mock");
-		conf.element("css", css2);
-
-		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor,
-				new HashSet<CustomConfigurator>());
-
-		assertArrayEquals(css2, descriptor.getStyles().toArray(new String[0]));
 	}
 
 	public static class MockConfigurator implements CustomConfigurator {
