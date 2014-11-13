@@ -1,7 +1,6 @@
 package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 
 import javax.inject.Singleton;
@@ -13,8 +12,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-
+import net.sf.json.JSONArray;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 
@@ -56,8 +54,7 @@ public class MainModuleContentProcessor implements Filter {
 			Map<String, String[]> requireShim = descriptor.getRequireShim();
 			for (Object key : requireShim.keySet()) {
 				String name = key.toString();
-				JSONArray array = new JSONArray(Arrays.asList(requireShim
-						.get(name)));
+				JSONArray array = JSONArray.fromObject(requireShim.get(name));
 				shim.append("\"" + name + "\": " + array.toString() + ",\n\t\t");
 			}
 		}
