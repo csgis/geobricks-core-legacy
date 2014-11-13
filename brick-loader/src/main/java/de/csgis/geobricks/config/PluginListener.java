@@ -77,7 +77,7 @@ public class PluginListener implements ServletContextListener {
 					"/conf/" + key + "-conf.json");
 			PluginDescriptor pluginDescriptor = getModulesAndStyles(context,
 					pluginConfUrl);
-
+			pluginDescriptor.setId(key.toString());
 			if (pluginDescriptor != null) {
 				JSONObject pluginConf = JSONObject.fromObject(IOUtils
 						.toString(pluginConfUrl.openStream()));
@@ -229,12 +229,6 @@ public class PluginListener implements ServletContextListener {
 	 */
 	public void processPluginConf(JSONObject conf, PluginDescriptor descriptor,
 			Set<CustomConfigurator> configurators) {
-		if (!conf.has("id")) {
-			return;
-		}
-
-		descriptor.setId(conf.getString("id"));
-
 		JSONObject defaultConf = conf.getJSONObject("default-conf");
 		if (defaultConf != null && !defaultConf.isNullObject()) {
 			descriptor.setDefaultConfiguration(defaultConf);

@@ -253,19 +253,6 @@ public class PluginListenerTest {
 		verify(listener).getModulesAndStylesFromJar(any(ZipInputStream.class));
 	}
 
-	@Test
-	public void processPluginId() {
-		String id = "mock";
-
-		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
-		JSONObject conf = JSONObject.fromObject("{'id' : '" + id + "'}");
-
-		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor, configurators);
-		assertEquals(id, descriptor.getId());
-	}
-
 	public static class MockConfigurator implements CustomConfigurator {
 		@Override
 		public void config(HttpServletRequest request,
