@@ -23,37 +23,70 @@ public class MainModuleContentProcessorTest {
 	}
 
 	@Test
-	public void replaceNonRequireJSDependencies() throws IOException {
+	public void replaceRequireDeps() throws IOException {
 		String name = "dependency";
 		String path = "jslib/OpenLayers";
 		String content = IOUtils.toString(getClass().getResourceAsStream(MAIN));
 
 		PluginDescriptor descriptor = new PluginDescriptor();
-		descriptor.getDependencies().put(name, path);
+		descriptor.getRequirePaths().put(name, path);
 		String processed = processor.process(content,
 				new PluginDescriptor[] { descriptor });
 
 		Pattern pattern = Pattern.compile("paths\\s*:\\s*\\{.*\"" + name
-				+ "\"\\s*:\\s*\"../" + path + "\"", Pattern.DOTALL);
-		assertTrue(content.contains("$nonRequireJSDependencies"));
-		assertFalse(processed.contains("$nonRequireJSDependencies"));
+				+ "\"\\s*:\\s*\"" + path + "\"", Pattern.DOTALL);
+		assertTrue(content.contains("$paths"));
+		assertFalse(processed.contains("$paths"));
 		assertTrue(pattern.matcher(processed).find());
 	}
 
 	@Test
-	public void noDependencies() throws Exception {
+	public void noRequireDeps() throws Exception {
 		String content = IOUtils.toString(getClass().getResourceAsStream(MAIN));
 
 		PluginDescriptor descriptor = new PluginDescriptor();
 		String processed = processor.process(content,
 				new PluginDescriptor[] { descriptor });
 
-		// Only jquery dependency
-		Pattern pattern = Pattern.compile(
-				"paths\\s*:\\s*\\{[^\\}]*\"jquery\"\\s*:\\s*[^\\}]+\\}",
+		Pattern pattern = Pattern.compile("paths\\s*:\\s*\\{\\s*\\}",
 				Pattern.DOTALL);
-		assertTrue(content.contains("$nonRequireJSDependencies"));
-		assertFalse(processed.contains("$nonRequireJSDependencies"));
+		assertTrue(content.contains("$paths"));
+		assertFalse(processed.contains("$paths"));
+		assertTrue(pattern.matcher(processed).find());
+	}
+
+	@Test
+	public void replaceRequireShim() throws IOException {
+		String shimLib = "dependency";
+		String shimDep = "openlayers";
+		String content = IOUtils.toString(getClass().getResourceAsStream(MAIN));
+
+		PluginDescriptor descriptor = new PluginDescriptor();
+		descriptor.getRequireShim().put(shimLib, new String[] { shimDep });
+		String processed = processor.process(content,
+				new PluginDescriptor[] { descriptor });
+
+		Pattern pattern = Pattern.compile("shim\\s*:\\s*\\{.*\"" + shimLib
+				+ "\"\\s*:\\s*\\[\"" + shimDep + "\"\\]", Pattern.DOTALL);
+		assertTrue(content.contains("$shim"));
+		assertFalse(processed.contains("$shim"));
+		assertTrue(pattern.matcher(processed).find());
+	}
+
+	@Test
+	public void noRequireShim() throws Exception {
+		String content = IOUtils.toString(getClass().getResourceAsStream(MAIN));
+
+		PluginDescriptor descriptor = new PluginDescriptor();
+		String processed = processor.process(content,
+				new PluginDescriptor[] { descriptor });
+
+		// Empty shim
+		Pattern pattern = Pattern.compile("shim\\s*:\\s*\\{\\s*\\}",
+				Pattern.DOTALL);
+
+		assertTrue(content.contains("$shim"));
+		assertFalse(processed.contains("$shim"));
 		assertTrue(pattern.matcher(processed).find());
 	}
 }

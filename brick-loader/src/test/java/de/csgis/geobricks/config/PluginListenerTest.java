@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,14 +36,14 @@ import de.csgis.geobricks.PluginDescriptor;
 
 public class PluginListenerTest {
 	@Test
-	public void testInvalidPluginConf() {
+	public void invalidPluginConf() {
 		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
 		PluginDescriptor descriptor = new PluginDescriptor();
 		JSONObject conf = JSONObject.fromObject("{}");
 
 		PluginListener listener = new PluginListener();
 		listener.processPluginConf(conf, descriptor, configurators);
-		assertEquals(0, descriptor.getDependencies().size());
+		assertEquals(0, descriptor.getRequirePaths().size());
 		assertNull(descriptor.getDefaultConfiguration());
 		assertEquals(0, configurators.size());
 	}
@@ -57,7 +56,7 @@ public class PluginListenerTest {
 
 		PluginListener listener = new PluginListener();
 		listener.processPluginConf(conf, descriptor, configurators);
-		assertEquals(0, descriptor.getDependencies().size());
+		assertEquals(0, descriptor.getRequirePaths().size());
 		assertNull(descriptor.getDefaultConfiguration());
 		assertEquals(0, configurators.size());
 	}
@@ -73,7 +72,7 @@ public class PluginListenerTest {
 
 		PluginListener listener = new PluginListener();
 		listener.processPluginConf(conf, descriptor, configurators);
-		assertEquals(0, descriptor.getDependencies().size());
+		assertEquals(0, descriptor.getRequirePaths().size());
 		assertEquals(0, configurators.size());
 
 		JSONObject defaultConf = descriptor.getDefaultConfiguration();
@@ -81,22 +80,46 @@ public class PluginListenerTest {
 	}
 
 	@Test
-	public void dependencies() {
+	public void requirePaths() {
 		String name = "openlayers";
 		String path = "jslib/OpenLayers";
 
 		PluginDescriptor descriptor = new PluginDescriptor();
 		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
 		JSONObject conf = JSONObject.fromObject("{'id' : 'mock',"
-				+ "'non-require-deps' : { '" + name + "' : '" + path + "' }}");
+				+ "'requirejs' : { 'paths' : { '" + name + "' : '" + path
+				+ "' }}}");
 
 		PluginListener listener = new PluginListener();
 		listener.processPluginConf(conf, descriptor, configurators);
-		assertEquals(1, descriptor.getDependencies().size());
+		assertEquals(1, descriptor.getRequirePaths().size());
 		assertEquals(0, configurators.size());
 		assertNull(descriptor.getDefaultConfiguration());
 
-		assertEquals(path, descriptor.getDependencies().get(name));
+		assertEquals(path, descriptor.getRequirePaths().get(name));
+	}
+
+	@Test
+	public void requireShim() {
+		String shimLib = "openlayers";
+		String shimDep = "jquery";
+
+		PluginDescriptor descriptor = new PluginDescriptor();
+		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
+		JSONObject conf = JSONObject.fromObject("{'id' : 'mock',"
+				+ "'requirejs' : { " //
+				+ "'shim' : { " //
+				+ "'" + shimLib + "' : ['" + shimDep + "'] "//
+				+ "}}}");
+
+		PluginListener listener = new PluginListener();
+		listener.processPluginConf(conf, descriptor, configurators);
+		assertEquals(1, descriptor.getRequireShim().size());
+		assertEquals(0, configurators.size());
+		assertNull(descriptor.getDefaultConfiguration());
+
+		assertArrayEquals(new String[] { shimDep }, descriptor.getRequireShim()
+				.get(shimLib));
 	}
 
 	@Test
@@ -108,7 +131,7 @@ public class PluginListenerTest {
 
 		PluginListener listener = new PluginListener();
 		listener.processPluginConf(conf, descriptor, configurators);
-		assertEquals(0, descriptor.getDependencies().size());
+		assertEquals(0, descriptor.getRequirePaths().size());
 		assertEquals(0, configurators.size());
 		assertNull(descriptor.getDefaultConfiguration());
 	}
@@ -123,7 +146,7 @@ public class PluginListenerTest {
 
 		PluginListener listener = new PluginListener();
 		listener.processPluginConf(conf, descriptor, configurators);
-		assertEquals(0, descriptor.getDependencies().size());
+		assertEquals(0, descriptor.getRequirePaths().size());
 		assertEquals(0, configurators.size());
 		assertNull(descriptor.getDefaultConfiguration());
 	}
@@ -140,7 +163,7 @@ public class PluginListenerTest {
 		PluginListener listener = new PluginListener();
 		listener.processPluginConf(conf, descriptor, configurators);
 
-		assertEquals(0, descriptor.getDependencies().size());
+		assertEquals(0, descriptor.getRequirePaths().size());
 		assertEquals(1, configurators.size());
 		assertNull(descriptor.getDefaultConfiguration());
 
@@ -160,6 +183,20 @@ public class PluginListenerTest {
 		assertEquals(0, descriptor.getModules().size());
 		assertEquals(1, descriptor.getStyles().size());
 		assertEquals("modules/mock.css", descriptor.getStyles().iterator()
+				.next());
+	}
+
+	@Test
+	public void processCSSFromStylesDirectory() {
+		PluginDescriptor descriptor = new PluginDescriptor();
+		String entry = PluginListener.STYLES_PATH + File.separator + "mock.css";
+
+		PluginListener listener = new PluginListener();
+		listener.processEntry(entry, descriptor);
+
+		assertEquals(0, descriptor.getModules().size());
+		assertEquals(1, descriptor.getStyles().size());
+		assertEquals("styles/mock.css", descriptor.getStyles().iterator()
 				.next());
 	}
 
@@ -205,7 +242,7 @@ public class PluginListenerTest {
 		ServletContext context = mock(ServletContext.class);
 		URL pluginConf = new URL("jar:file:"
 				+ getClass().getResource("/resources.jar").getFile()
-				+ "!/conf/mock-pluginconf.json");
+				+ "!/conf/mock-conf.json");
 		when(context.getResourceAsStream(anyString())).thenReturn(stream);
 
 		PluginListener listener = spy(new PluginListener());
@@ -214,38 +251,6 @@ public class PluginListenerTest {
 		listener.getModulesAndStyles(context, pluginConf);
 
 		verify(listener).getModulesAndStylesFromJar(any(ZipInputStream.class));
-	}
-
-	@Test
-	public void processPluginId() {
-		String id = "mock";
-
-		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
-		JSONObject conf = JSONObject.fromObject("{'id' : '" + id + "'}");
-
-		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor, configurators);
-		assertEquals(id, descriptor.getId());
-	}
-
-	@Test
-	public void css() {
-		String[] css1 = new String[] { "a.css" };
-		String[] css2 = new String[] { "b.css", "c.css" };
-
-		PluginDescriptor descriptor = new PluginDescriptor();
-		Collections.addAll(descriptor.getStyles(), css1);
-
-		JSONObject conf = new JSONObject();
-		conf.element("id", "mock");
-		conf.element("css", css2);
-
-		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor,
-				new HashSet<CustomConfigurator>());
-
-		assertArrayEquals(css2, descriptor.getStyles().toArray(new String[0]));
 	}
 
 	public static class MockConfigurator implements CustomConfigurator {

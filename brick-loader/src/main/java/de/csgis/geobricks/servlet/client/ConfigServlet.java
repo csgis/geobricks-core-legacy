@@ -61,7 +61,7 @@ public class ConfigServlet extends HttpServlet {
 			}
 		}
 
-		config.element("main", modules);
+		config.element("load-modules", modules);
 
 		// Custom configuration
 		CustomConfigurator[] configurators = (CustomConfigurator[]) context

@@ -12,7 +12,7 @@ import de.csgis.geobricks.Path;
 import de.csgis.geobricks.servlet.OutputFilter;
 import de.csgis.geobricks.servlet.client.ConfigServlet;
 import de.csgis.geobricks.servlet.client.IndexHTMLRedirectFilter;
-import de.csgis.geobricks.servlet.client.IndexReplaceCSSFilter;
+import de.csgis.geobricks.servlet.client.IndexHTMLContentProcessor;
 import de.csgis.geobricks.servlet.client.MainModuleContentProcessor;
 import de.csgis.geobricks.servlet.client.StaticBinaryServlet;
 import de.csgis.geobricks.servlet.client.StaticTextServlet;
@@ -39,6 +39,8 @@ public class ClientServletModule extends ServletModule {
 		// Static content
 		serveRegex(Path.root.modules().all().path()).with(
 				new StaticBinaryServlet("modules"));
+		serveRegex(Path.root.styles().all().path()).with(
+				new StaticBinaryServlet("styles"));
 		serveRegex(Path.root.jslib().all().path()).with(
 				new StaticBinaryServlet("jslib"));
 		serveRegex(Path.root.images().all().path()).with(
@@ -47,7 +49,7 @@ public class ClientServletModule extends ServletModule {
 		// Application index.html
 		String indexPath = Path.root.file("index.html").path();
 		filterRegex(indexPath, Path.root.path() + "/").through(
-				IndexReplaceCSSFilter.class);
+				IndexHTMLContentProcessor.class);
 		serveRegex(indexPath, Path.root.path() + "/").with(
 				new StaticTextServlet("", "index.html"));
 

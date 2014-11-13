@@ -1,6 +1,7 @@
 package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.inject.Singleton;
@@ -11,6 +12,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONArray;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
@@ -36,28 +39,41 @@ public class MainModuleContentProcessor implements Filter {
 	}
 
 	public String process(String content, PluginDescriptor[] descriptors) {
-		StringBuilder str = new StringBuilder();
-		str.append("\"jquery\" : \"../jslib/jquery-1.11.0.min\",");
+		StringBuilder paths = new StringBuilder();
+		StringBuilder shim = new StringBuilder();
 
 		for (PluginDescriptor descriptor : descriptors) {
-			Map<String, String> dependencies = descriptor.getDependencies();
-			for (Object key : dependencies.keySet()) {
+			Map<String, String> requirePaths = descriptor.getRequirePaths();
+			for (Object key : requirePaths.keySet()) {
 				String name = key.toString();
 
-				str.append('"').append(name).append('"');
-				str.append(':');
-				// Paths are relative to modules so we go up one level
-				str.append("\"../").append(dependencies.get(name)).append('"');
-				str.append(",\n\t\t");
+				paths.append('"').append(name).append('"');
+				paths.append(':');
+				paths.append("\"").append(requirePaths.get(name)).append('"');
+				paths.append(",\n\t\t");
+			}
+
+			Map<String, String[]> requireShim = descriptor.getRequireShim();
+			for (Object key : requireShim.keySet()) {
+				String name = key.toString();
+				JSONArray array = new JSONArray(Arrays.asList(requireShim
+						.get(name)));
+				shim.append("\"" + name + "\": " + array.toString() + ",\n\t\t");
 			}
 		}
 
 		// remove last comma
-		if (str.indexOf(",") != -1) {
-			str.setLength(str.lastIndexOf(","));
+		if (paths.indexOf(",") != -1) {
+			paths.setLength(paths.lastIndexOf(","));
+		}
+		if (shim.indexOf(",") != -1) {
+			shim.setLength(shim.lastIndexOf(","));
 		}
 
-		return content.replace("$nonRequireJSDependencies", str.toString());
+		content = content.replace("$paths", "paths : {" + paths.toString()
+				+ "}");
+		content = content.replace("$shim", "shim : {" + shim.toString() + "}");
+		return content;
 	}
 
 	@Override

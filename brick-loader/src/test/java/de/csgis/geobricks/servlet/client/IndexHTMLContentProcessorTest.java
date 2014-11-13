@@ -12,14 +12,14 @@ import org.junit.Test;
 
 import de.csgis.geobricks.PluginDescriptor;
 
-public class IndexReplaceCSSFilterTest {
+public class IndexHTMLContentProcessorTest {
 	private static final String INDEX = "/webapp/index.html";
 
-	private IndexReplaceCSSFilter filter;
+	private IndexHTMLContentProcessor filter;
 
 	@Before
 	public void setup() {
-		filter = new IndexReplaceCSSFilter();
+		filter = new IndexHTMLContentProcessor();
 	}
 
 	@Test
@@ -31,7 +31,7 @@ public class IndexReplaceCSSFilterTest {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
 		String processed = filter.process(content,
-				new PluginDescriptor[] { descriptor });
+				new PluginDescriptor[] { descriptor }, false);
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -45,11 +45,41 @@ public class IndexReplaceCSSFilterTest {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
 		String processed = filter.process(content,
-				new PluginDescriptor[] { new PluginDescriptor() });
+				new PluginDescriptor[] { new PluginDescriptor() }, false);
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
 		assertFalse(processed.contains("<link"));
+	}
+
+	@Test
+	public void minifiedJS() throws Exception {
+		String content = IOUtils
+				.toString(getClass().getResourceAsStream(INDEX));
+		String processed = filter.process(content,
+				new PluginDescriptor[] { new PluginDescriptor() }, true);
+
+		assertTrue(content.contains("$mainModule"));
+		assertTrue(content.contains("$styleSheets"));
+		assertFalse(processed.contains("$mainModule"));
+		assertFalse(processed.contains("$styleSheets"));
+		assertTrue(processed.contains("\"main\" : \"optimized/portal\""));
+		checkCSS(processed, "optimized/portal-style.css");
+	}
+
+	@Test
+	public void notMinifiedJS() throws Exception {
+		String content = IOUtils
+				.toString(getClass().getResourceAsStream(INDEX));
+		String processed = filter.process(content,
+				new PluginDescriptor[] { new PluginDescriptor() }, false);
+
+		assertTrue(content.contains("$mainModule"));
+		assertTrue(content.contains("$styleSheets"));
+		assertFalse(processed.contains("$mainModule"));
+		assertFalse(processed.contains("$styleSheets"));
+		assertFalse(processed.contains("\"main\" : \"optimized/portal\""));
+		assertFalse(processed.contains("optimized/portal-style.css"));
 	}
 
 	private void checkCSS(String content, String css) {

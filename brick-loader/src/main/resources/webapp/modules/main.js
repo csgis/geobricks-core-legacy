@@ -1,12 +1,9 @@
 require.config({
 	baseUrl : "modules",
-	paths : {
-		$nonRequireJSDependencies
-	},
-	shim : {},
+	$paths,
+	$shim,
 	waitSeconds : 15
 });
-
 
 var defaultOnError = require.onError;
 
@@ -31,10 +28,4 @@ require.onError = function(err) {
 	}
 }
 
-define([ "module", "message-bus" ], function(module, bus) {
-	var moduleList = module.config();
-
-	require(moduleList, function() {
-		bus.send("modules-loaded");
-	});
-});
+require(["load-modules"]);

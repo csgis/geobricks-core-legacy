@@ -117,6 +117,6 @@ public class GetApplicationTest extends AbstractFunctionalTest {
 		assertTrue(content.startsWith("var require = "));
 		JSONObject json = JSONObject.fromObject(content
 				.substring("var require = ".length()));
-		assertTrue(json.getJSONObject("config").has("main"));
+		assertTrue(json.getJSONObject("config").has("load-modules"));
 	}
 }
