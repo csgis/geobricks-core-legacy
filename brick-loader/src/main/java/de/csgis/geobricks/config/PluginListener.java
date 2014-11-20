@@ -153,7 +153,10 @@ public class PluginListener implements ServletContextListener {
 		while ((entry = jar.getNextEntry()) != null) {
 			String name = entry.getName();
 			if (name.matches(MODULES_PATH + File.separator + ".+")) {
-				processEntry(name, descriptor);
+				processJSEntry(name, descriptor);
+				processCSSEntry(name, descriptor);
+			} else if (name.matches(STYLES_PATH + File.separator + ".+")) {
+				processCSSEntry(name, descriptor);
 			}
 		}
 
@@ -172,20 +175,24 @@ public class PluginListener implements ServletContextListener {
 	public PluginDescriptor getModulesAndStylesFromDir(File root) {
 		PluginDescriptor descriptor = new PluginDescriptor();
 
-		String path = "webapp" + File.separator + "modules";
-		File[] moduleFiles = new File(root, path).listFiles();
+		File[] moduleFiles = new File(root, MODULES_PATH).listFiles();
 		for (File file : moduleFiles) {
-			processEntry(path + File.separator + file.getName(), descriptor);
+			String entry = MODULES_PATH + File.separator + file.getName();
+			processJSEntry(entry, descriptor);
+			processCSSEntry(entry, descriptor);
 		}
+
+		File[] styleFiles = new File(root, STYLES_PATH).listFiles();
+		for (File file : styleFiles) {
+			String entry = STYLES_PATH + File.separator + file.getName();
+			processCSSEntry(entry, descriptor);
+		}
+
 		return descriptor;
 	}
 
 	/**
 	 * Processes the given entry.
-	 * 
-	 * If it's a <code>.js</code> file within the {@link #MODULES_PATH} or the
-	 * {@link #STYLES_PATH} directory it will be added to the modules set of the
-	 * plugin descriptor.
 	 * 
 	 * If it's a <code>.css</code> file within the {@link #MODULES_PATH} or the
 	 * {@link #STYLES_PATH} directory it will be added to the styles list of the
@@ -196,11 +203,11 @@ public class PluginListener implements ServletContextListener {
 	 * @param descriptor
 	 *            The descriptor where the module or style should be added.
 	 */
-	public void processEntry(String entry, PluginDescriptor descriptor) {
-		int modulesLength = PluginListener.MODULES_PATH.length();
-
+	public void processCSSEntry(String entry, PluginDescriptor descriptor) {
 		if (entry.endsWith(".css")) {
+			int modulesLength = PluginListener.MODULES_PATH.length();
 			int stylesLength = PluginListener.STYLES_PATH.length();
+
 			if (entry.startsWith(PluginListener.MODULES_PATH)) {
 				String style = "modules/" + entry.substring(modulesLength + 1);
 				descriptor.getStyles().add(style);
@@ -208,8 +215,24 @@ public class PluginListener implements ServletContextListener {
 				String style = "styles/" + entry.substring(stylesLength + 1);
 				descriptor.getStyles().add(style);
 			}
-		} else if (entry.endsWith(".js")
+		}
+	}
+
+	/**
+	 * Processes the given entry.
+	 * 
+	 * If it's a <code>.js</code> file within the {@link #MODULES_PATH}
+	 * directory it will be added to the modules set of the plugin descriptor.
+	 * 
+	 * @param entry
+	 *            The entry to process.
+	 * @param descriptor
+	 *            The descriptor where the module or style should be added.
+	 */
+	public void processJSEntry(String entry, PluginDescriptor descriptor) {
+		if (entry.endsWith(".js")
 				&& entry.startsWith(PluginListener.MODULES_PATH)) {
+			int modulesLength = PluginListener.MODULES_PATH.length();
 			String module = entry.substring(modulesLength + 1,
 					entry.length() - 3);
 			descriptor.getModules().add(module);

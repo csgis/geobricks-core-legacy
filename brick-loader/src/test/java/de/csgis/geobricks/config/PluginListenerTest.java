@@ -178,7 +178,7 @@ public class PluginListenerTest {
 				+ "mock.css";
 
 		PluginListener listener = new PluginListener();
-		listener.processEntry(entry, descriptor);
+		listener.processCSSEntry(entry, descriptor);
 
 		assertEquals(0, descriptor.getModules().size());
 		assertEquals(1, descriptor.getStyles().size());
@@ -192,7 +192,7 @@ public class PluginListenerTest {
 		String entry = PluginListener.STYLES_PATH + File.separator + "mock.css";
 
 		PluginListener listener = new PluginListener();
-		listener.processEntry(entry, descriptor);
+		listener.processCSSEntry(entry, descriptor);
 
 		assertEquals(0, descriptor.getModules().size());
 		assertEquals(1, descriptor.getStyles().size());
@@ -206,7 +206,7 @@ public class PluginListenerTest {
 		String entry = PluginListener.MODULES_PATH + File.separator + "mock.js";
 
 		PluginListener listener = new PluginListener();
-		listener.processEntry(entry, descriptor);
+		listener.processJSEntry(entry, descriptor);
 
 		assertEquals(1, descriptor.getModules().size());
 		assertEquals(0, descriptor.getStyles().size());
@@ -218,7 +218,8 @@ public class PluginListenerTest {
 		PluginDescriptor descriptor = new PluginDescriptor();
 
 		PluginListener listener = new PluginListener();
-		listener.processEntry("invalid_entry", descriptor);
+		listener.processJSEntry("invalid_entry", descriptor);
+		listener.processCSSEntry("invalid_entry", descriptor);
 
 		assertEquals(0, descriptor.getModules().size());
 		assertEquals(0, descriptor.getStyles().size());
@@ -234,6 +235,29 @@ public class PluginListenerTest {
 		List<String> styles = descriptor.getStyles();
 		assertEquals(1, styles.size());
 		assertEquals("modules/mock.css", styles.get(0));
+	}
+
+	@Test
+	public void dontProcessJSEntryFromStyles() {
+		PluginDescriptor descriptor = new PluginDescriptor();
+		String entry = PluginListener.STYLES_PATH + File.separator + "mock.js";
+
+		PluginListener listener = new PluginListener();
+		listener.processJSEntry(entry, descriptor);
+
+		assertEquals(0, descriptor.getModules().size());
+		assertEquals(0, descriptor.getStyles().size());
+	}
+
+	@Test
+	public void processDirectory() {
+		File root = new File(getClass().getResource("/").getPath());
+
+		PluginListener listener = new PluginListener();
+		PluginDescriptor descriptor = listener.getModulesAndStylesFromDir(root);
+
+		assertEquals(0, descriptor.getModules().size());
+		assertEquals(2, descriptor.getStyles().size());
 	}
 
 	@Test
