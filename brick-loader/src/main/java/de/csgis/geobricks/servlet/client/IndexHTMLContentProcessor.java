@@ -2,6 +2,7 @@ package de.csgis.geobricks.servlet.client;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -25,7 +26,12 @@ public class IndexHTMLContentProcessor implements Filter {
 	private static final Logger logger = Logger
 			.getLogger(IndexHTMLContentProcessor.class);
 
+	public static final String STYLES_DIR = "styles";
+
 	private PluginDescriptor[] descriptors;
+
+	private File stylesDir;
+
 	private File appProperties;
 
 	@Override
@@ -33,6 +39,15 @@ public class IndexHTMLContentProcessor implements Filter {
 		ServletContext context = filterConfig.getServletContext();
 		descriptors = (PluginDescriptor[]) context
 				.getAttribute(Geobricks.ATTR_PLUGINS_DESC);
+
+		String path = context.getRealPath("/" + STYLES_DIR);
+		if (path != null) {
+			File dir = new File(path);
+			if (dir.exists() && dir.isDirectory() && dir.canRead()) {
+				stylesDir = dir;
+			}
+		}
+
 		String confDir = context.getAttribute(Geobricks.ATTR_CONF_DIR)
 				.toString();
 		appProperties = new File(confDir, "app.properties");
@@ -57,14 +72,15 @@ public class IndexHTMLContentProcessor implements Filter {
 							+ ". Assuming minified_js=false", e);
 		}
 		response.getWriter().print(
-				process(wrapper.toString(), descriptors, minified));
+				process(wrapper.toString(), descriptors, stylesDir, minified));
 	}
 
 	public String process(String content, PluginDescriptor[] descriptors,
-			boolean minified) {
+			File stylesDir, boolean minified) {
 		if (minified) {
 			String css = "<link rel=\"stylesheet\" href=\"optimized/portal-style.css\"/>\n";
-			content = content.replace("$styleSheets", css);
+			content = content.replace("$styleSheets", css
+					+ getCSSFromDir(stylesDir));
 			return content.replace("$mainModule", "optimized/portal");
 		} else {
 			StringBuilder str = new StringBuilder();
@@ -74,9 +90,36 @@ public class IndexHTMLContentProcessor implements Filter {
 							+ "\"/>\n");
 				}
 			}
-			content = content.replace("$styleSheets", str.toString());
+			content = content.replace("$styleSheets", str.toString()
+					+ getCSSFromDir(stylesDir));
 			return content.replace("$mainModule", "modules/main");
 		}
+	}
+
+	private String getCSSFromDir(File stylesDir) {
+		String ret = "";
+		if (stylesDir != null) {
+			File[] cssFiles = stylesDir.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.toLowerCase().endsWith(".css");
+				}
+			});
+
+			if (cssFiles != null) {
+				for (File css : cssFiles) {
+					String path = css.getPath();
+					String stylesPath = stylesDir.getPath();
+					if (path.startsWith(stylesPath)) {
+						path = path.substring(stylesPath.length() + 1);
+					}
+					ret += "<link rel=\"stylesheet\" href=\"" + STYLES_DIR
+							+ "/" + path + "\"/>\n";
+				}
+			}
+		}
+
+		return ret;
 	}
 
 	@Override

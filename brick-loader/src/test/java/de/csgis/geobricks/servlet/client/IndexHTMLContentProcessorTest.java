@@ -2,7 +2,12 @@ package de.csgis.geobricks.servlet.client;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Collections;
 import java.util.regex.Pattern;
 
@@ -31,7 +36,7 @@ public class IndexHTMLContentProcessorTest {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
 		String processed = filter.process(content,
-				new PluginDescriptor[] { descriptor }, false);
+				new PluginDescriptor[] { descriptor }, mock(File.class), false);
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -45,7 +50,8 @@ public class IndexHTMLContentProcessorTest {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
 		String processed = filter.process(content,
-				new PluginDescriptor[] { new PluginDescriptor() }, false);
+				new PluginDescriptor[] { new PluginDescriptor() },
+				mock(File.class), false);
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -57,7 +63,8 @@ public class IndexHTMLContentProcessorTest {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
 		String processed = filter.process(content,
-				new PluginDescriptor[] { new PluginDescriptor() }, true);
+				new PluginDescriptor[] { new PluginDescriptor() },
+				mock(File.class), true);
 
 		assertTrue(content.contains("$mainModule"));
 		assertTrue(content.contains("$styleSheets"));
@@ -72,7 +79,8 @@ public class IndexHTMLContentProcessorTest {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
 		String processed = filter.process(content,
-				new PluginDescriptor[] { new PluginDescriptor() }, false);
+				new PluginDescriptor[] { new PluginDescriptor() },
+				mock(File.class), false);
 
 		assertTrue(content.contains("$mainModule"));
 		assertTrue(content.contains("$styleSheets"));
@@ -80,6 +88,52 @@ public class IndexHTMLContentProcessorTest {
 		assertFalse(processed.contains("$styleSheets"));
 		assertFalse(processed.contains("\"main\" : \"optimized/portal\""));
 		assertFalse(processed.contains("optimized/portal-style.css"));
+	}
+
+	@Test
+	public void CSSFromStylesDir() throws Exception {
+		File[] files = new File[] { new File(
+				IndexHTMLContentProcessor.STYLES_DIR + File.separator
+						+ "testing.css") };
+
+		File configDir = mock(File.class);
+		when(configDir.listFiles(any(FilenameFilter.class))).thenReturn(files);
+		when(configDir.getPath()).thenReturn(
+				IndexHTMLContentProcessor.STYLES_DIR);
+
+		String content = IOUtils
+				.toString(getClass().getResourceAsStream(INDEX));
+		String processed = filter.process(content,
+				new PluginDescriptor[] { new PluginDescriptor() }, configDir,
+				false);
+
+		assertTrue(content.contains("$styleSheets"));
+		assertFalse(processed.contains("$styleSheets"));
+		checkCSS(processed, IndexHTMLContentProcessor.STYLES_DIR
+				+ "/testing.css");
+	}
+
+	public void minifiedIncludesCSSFromStylesDir() throws Exception {
+		File[] files = new File[] { new File(
+				IndexHTMLContentProcessor.STYLES_DIR + File.separator
+						+ "testing.css") };
+
+		File configDir = mock(File.class);
+		when(configDir.listFiles(any(FilenameFilter.class))).thenReturn(files);
+		when(configDir.getPath()).thenReturn(
+				IndexHTMLContentProcessor.STYLES_DIR);
+
+		String content = IOUtils
+				.toString(getClass().getResourceAsStream(INDEX));
+		String processed = filter.process(content,
+				new PluginDescriptor[] { new PluginDescriptor() }, configDir,
+				true);
+
+		assertTrue(content.contains("$styleSheets"));
+		assertFalse(processed.contains("$styleSheets"));
+		checkCSS(processed, "optimized/portal-style.css");
+		checkCSS(processed, IndexHTMLContentProcessor.STYLES_DIR
+				+ "/testing.css");
 	}
 
 	private void checkCSS(String content, String css) {
