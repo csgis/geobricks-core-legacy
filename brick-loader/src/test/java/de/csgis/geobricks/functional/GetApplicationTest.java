@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.junit.Test;
 
@@ -76,6 +77,21 @@ public class GetApplicationTest extends AbstractFunctionalTest {
 				.getStatusCode());
 		String line = IOUtils.toString(response.getEntity().getContent());
 		assertTrue(line.trim().startsWith("define(["));
+	}
+
+	@Test
+	public void moduleContentType() throws Exception {
+		HttpResponse response = app.doGet("modules/main.js");
+		Header contentType = response.getLastHeader("Content-Type");
+		assertEquals("application/javascript; charset=UTF-8",
+				contentType.getValue());
+	}
+
+	@Test
+	public void indexContentType() throws Exception {
+		HttpResponse response = app.doGet("index.html");
+		Header contentType = response.getLastHeader("Content-Type");
+		assertEquals("text/html; charset=UTF-8", contentType.getValue());
 	}
 
 	@Test

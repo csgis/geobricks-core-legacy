@@ -13,7 +13,7 @@ public class AbstractFunctionalTest {
 
 	static {
 		try {
-			serverManager.installApp(APP_ID, "src/test/resources/test-web.xml");
+			serverManager.installApp(APP_ID, "src/test/webapp");
 			app = new RestPoint(serverManager, APP_ID, "");
 
 			serverManager.start();

@@ -10,8 +10,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 	@Override
 	protected Injector getInjector() {
 		if (injector == null) {
-			injector = Guice.createInjector(new RuntimeModule(),
-					new ClientServletModule());
+			injector = Guice.createInjector(new ClientServletModule());
 		}
 		return injector;
 	}

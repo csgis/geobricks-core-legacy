@@ -9,7 +9,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import javax.servlet.ServletContext;
@@ -49,9 +48,10 @@ public class ApplicationListenerTest {
 
 	@Test
 	public void customPluginConfig() throws Exception {
-		String json = "{" + PLUGIN_ID + ": { mymodule : { enabled : true }}}";
-		when(context.getResourceAsStream(anyString())).thenReturn(
-				new ByteArrayInputStream(json.getBytes()));
+		JSONObject json = JSONObject.fromObject("{" + PLUGIN_ID
+				+ ": { mymodule : { enabled : true }}}");
+		when(context.getAttribute(Geobricks.ATTR_PLUGINS_CONF))
+				.thenReturn(json);
 
 		JSONObject conf = configure(Geobricks.ATTR_PLUGINS_CONF,
 				JSONObject.class);
@@ -64,9 +64,9 @@ public class ApplicationListenerTest {
 		descriptor.setDefaultConfiguration(JSONObject
 				.fromObject("{ mymodule : { enabled : false }}"));
 
-		String json = "{" + PLUGIN_ID + ": {}}";
-		when(context.getResourceAsStream(anyString())).thenReturn(
-				new ByteArrayInputStream(json.getBytes()));
+		JSONObject json = JSONObject.fromObject("{" + PLUGIN_ID + ": {}}");
+		when(context.getAttribute(Geobricks.ATTR_PLUGINS_CONF))
+				.thenReturn(json);
 
 		JSONObject conf = configure(Geobricks.ATTR_PLUGINS_CONF,
 				JSONObject.class);
@@ -77,9 +77,9 @@ public class ApplicationListenerTest {
 
 	@Test
 	public void undefinedConfDir() throws Exception {
-		String json = "{" + PLUGIN_ID + ": {}}";
-		when(context.getResourceAsStream(anyString())).thenReturn(
-				new ByteArrayInputStream(json.getBytes()));
+		JSONObject json = JSONObject.fromObject("{" + PLUGIN_ID + ": {}}");
+		when(context.getAttribute(Geobricks.ATTR_PLUGINS_CONF))
+				.thenReturn(json);
 
 		String conf = configure(Geobricks.ATTR_CONF_DIR, String.class);
 		assertEquals(DEFAULT_CONFIG_PATH, conf);
@@ -87,9 +87,9 @@ public class ApplicationListenerTest {
 
 	@Test
 	public void nonExistingConfDirBase() throws Exception {
-		String json = "{" + PLUGIN_ID + ": {}}";
-		when(context.getResourceAsStream(anyString())).thenReturn(
-				new ByteArrayInputStream(json.getBytes()));
+		JSONObject json = JSONObject.fromObject("{" + PLUGIN_ID + ": {}}");
+		when(context.getAttribute(Geobricks.ATTR_PLUGINS_CONF))
+				.thenReturn(json);
 
 		System.setProperty("GEOBRICKS_CONF_DIR", "non_existing");
 		String conf = configure(Geobricks.ATTR_CONF_DIR, String.class);
@@ -98,9 +98,9 @@ public class ApplicationListenerTest {
 
 	@Test
 	public void nonExistingConfDirForApp() throws Exception {
-		String json = "{" + PLUGIN_ID + ": {}}";
-		when(context.getResourceAsStream(anyString())).thenReturn(
-				new ByteArrayInputStream(json.getBytes()));
+		JSONObject json = JSONObject.fromObject("{" + PLUGIN_ID + ": {}}");
+		when(context.getAttribute(Geobricks.ATTR_PLUGINS_CONF))
+				.thenReturn(json);
 
 		System.setProperty("GEOBRICKS_CONF_DIR",
 				System.getProperty("java.io.tmpdir"));
@@ -110,9 +110,9 @@ public class ApplicationListenerTest {
 
 	@Test
 	public void confDirFromVariable() throws Exception {
-		String json = "{" + PLUGIN_ID + ": {}}";
-		when(context.getResourceAsStream(anyString())).thenReturn(
-				new ByteArrayInputStream(json.getBytes()));
+		JSONObject json = JSONObject.fromObject("{" + PLUGIN_ID + ": {}}");
+		when(context.getAttribute(Geobricks.ATTR_PLUGINS_CONF))
+				.thenReturn(json);
 
 		File dir = new File(System.getProperty("java.io.tmpdir"), APP_NAME);
 		dir.mkdir();
@@ -125,7 +125,7 @@ public class ApplicationListenerTest {
 	}
 
 	@Test
-	public void testGetConfiguredAppId() throws Exception {
+	public void getConfiguredAppId() throws Exception {
 		String configuredId = "configuredid";
 		when(context.getInitParameter("geobricks-app-id")).thenReturn(
 				configuredId);
@@ -135,7 +135,7 @@ public class ApplicationListenerTest {
 	}
 
 	@Test
-	public void testGetAppIdFromURL() throws Exception {
+	public void getAppIdFromURL() throws Exception {
 		String urlId = "myapp";
 		when(context.getInitParameter("geobricks-app-id")).thenReturn(null);
 		when(context.getContextPath()).thenReturn("/" + urlId);
@@ -151,9 +151,10 @@ public class ApplicationListenerTest {
 		when(context.getAttribute(Geobricks.ATTR_PLUGINS_DESC)).thenReturn(
 				new PluginDescriptor[] { p1, p2 });
 
-		String json = "{" + p2.getId() + ": {}, " + p1.getId() + " :{}}";
-		when(context.getResourceAsStream(anyString())).thenReturn(
-				new ByteArrayInputStream(json.getBytes()));
+		JSONObject json = JSONObject.fromObject("{" + p2.getId() + ": {}, "
+				+ p1.getId() + " :{}}");
+		when(context.getAttribute(Geobricks.ATTR_PLUGINS_CONF))
+				.thenReturn(json);
 
 		PluginDescriptor[] descriptors = configure(Geobricks.ATTR_PLUGINS_DESC,
 				PluginDescriptor[].class);
@@ -164,9 +165,9 @@ public class ApplicationListenerTest {
 	@Test
 	public void onlyIncludePluginsOnAppConf() throws Exception {
 		// Only PLUGIN_ID defined
-		String json = "{" + PLUGIN_ID + ": {}}";
-		when(context.getResourceAsStream(anyString())).thenReturn(
-				new ByteArrayInputStream(json.getBytes()));
+		JSONObject json = JSONObject.fromObject("{" + PLUGIN_ID + ": {}}");
+		when(context.getAttribute(Geobricks.ATTR_PLUGINS_CONF))
+				.thenReturn(json);
 
 		// Several plugins on classpath
 		PluginDescriptor p1 = new PluginDescriptor(PLUGIN_ID);

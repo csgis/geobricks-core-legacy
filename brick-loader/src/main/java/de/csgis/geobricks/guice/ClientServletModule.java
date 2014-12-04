@@ -1,7 +1,13 @@
 package de.csgis.geobricks.guice;
 
+import java.util.Map;
+
+import javax.servlet.Filter;
+
 import com.google.inject.servlet.ServletModule;
 
+import de.csgis.geobricks.CustomConfigurator;
+import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.Path;
 import de.csgis.geobricks.servlet.OutputFilter;
 import de.csgis.geobricks.servlet.client.ConfigServlet;
@@ -44,5 +50,17 @@ public class ClientServletModule extends ServletModule {
 				IndexReplaceCSSFilter.class);
 		serveRegex(indexPath, Path.root.path() + "/").with(
 				new StaticTextServlet("", "index.html"));
+
+		CustomConfigurator[] configurators = (CustomConfigurator[]) getServletContext()
+				.getAttribute(Geobricks.ATTR_CONFIGURATORS);
+		for (CustomConfigurator configurator : configurators) {
+			Map<String, Class<? extends Filter>> filters = configurator
+					.getFilters();
+			if (filters != null) {
+				for (String regex : filters.keySet()) {
+					filterRegex(regex).through(filters.get(regex));
+				}
+			}
+		}
 	}
 }

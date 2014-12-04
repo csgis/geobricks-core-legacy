@@ -5,7 +5,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ ApplicationListenerTest.class, PluginListenerTest.class,
-		JarPluginScannerTest.class })
+@SuiteClasses({ ApplicationListenerTest.class, PluginListenerTest.class })
 public class AllConfigTests {
 }
