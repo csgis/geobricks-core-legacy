@@ -39,8 +39,8 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 		InputStream resourceStream = getResourceStream(requestURI);
 
 		try {
-			write(resourceStream, resp);
 			setContentTypeAndEncoding(resp, requestURI);
+			write(resourceStream, resp);
 		} finally {
 			resourceStream.close();
 		}
@@ -53,6 +53,9 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 			resp.setCharacterEncoding("UTF-8");
 		} else if (resource.endsWith(".html")) {
 			resp.setContentType("text/html");
+			resp.setCharacterEncoding("UTF-8");
+		} else if (resource.endsWith(".css")) {
+			resp.setContentType("text/css");
 			resp.setCharacterEncoding("UTF-8");
 		}
 	}
