@@ -64,4 +64,15 @@ public class StaticServletTest {
 		verify(resp).setContentType("text/html");
 		verify(resp).setCharacterEncoding("UTF-8");
 	}
+
+	@Test
+	public void cssContentTypeAndEncoding() {
+		StaticTextServlet servlet = new StaticTextServlet("", "index.css");
+
+		HttpServletResponse resp = mock(HttpServletResponse.class);
+		servlet.setContentTypeAndEncoding(resp, "myviewer-1.0-SNAPSHOT/");
+
+		verify(resp).setContentType("text/css");
+		verify(resp).setCharacterEncoding("UTF-8");
+	}
 }
