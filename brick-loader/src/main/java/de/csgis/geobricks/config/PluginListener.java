@@ -16,7 +16,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
@@ -261,23 +260,12 @@ public class PluginListener implements ServletContextListener {
 		if (requirejs != null && !requirejs.isNullObject()) {
 			JSONObject paths = requirejs.getJSONObject("paths");
 			if (paths != null && !paths.isNullObject()) {
-				for (Object key : paths.keySet()) {
-					String name = key.toString();
-					descriptor.getRequirePaths().put(name,
-							paths.getString(name));
-				}
+				descriptor.setRequirePaths(paths);
 			}
+
 			JSONObject shim = requirejs.getJSONObject("shim");
 			if (shim != null && !shim.isNullObject()) {
-				for (Object key : shim.keySet()) {
-					String name = key.toString();
-					JSONArray array = shim.getJSONArray(name);
-					String[] shimDeps = new String[array.size()];
-					for (int i = 0; i < shimDeps.length; i++) {
-						shimDeps[i] = array.getString(i);
-					}
-					descriptor.getRequireShim().put(name, shimDeps);
-				}
+				descriptor.setRequireShim(shim);
 			}
 		}
 

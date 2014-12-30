@@ -1,7 +1,6 @@
 package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.inject.Singleton;
 import javax.servlet.Filter;
@@ -12,7 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 
@@ -37,39 +36,16 @@ public class MainModuleContentProcessor implements Filter {
 	}
 
 	public String process(String content, PluginDescriptor[] descriptors) {
-		StringBuilder paths = new StringBuilder();
-		StringBuilder shim = new StringBuilder();
+		JSONObject paths = new JSONObject();
+		JSONObject shim = new JSONObject();
 
 		for (PluginDescriptor descriptor : descriptors) {
-			Map<String, String> requirePaths = descriptor.getRequirePaths();
-			for (Object key : requirePaths.keySet()) {
-				String name = key.toString();
-
-				paths.append('"').append(name).append('"');
-				paths.append(':');
-				paths.append("\"").append(requirePaths.get(name)).append('"');
-				paths.append(",\n\t\t");
-			}
-
-			Map<String, String[]> requireShim = descriptor.getRequireShim();
-			for (Object key : requireShim.keySet()) {
-				String name = key.toString();
-				JSONArray array = JSONArray.fromObject(requireShim.get(name));
-				shim.append("\"" + name + "\": " + array.toString() + ",\n\t\t");
-			}
+			paths.putAll(descriptor.getRequirePaths());
+			shim.putAll(descriptor.getRequireShim());
 		}
 
-		// remove last comma
-		if (paths.indexOf(",") != -1) {
-			paths.setLength(paths.lastIndexOf(","));
-		}
-		if (shim.indexOf(",") != -1) {
-			shim.setLength(shim.lastIndexOf(","));
-		}
-
-		content = content.replace("$paths", "paths : {" + paths.toString()
-				+ "}");
-		content = content.replace("$shim", "shim : {" + shim.toString() + "}");
+		content = content.replace("$paths", "paths : " + paths.toString());
+		content = content.replace("$shim", "shim : " + shim.toString());
 		return content;
 	}
 

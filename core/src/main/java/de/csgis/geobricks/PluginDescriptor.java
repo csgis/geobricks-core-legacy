@@ -1,10 +1,8 @@
 package de.csgis.geobricks;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.sf.json.JSONObject;
@@ -14,8 +12,8 @@ public class PluginDescriptor {
 	private JSONObject defaultConfiguration;
 	private Set<String> modules = new HashSet<String>();
 	private List<String> styles = new ArrayList<String>();
-	private Map<String, String> requirePaths = new HashMap<String, String>();
-	private Map<String, String[]> requireShim = new HashMap<String, String[]>();
+	private JSONObject requirePaths = new JSONObject();
+	private JSONObject requireShim = new JSONObject();
 
 	public PluginDescriptor() {
 	}
@@ -40,12 +38,20 @@ public class PluginDescriptor {
 		return styles;
 	}
 
-	public Map<String, String> getRequirePaths() {
+	public JSONObject getRequirePaths() {
 		return requirePaths;
 	}
 
-	public Map<String, String[]> getRequireShim() {
+	public void setRequirePaths(JSONObject requirePaths) {
+		this.requirePaths = requirePaths;
+	}
+
+	public JSONObject getRequireShim() {
 		return requireShim;
+	}
+
+	public void setRequireShim(JSONObject requireShim) {
+		this.requireShim = requireShim;
 	}
 
 	public JSONObject getDefaultConfiguration() {

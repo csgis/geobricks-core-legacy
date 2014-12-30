@@ -27,6 +27,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.junit.Test;
@@ -118,8 +119,8 @@ public class PluginListenerTest {
 		assertEquals(0, configurators.size());
 		assertNull(descriptor.getDefaultConfiguration());
 
-		assertArrayEquals(new String[] { shimDep }, descriptor.getRequireShim()
-				.get(shimLib));
+		JSONArray array = (JSONArray) descriptor.getRequireShim().get(shimLib);
+		assertArrayEquals(new String[] { shimDep }, array.toArray());
 	}
 
 	@Test
