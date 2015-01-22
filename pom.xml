@@ -13,6 +13,7 @@
 		<module>core</module>
 		<module>brick-loader</module>
 		<module>geobricks-full</module>
+		<module>lib-proxy</module>
 		<module>tests-commons</module>
 		<module>plugins</module>
 		<module>apps</module>
