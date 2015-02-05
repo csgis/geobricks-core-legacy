@@ -18,11 +18,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipInputStream;
 
-import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -283,11 +281,6 @@ public class PluginListenerTest {
 		public void config(HttpServletRequest request,
 				HttpServletResponse response, JSONObject staticConfig,
 				String confDir) {
-		}
-
-		@Override
-		public Map<String, Class<? extends Filter>> getFilters() {
-			return null;
 		}
 	}
 }
