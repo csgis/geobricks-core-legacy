@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.servlet.CharResponseWrapper;
 
 @Singleton
 public class IndexHTMLContentProcessor implements Filter {
