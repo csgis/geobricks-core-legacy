@@ -2,11 +2,8 @@ package de.csgis.geobricks.servlet.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -21,7 +18,6 @@ import net.sf.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.csgis.geobricks.CustomConfigurator;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 
@@ -87,25 +83,6 @@ public class ConfigServletTest {
 		assertEquals(0, configModules.size());
 	}
 
-	@Test
-	public void customConfigurator() {
-		HttpServletRequest request = mock(HttpServletRequest.class);
-		HttpServletResponse response = mock(HttpServletResponse.class);
-
-		CustomConfigurator configurator = mock(CustomConfigurator.class);
-
-		ServletContext context = context(
-				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"),
-				new String[0]);
-		when(context.getAttribute(eq(Geobricks.ATTR_CONFIGURATORS)))
-				.thenReturn(new CustomConfigurator[] { configurator });
-
-		servlet.getConfig(request, response, context);
-
-		verify(configurator).config(eq(request), eq(response),
-				any(JSONObject.class), anyString());
-	}
-
 	private ServletContext context(JSONObject pluginsConf, String[] modules) {
 		ServletContext context = mock(ServletContext.class);
 		when(context.getAttribute(eq(Geobricks.ATTR_PLUGINS_CONF))).thenReturn(
@@ -115,8 +92,6 @@ public class ConfigServletTest {
 		PluginDescriptor descriptor = new PluginDescriptor();
 		Collections.addAll(descriptor.getModules(), modules);
 
-		when(context.getAttribute(eq(Geobricks.ATTR_CONFIGURATORS)))
-				.thenReturn(new CustomConfigurator[0]);
 		when(context.getAttribute(eq(Geobricks.ATTR_PLUGINS_DESC))).thenReturn(
 				new PluginDescriptor[] { descriptor });
 

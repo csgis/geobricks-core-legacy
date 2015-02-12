@@ -16,50 +16,39 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.zip.ZipInputStream;
 
-import javax.servlet.Filter;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.junit.Test;
 
-import de.csgis.geobricks.CustomConfigurator;
 import de.csgis.geobricks.PluginDescriptor;
 
 public class PluginListenerTest {
 	@Test
 	public void invalidPluginConf() {
-		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
 		PluginDescriptor descriptor = new PluginDescriptor();
 		JSONObject conf = JSONObject.fromObject("{}");
 
 		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor, configurators);
+		listener.processPluginConf(conf, descriptor);
 		assertEquals(0, descriptor.getRequirePaths().size());
 		assertNull(descriptor.getDefaultConfiguration());
-		assertEquals(0, configurators.size());
 	}
 
 	@Test
 	public void emptyPluginConf() {
 		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
 		JSONObject conf = JSONObject.fromObject("{'id' : 'mock'}");
 
 		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor, configurators);
+		listener.processPluginConf(conf, descriptor);
 		assertEquals(0, descriptor.getRequirePaths().size());
 		assertNull(descriptor.getDefaultConfiguration());
-		assertEquals(0, configurators.size());
 	}
 
 	@Test
@@ -67,14 +56,12 @@ public class PluginListenerTest {
 		String id = "mock";
 
 		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
 		JSONObject conf = JSONObject.fromObject("{'id' : '" + id + "',"
 				+ "'default-conf' : { 'module' : {'enabled' : true }}}");
 
 		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor, configurators);
+		listener.processPluginConf(conf, descriptor);
 		assertEquals(0, descriptor.getRequirePaths().size());
-		assertEquals(0, configurators.size());
 
 		JSONObject defaultConf = descriptor.getDefaultConfiguration();
 		assertTrue(defaultConf.getJSONObject("module").getBoolean("enabled"));
@@ -86,15 +73,13 @@ public class PluginListenerTest {
 		String path = "jslib/OpenLayers";
 
 		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
 		JSONObject conf = JSONObject.fromObject("{'id' : 'mock',"
 				+ "'requirejs' : { 'paths' : { '" + name + "' : '" + path
 				+ "' }}}");
 
 		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor, configurators);
+		listener.processPluginConf(conf, descriptor);
 		assertEquals(1, descriptor.getRequirePaths().size());
-		assertEquals(0, configurators.size());
 		assertNull(descriptor.getDefaultConfiguration());
 
 		assertEquals(path, descriptor.getRequirePaths().get(name));
@@ -106,7 +91,6 @@ public class PluginListenerTest {
 		String shimDep = "jquery";
 
 		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
 		JSONObject conf = JSONObject.fromObject("{'id' : 'mock',"
 				+ "'requirejs' : { " //
 				+ "'shim' : { " //
@@ -114,62 +98,12 @@ public class PluginListenerTest {
 				+ "}}}");
 
 		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor, configurators);
+		listener.processPluginConf(conf, descriptor);
 		assertEquals(1, descriptor.getRequireShim().size());
-		assertEquals(0, configurators.size());
 		assertNull(descriptor.getDefaultConfiguration());
 
 		JSONArray array = (JSONArray) descriptor.getRequireShim().get(shimLib);
 		assertArrayEquals(new String[] { shimDep }, array.toArray());
-	}
-
-	@Test
-	public void invalidConfiguratorClassName() {
-		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
-		JSONObject conf = JSONObject.fromObject("{'id' : 'mock',"
-				+ "'custom-configurator' : 'invalid_class'}");
-
-		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor, configurators);
-		assertEquals(0, descriptor.getRequirePaths().size());
-		assertEquals(0, configurators.size());
-		assertNull(descriptor.getDefaultConfiguration());
-	}
-
-	@Test
-	public void invalidConfiguratorClass() {
-		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
-		JSONObject conf = JSONObject.fromObject("{'id' : 'mock',"
-				+ "'custom-configurator' : '"
-				+ CustomConfigurator.class.getCanonicalName() + "'}");
-
-		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor, configurators);
-		assertEquals(0, descriptor.getRequirePaths().size());
-		assertEquals(0, configurators.size());
-		assertNull(descriptor.getDefaultConfiguration());
-	}
-
-	@Test
-	public void validConfigurator() {
-		String className = getClass().getCanonicalName() + "$MockConfigurator";
-
-		PluginDescriptor descriptor = new PluginDescriptor();
-		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
-		JSONObject conf = JSONObject.fromObject("{'id' : 'mock',"
-				+ "'custom-configurator' : '" + className + "'}");
-
-		PluginListener listener = new PluginListener();
-		listener.processPluginConf(conf, descriptor, configurators);
-
-		assertEquals(0, descriptor.getRequirePaths().size());
-		assertEquals(1, configurators.size());
-		assertNull(descriptor.getDefaultConfiguration());
-
-		assertEquals(MockConfigurator.class.getCanonicalName(), configurators
-				.iterator().next().getClass().getCanonicalName());
 	}
 
 	@Test
@@ -276,18 +210,5 @@ public class PluginListenerTest {
 		listener.getModulesAndStyles(context, pluginConf);
 
 		verify(listener).getModulesAndStylesFromJar(any(ZipInputStream.class));
-	}
-
-	public static class MockConfigurator implements CustomConfigurator {
-		@Override
-		public void config(HttpServletRequest request,
-				HttpServletResponse response, JSONObject staticConfig,
-				String confDir) {
-		}
-
-		@Override
-		public Map<String, Class<? extends Filter>> getFilters() {
-			return null;
-		}
 	}
 }

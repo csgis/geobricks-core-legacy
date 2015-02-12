@@ -21,7 +21,6 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-import de.csgis.geobricks.CustomConfigurator;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 
@@ -35,8 +34,6 @@ import de.csgis.geobricks.PluginDescriptor;
  * <li>{@link Geobricks#ATTR_PLUGINS_CONF} ({@link PluginDescriptor}[]): Plugin
  * configurations for application. Content as read from
  * <code>gbapp-conf.json</code> without any modification.</li>
- * <li>{@link Geobricks#ATTR_CONFIGURATORS} ({@link CustomConfigurator}[]):
- * Custom application configurators.</li>
  * </ul>
  * 
  * @author vicgonco
@@ -62,7 +59,6 @@ public class PluginListener implements ServletContextListener {
 	}
 
 	public void initialize(ServletContext context) throws IOException {
-		Set<CustomConfigurator> configurators = new HashSet<CustomConfigurator>();
 		Set<PluginDescriptor> descriptors = new HashSet<PluginDescriptor>();
 
 		InputStream stream = context.getResourceAsStream(APP_CONF_PATH);
@@ -80,7 +76,7 @@ public class PluginListener implements ServletContextListener {
 			if (pluginDescriptor != null) {
 				JSONObject pluginConf = JSONObject.fromObject(IOUtils
 						.toString(pluginConfUrl.openStream()));
-				processPluginConf(pluginConf, pluginDescriptor, configurators);
+				processPluginConf(pluginConf, pluginDescriptor);
 				descriptors.add(pluginDescriptor);
 			}
 		}
@@ -88,8 +84,6 @@ public class PluginListener implements ServletContextListener {
 		context.setAttribute(Geobricks.ATTR_PLUGINS_CONF, appConf);
 		context.setAttribute(Geobricks.ATTR_PLUGINS_DESC,
 				descriptors.toArray(new PluginDescriptor[descriptors.size()]));
-		context.setAttribute(Geobricks.ATTR_CONFIGURATORS, configurators
-				.toArray(new CustomConfigurator[configurators.size()]));
 	}
 
 	/**
@@ -249,8 +243,7 @@ public class PluginListener implements ServletContextListener {
 	 * @param configurators
 	 *            The set of custom configurators.
 	 */
-	public void processPluginConf(JSONObject conf, PluginDescriptor descriptor,
-			Set<CustomConfigurator> configurators) {
+	public void processPluginConf(JSONObject conf, PluginDescriptor descriptor) {
 		JSONObject defaultConf = conf.getJSONObject("default-conf");
 		if (defaultConf != null && !defaultConf.isNullObject()) {
 			descriptor.setDefaultConfiguration(defaultConf);
@@ -266,22 +259,6 @@ public class PluginListener implements ServletContextListener {
 			JSONObject shim = requirejs.getJSONObject("shim");
 			if (shim != null && !shim.isNullObject()) {
 				descriptor.setRequireShim(shim);
-			}
-		}
-
-		if (conf.has("custom-configurator")) {
-			String configurator = conf.getString("custom-configurator");
-			try {
-				Class<?> c = Class.forName(configurator);
-				if (CustomConfigurator.class.isAssignableFrom(c)) {
-					configurators.add((CustomConfigurator) c.newInstance());
-				}
-			} catch (ClassNotFoundException e) {
-				logger.error("Cannot instantiate custom configurator. "
-						+ "Class not found: " + configurator + ". Ignoring.", e);
-			} catch (IllegalAccessException | InstantiationException e) {
-				logger.error("Cannot instantiate custom configurator: "
-						+ configurator + ". Ignoring.", e);
 			}
 		}
 	}

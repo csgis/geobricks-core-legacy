@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
-import de.csgis.geobricks.CustomConfigurator;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 
@@ -62,16 +61,6 @@ public class ConfigServlet extends HttpServlet {
 		}
 
 		config.element("load-modules", modules);
-
-		// Custom configuration
-		CustomConfigurator[] configurators = (CustomConfigurator[]) context
-				.getAttribute(Geobricks.ATTR_CONFIGURATORS);
-		String confDir = context.getAttribute(Geobricks.ATTR_CONF_DIR)
-				.toString();
-		for (CustomConfigurator configurator : configurators) {
-			configurator.config(request, response, config, confDir);
-		}
-
 		return new JSONObject().element("config", config).toString();
 	}
 }
