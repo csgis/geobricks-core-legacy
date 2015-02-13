@@ -57,6 +57,10 @@ public class Path {
 		return copy().append("/styles");
 	}
 
+	public Path theme() {
+		return copy().append("/theme");
+	}
+
 	public Path module(String moduleName) {
 		return copy().append("/modules/" + moduleName);
 	}
