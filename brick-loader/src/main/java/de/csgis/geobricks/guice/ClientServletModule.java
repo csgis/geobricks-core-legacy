@@ -39,6 +39,8 @@ public class ClientServletModule extends ServletModule {
 				new StaticBinaryServlet("jslib"));
 		serveRegex(Path.root.images().all().path()).with(
 				new StaticBinaryServlet("images"));
+		serveRegex(Path.root.theme().all().path()).with(
+				new StaticBinaryServlet("theme"));
 
 		// Application index.html
 		String indexPath = Path.root.file("index.html").path();

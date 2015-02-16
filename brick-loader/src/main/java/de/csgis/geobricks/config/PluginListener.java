@@ -45,6 +45,7 @@ public class PluginListener implements ServletContextListener {
 
 	public static final String MODULES_PATH = "webapp/modules";
 	public static final String STYLES_PATH = "webapp/styles";
+	public static final String THEME_PATH = "webapp/theme";
 	public static final String APP_CONF_PATH = "/WEB-INF/conf/gbapp-conf.json";
 
 	@Override
@@ -109,9 +110,8 @@ public class PluginListener implements ServletContextListener {
 			try {
 				String path = new URL(pluginConf.getFile()).getPath();
 				logger.debug("Getting path: " + path);
-				ZipInputStream jar = new ZipInputStream(new FileInputStream(
-						path.substring(0, path.indexOf('!'))));
-				return getModulesAndStylesFromJar(jar);
+				return getModulesAndStylesFromJar(path.substring(0,
+						path.indexOf('!')));
 			} catch (MalformedURLException e) {
 				throw new IOException(e);
 			}
@@ -131,27 +131,46 @@ public class PluginListener implements ServletContextListener {
 	 * Obtains the plugin descriptor with the modules and styles configured from
 	 * the given jar file.
 	 * 
-	 * @param jar
-	 *            The jar file to scan.
+	 * @param zipFile
+	 *            The path of the jar file to scan.
 	 * @return The plugin descriptor with <b>only</b> the modules and
 	 *         stylesheets configured.
 	 * @throws IOException
 	 *             If any I/O error occurs while reading the jar file.
 	 */
-	public PluginDescriptor getModulesAndStylesFromJar(ZipInputStream jar)
+	public PluginDescriptor getModulesAndStylesFromJar(String zipFile)
 			throws IOException {
 		PluginDescriptor descriptor = new PluginDescriptor();
 
 		ZipEntry entry;
+
+		ZipInputStream jar = new ZipInputStream(new FileInputStream(zipFile));
 		while ((entry = jar.getNextEntry()) != null) {
 			String name = entry.getName();
 			if (name.matches(MODULES_PATH + File.separator + ".+")) {
 				processJSEntry(name, descriptor);
 				processCSSEntry(name, descriptor);
-			} else if (name.matches(STYLES_PATH + File.separator + ".+")) {
+			}
+		}
+		jar.close();
+
+		jar = new ZipInputStream(new FileInputStream(zipFile));
+		while ((entry = jar.getNextEntry()) != null) {
+			String name = entry.getName();
+			if (name.matches(STYLES_PATH + File.separator + ".+")) {
 				processCSSEntry(name, descriptor);
 			}
 		}
+		jar.close();
+
+		jar = new ZipInputStream(new FileInputStream(zipFile));
+		while ((entry = jar.getNextEntry()) != null) {
+			String name = entry.getName();
+			if (name.matches(THEME_PATH + File.separator + ".+")) {
+				processCSSEntry(name, descriptor);
+			}
+		}
+		jar.close();
 
 		return descriptor;
 	}
@@ -169,19 +188,30 @@ public class PluginListener implements ServletContextListener {
 		PluginDescriptor descriptor = new PluginDescriptor();
 
 		File[] moduleFiles = new File(root, MODULES_PATH).listFiles();
-		for (File file : moduleFiles) {
-			String entry = MODULES_PATH + File.separator + file.getName();
-			processJSEntry(entry, descriptor);
-			processCSSEntry(entry, descriptor);
+		if (moduleFiles != null) {
+			for (File file : moduleFiles) {
+				String entry = MODULES_PATH + File.separator + file.getName();
+				processJSEntry(entry, descriptor);
+				processCSSEntry(entry, descriptor);
+			}
 		}
 
-		File[] styleFiles = new File(root, STYLES_PATH).listFiles();
-		for (File file : styleFiles) {
-			String entry = STYLES_PATH + File.separator + file.getName();
-			processCSSEntry(entry, descriptor);
-		}
+		processCSSFiles(new File(root, STYLES_PATH).listFiles(), STYLES_PATH,
+				descriptor);
+		processCSSFiles(new File(root, THEME_PATH).listFiles(), THEME_PATH,
+				descriptor);
 
 		return descriptor;
+	}
+
+	private void processCSSFiles(File[] files, String dir,
+			PluginDescriptor descriptor) {
+		if (files != null) {
+			for (File file : files) {
+				String entry = dir + File.separator + file.getName();
+				processCSSEntry(entry, descriptor);
+			}
+		}
 	}
 
 	/**
@@ -200,12 +230,16 @@ public class PluginListener implements ServletContextListener {
 		if (entry.endsWith(".css")) {
 			int modulesLength = PluginListener.MODULES_PATH.length();
 			int stylesLength = PluginListener.STYLES_PATH.length();
+			int themeLength = PluginListener.THEME_PATH.length();
 
 			if (entry.startsWith(PluginListener.MODULES_PATH)) {
 				String style = "modules/" + entry.substring(modulesLength + 1);
 				descriptor.getStyles().add(style);
 			} else if (entry.startsWith(PluginListener.STYLES_PATH)) {
 				String style = "styles/" + entry.substring(stylesLength + 1);
+				descriptor.getStyles().add(style);
+			} else if (entry.startsWith(PluginListener.THEME_PATH)) {
+				String style = "theme/" + entry.substring(themeLength + 1);
 				descriptor.getStyles().add(style);
 			}
 		}

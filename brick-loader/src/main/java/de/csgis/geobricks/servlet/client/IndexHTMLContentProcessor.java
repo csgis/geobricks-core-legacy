@@ -27,7 +27,7 @@ public class IndexHTMLContentProcessor implements Filter {
 	private static final Logger logger = Logger
 			.getLogger(IndexHTMLContentProcessor.class);
 
-	public static final String STYLES_DIR = "styles";
+	public static final String STYLES_DIR = "css";
 
 	private PluginDescriptor[] descriptors;
 

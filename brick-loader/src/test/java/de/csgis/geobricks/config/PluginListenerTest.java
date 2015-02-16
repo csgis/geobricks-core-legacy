@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletContext;
 
@@ -136,6 +135,19 @@ public class PluginListenerTest {
 	}
 
 	@Test
+	public void processCSSFromThemeDirectory() {
+		PluginDescriptor descriptor = new PluginDescriptor();
+		String entry = PluginListener.THEME_PATH + File.separator + "mock.css";
+
+		PluginListener listener = new PluginListener();
+		listener.processCSSEntry(entry, descriptor);
+
+		assertEquals(0, descriptor.getModules().size());
+		assertEquals(1, descriptor.getStyles().size());
+		assertEquals("theme/mock.css", descriptor.getStyles().iterator().next());
+	}
+
+	@Test
 	public void processJSEntry() {
 		PluginDescriptor descriptor = new PluginDescriptor();
 		String entry = PluginListener.MODULES_PATH + File.separator + "mock.js";
@@ -162,10 +174,9 @@ public class PluginListenerTest {
 
 	@Test
 	public void processEntriesFromJar() throws IOException {
-		ZipInputStream jar = new ZipInputStream(getClass().getResourceAsStream(
-				"/resources.jar"));
+		String file = getClass().getResource("/resources.jar").getPath();
 		PluginListener listener = new PluginListener();
-		PluginDescriptor descriptor = listener.getModulesAndStylesFromJar(jar);
+		PluginDescriptor descriptor = listener.getModulesAndStylesFromJar(file);
 
 		List<String> styles = descriptor.getStyles();
 		assertEquals(1, styles.size());
@@ -192,7 +203,7 @@ public class PluginListenerTest {
 		PluginDescriptor descriptor = listener.getModulesAndStylesFromDir(root);
 
 		assertEquals(0, descriptor.getModules().size());
-		assertEquals(2, descriptor.getStyles().size());
+		assertEquals(3, descriptor.getStyles().size());
 	}
 
 	@Test
@@ -206,9 +217,9 @@ public class PluginListenerTest {
 
 		PluginListener listener = spy(new PluginListener());
 		doReturn(new PluginDescriptor()).when(listener)
-				.getModulesAndStylesFromJar(any(ZipInputStream.class));
+				.getModulesAndStylesFromJar(any(String.class));
 		listener.getModulesAndStyles(context, pluginConf);
 
-		verify(listener).getModulesAndStylesFromJar(any(ZipInputStream.class));
+		verify(listener).getModulesAndStylesFromJar(any(String.class));
 	}
 }
