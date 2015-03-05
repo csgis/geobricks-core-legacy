@@ -14,6 +14,7 @@
 		<module>brick-loader</module>
 		<module>geobricks-full</module>
 		<module>lib-proxy</module>
+		<module>lib-shared-sessions</module>
 		<module>tests-commons</module>
 		<module>plugins</module>
 		<module>apps</module>
