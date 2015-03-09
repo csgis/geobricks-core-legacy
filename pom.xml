@@ -15,7 +15,6 @@
 		<module>tests-commons</module>
 		<module>libs</module>
 		<module>plugins</module>
-		<module>apps</module>
 		<module>themes</module>
 	</modules>
 
