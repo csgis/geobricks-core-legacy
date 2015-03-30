@@ -214,26 +214,6 @@
 					</filterConfig>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.18.1</version>
-				<configuration>
-					<systemProperties>
-						<geobricks.finalName>${project.build.finalName}</geobricks.finalName>
-						<geobricks.contextPath>${project.build.directory}/${project.build.finalName}</geobricks.contextPath>
-						<GEOBRICKS_CONF_DIR>/var/geobricks</GEOBRICKS_CONF_DIR>
-					</systemProperties>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 </project>
