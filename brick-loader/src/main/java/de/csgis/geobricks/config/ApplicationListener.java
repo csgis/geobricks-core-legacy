@@ -17,12 +17,13 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 
 import de.csgis.geobricks.Geobricks;
+import de.csgis.geobricks.JSONUtils;
 import de.csgis.geobricks.PluginDescriptor;
 
 /**
- * Reads the application configuration from
- * {@link ApplicationListener#APP_CONF_PATH} and updates the following servlet
- * attributes:
+ * Reads the application configuration from the
+ * {@link Geobricks#ATTR_PLUGINS_CONF} servlet attribute and updates the
+ * following servlet attributes:
  * 
  * <ul>
  * <li>Sets {@link Geobricks#ATTR_PLUGINS_CONF} with the app-specific plugin
@@ -95,8 +96,9 @@ public class ApplicationListener implements ServletContextListener {
 					.getJSONObject(pluginId);
 			JSONObject defaultConf = getDefaultConfiguration(descriptors,
 					pluginId);
-			if (pluginConf.isEmpty() && defaultConf != null) {
-				pluginConfigurations.put(pluginId, defaultConf);
+			if (defaultConf != null) {
+				JSONObject merged = JSONUtils.merge(defaultConf, pluginConf);
+				pluginConfigurations.put(pluginId, merged);
 			}
 		}
 		context.setAttribute(Geobricks.ATTR_PLUGINS_CONF, pluginConfigurations);

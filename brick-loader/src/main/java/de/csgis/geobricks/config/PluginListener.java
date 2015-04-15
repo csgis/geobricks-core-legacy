@@ -71,15 +71,18 @@ public class PluginListener implements ServletContextListener {
 		for (Object key : appConf.keySet()) {
 			URL pluginConfUrl = getClass().getResource(
 					"/conf/" + key + "-conf.json");
+			if (pluginConfUrl == null) {
+				logger.error("Cannot load plugin: " + key);
+				continue;
+			}
+
 			PluginDescriptor pluginDescriptor = getModulesAndStyles(context,
 					pluginConfUrl);
 			pluginDescriptor.setId(key.toString());
-			if (pluginDescriptor != null) {
-				JSONObject pluginConf = JSONObject.fromObject(IOUtils
-						.toString(pluginConfUrl.openStream()));
-				processPluginConf(pluginConf, pluginDescriptor);
-				descriptors.add(pluginDescriptor);
-			}
+			JSONObject pluginConf = JSONObject.fromObject(IOUtils
+					.toString(pluginConfUrl));
+			processPluginConf(pluginConf, pluginDescriptor);
+			descriptors.add(pluginDescriptor);
 		}
 
 		context.setAttribute(Geobricks.ATTR_PLUGINS_CONF, appConf);
