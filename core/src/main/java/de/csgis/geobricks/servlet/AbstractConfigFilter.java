@@ -1,6 +1,7 @@
 package de.csgis.geobricks.servlet;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -12,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
-import de.csgis.geobricks.Geobricks;
 
 /**
  * Abstract filter to handle modifications on config.js. Subclasses only need to
@@ -24,12 +24,19 @@ import de.csgis.geobricks.Geobricks;
  * 
  */
 public abstract class AbstractConfigFilter implements Filter {
-	protected String confDir;
+	private ConfigReader config;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		confDir = filterConfig.getServletContext()
-				.getAttribute(Geobricks.ATTR_CONF_DIR).toString();
+		try {
+			config = new ConfigReader(filterConfig.getServletContext());
+		} catch (IOException e) {
+			throw new ServletException(e);
+		}
+	}
+
+	protected Properties getAppProperties() {
+		return config.getAppProperties();
 	}
 
 	@Override

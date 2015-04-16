@@ -87,7 +87,6 @@ public class ConfigServletTest {
 		ServletContext context = mock(ServletContext.class);
 		when(context.getAttribute(eq(Geobricks.ATTR_PLUGINS_CONF))).thenReturn(
 				pluginsConf);
-		when(context.getAttribute(eq(Geobricks.ATTR_CONF_DIR))).thenReturn("");
 
 		PluginDescriptor descriptor = new PluginDescriptor();
 		Collections.addAll(descriptor.getModules(), modules);

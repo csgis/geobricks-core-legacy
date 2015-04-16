@@ -1,10 +1,8 @@
 package de.csgis.geobricks.servlet.client;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.inject.Singleton;
 import javax.servlet.Filter;
@@ -16,24 +14,20 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.servlet.ConfigReader;
 import de.csgis.geobricks.servlet.CharResponseWrapper;
 
 @Singleton
 public class IndexHTMLContentProcessor implements Filter {
-	private static final Logger logger = Logger
-			.getLogger(IndexHTMLContentProcessor.class);
-
 	public static final String STYLES_DIR = "css";
 
 	private PluginDescriptor[] descriptors;
 
 	private File stylesDir;
 
-	private File appProperties;
+	private ConfigReader config;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -49,9 +43,11 @@ public class IndexHTMLContentProcessor implements Filter {
 			}
 		}
 
-		String confDir = context.getAttribute(Geobricks.ATTR_CONF_DIR)
-				.toString();
-		appProperties = new File(confDir, "app.properties");
+		try {
+			config = new ConfigReader(context);
+		} catch (IOException e) {
+			throw new ServletException(e);
+		}
 	}
 
 	@Override
@@ -61,17 +57,8 @@ public class IndexHTMLContentProcessor implements Filter {
 				(HttpServletResponse) response);
 		chain.doFilter(request, wrapper);
 
-		boolean minified = false;
-		try {
-			Properties properties = new Properties();
-			properties.load(new FileInputStream(appProperties));
-			minified = Boolean.parseBoolean(properties.getProperty("minified"));
-		} catch (IOException e) {
-			logger.error(
-					"Error reading app.properties file: "
-							+ appProperties.getAbsolutePath()
-							+ ". Assuming minified_js=false", e);
-		}
+		boolean minified = Boolean.parseBoolean(config.getAppProperties()
+				.getProperty("minified"));
 		response.getWriter().print(
 				process(wrapper.toString(), descriptors, stylesDir, minified));
 	}
