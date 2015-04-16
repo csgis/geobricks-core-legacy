@@ -21,6 +21,10 @@ public class ConfigReader {
 		updateAppProperties();
 	}
 
+	public String getConfigDir() {
+		return context.getAttribute(Geobricks.ATTR_CONF_DIR).toString();
+	}
+
 	public Properties getAppProperties() {
 		Object lastAccessedObj = context
 				.getAttribute(Geobricks.ATTR_APP_PROPERTIES_LAST_ACCESSED);

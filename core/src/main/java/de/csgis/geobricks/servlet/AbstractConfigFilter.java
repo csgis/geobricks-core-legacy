@@ -1,7 +1,6 @@
 package de.csgis.geobricks.servlet;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -24,7 +23,7 @@ import net.sf.json.JSONObject;
  * 
  */
 public abstract class AbstractConfigFilter implements Filter {
-	private ConfigReader config;
+	protected ConfigReader config;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -33,10 +32,6 @@ public abstract class AbstractConfigFilter implements Filter {
 		} catch (IOException e) {
 			throw new ServletException(e);
 		}
-	}
-
-	protected Properties getAppProperties() {
-		return config.getAppProperties();
 	}
 
 	@Override
