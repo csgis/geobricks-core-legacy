@@ -35,7 +35,7 @@ public class IndexHTMLContentProcessorTest {
 
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content,
+		String processed = filter.process(content, null,
 				new PluginDescriptor[] { descriptor }, mock(File.class), false);
 
 		assertTrue(content.contains("$styleSheets"));
@@ -49,20 +49,20 @@ public class IndexHTMLContentProcessorTest {
 	public void noCSS() throws Exception {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content,
+		String processed = filter.process(content, null,
 				new PluginDescriptor[] { new PluginDescriptor() },
 				mock(File.class), false);
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
-		assertFalse(processed.contains("<link"));
+		assertFalse(processed.contains("<link rel=\"stylesheet\""));
 	}
 
 	@Test
 	public void minifiedJS() throws Exception {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content,
+		String processed = filter.process(content, null,
 				new PluginDescriptor[] { new PluginDescriptor() },
 				mock(File.class), true);
 
@@ -78,7 +78,7 @@ public class IndexHTMLContentProcessorTest {
 	public void notMinifiedJS() throws Exception {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content,
+		String processed = filter.process(content, null,
 				new PluginDescriptor[] { new PluginDescriptor() },
 				mock(File.class), false);
 
@@ -103,7 +103,7 @@ public class IndexHTMLContentProcessorTest {
 
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content,
+		String processed = filter.process(content, null,
 				new PluginDescriptor[] { new PluginDescriptor() }, configDir,
 				false);
 
@@ -125,7 +125,7 @@ public class IndexHTMLContentProcessorTest {
 
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content,
+		String processed = filter.process(content, null,
 				new PluginDescriptor[] { new PluginDescriptor() }, configDir,
 				true);
 
@@ -134,6 +134,32 @@ public class IndexHTMLContentProcessorTest {
 		checkCSS(processed, "optimized/portal-style.css");
 		checkCSS(processed, IndexHTMLContentProcessor.STYLES_DIR
 				+ "/testing.css");
+	}
+
+	@Test
+	public void replacesTitleIfSpecified() throws Exception {
+		String content = IOUtils
+				.toString(getClass().getResourceAsStream(INDEX));
+		String processed = filter.process(content, "My Page",
+				new PluginDescriptor[] { new PluginDescriptor() },
+				mock(File.class), true);
+
+		assertTrue(content.contains("$title"));
+		assertFalse(processed.contains("$title"));
+		assertTrue(processed.contains("<title>My Page</title>"));
+	}
+
+	@Test
+	public void replacesEmptyTitleIfNotSpecified() throws Exception {
+		String content = IOUtils
+				.toString(getClass().getResourceAsStream(INDEX));
+		String processed = filter.process(content, null,
+				new PluginDescriptor[] { new PluginDescriptor() },
+				mock(File.class), true);
+
+		assertTrue(content.contains("$title"));
+		assertFalse(processed.contains("$title"));
+		assertTrue(processed.contains("<title></title>"));
 	}
 
 	private void checkCSS(String content, String css) {

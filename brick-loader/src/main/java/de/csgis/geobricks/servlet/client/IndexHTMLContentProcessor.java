@@ -3,6 +3,7 @@ package de.csgis.geobricks.servlet.client;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.inject.Singleton;
 import javax.servlet.Filter;
@@ -57,19 +58,24 @@ public class IndexHTMLContentProcessor implements Filter {
 				(HttpServletResponse) response);
 		chain.doFilter(request, wrapper);
 
-		boolean minified = Boolean.parseBoolean(config.getAppProperties()
+		Properties properties = config.getAppProperties();
+		boolean minified = Boolean.parseBoolean(properties
 				.getProperty("minified"));
+		String title = properties.getProperty("title");
+
 		response.getWriter().print(
-				process(wrapper.toString(), descriptors, stylesDir, minified));
+				process(wrapper.toString(), title, descriptors, stylesDir,
+						minified));
 	}
 
-	public String process(String content, PluginDescriptor[] descriptors,
-			File stylesDir, boolean minified) {
+	public String process(String content, String title,
+			PluginDescriptor[] descriptors, File stylesDir, boolean minified) {
+		String replaced;
 		if (minified) {
 			String css = "<link rel=\"stylesheet\" href=\"optimized/portal-style.css\"/>\n";
 			content = content.replace("$styleSheets", css
 					+ getCSSFromDir(stylesDir));
-			return content.replace("$mainModule", "optimized/portal");
+			replaced = content.replace("$mainModule", "optimized/portal");
 		} else {
 			StringBuilder str = new StringBuilder();
 			for (PluginDescriptor descriptor : descriptors) {
@@ -80,8 +86,15 @@ public class IndexHTMLContentProcessor implements Filter {
 			}
 			content = content.replace("$styleSheets", str.toString()
 					+ getCSSFromDir(stylesDir));
-			return content.replace("$mainModule", "modules/main");
+			replaced = content.replace("$mainModule", "modules/main");
 		}
+
+		if (title != null) {
+			replaced = replaced.replace("$title", title);
+		} else {
+			replaced = replaced.replace("$title", "");
+		}
+		return replaced;
 	}
 
 	private String getCSSFromDir(File stylesDir) {
