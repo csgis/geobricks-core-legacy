@@ -31,13 +31,15 @@ public class ConfigServletTest {
 	}
 
 	@Test
-	public void modules() {
+	public void modules() throws Exception {
 		String[] modules = new String[] { "a", "b" };
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
 		ServletContext context = context(
 				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"), modules);
+		when(context.getAttribute(Geobricks.ATTR_CONF_DIR)).thenReturn(
+				"non_existing_dir");
 
 		String config = servlet.getConfig(request, response, context);
 		JSONObject json = JSONObject.fromObject(config);
@@ -51,7 +53,7 @@ public class ConfigServletTest {
 	}
 
 	@Test
-	public void moduleConfig() {
+	public void moduleConfig() throws Exception {
 		String[] modules = new String[] { "a" };
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
@@ -59,6 +61,8 @@ public class ConfigServletTest {
 		ServletContext context = context(
 				JSONObject.fromObject("{'" + PLUGIN_ID
 						+ "' : { a : {enabled : true}}}"), modules);
+		when(context.getAttribute(Geobricks.ATTR_CONF_DIR)).thenReturn(
+				"non_existing_dir");
 
 		String config = servlet.getConfig(request, response, context);
 		JSONObject json = JSONObject.fromObject(config);
@@ -68,12 +72,14 @@ public class ConfigServletTest {
 	}
 
 	@Test
-	public void noModules() {
+	public void noModules() throws Exception {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
 		ServletContext context = context(
 				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"),
 				new String[0]);
+		when(context.getAttribute(Geobricks.ATTR_CONF_DIR)).thenReturn(
+				"non_existing_dir");
 
 		String config = servlet.getConfig(request, response, context);
 		JSONObject json = JSONObject.fromObject(config);

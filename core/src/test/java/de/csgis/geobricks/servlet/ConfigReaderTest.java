@@ -14,6 +14,10 @@ import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
+import net.sf.json.JSONObject;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -45,7 +49,10 @@ public class ConfigReaderTest {
 	}
 
 	@Before
-	public void setup() {
+	public void setup() throws Exception {
+		FileUtils.deleteDirectory(confDir);
+		confDir.mkdir();
+
 		attributes = new HashMap<Object, Object>();
 		context = mock(ServletContext.class);
 		doAnswer(new Answer<Void>() {
@@ -98,5 +105,59 @@ public class ConfigReaderTest {
 		assertEquals(2, app.size());
 		assertEquals("v2", app.getProperty("k1"));
 		assertEquals("v3", app.getProperty("k2"));
+	}
+
+	@Test
+	public void returnsEmptyMapIfNoPluginConfigs() throws Exception {
+		ConfigReader config = new ConfigReader(context);
+		assertEquals(0, config.getPluginConfigs().size());
+	}
+
+	@Test
+	public void addPluginConfigIfFileCreated() throws Exception {
+		ConfigReader config = new ConfigReader(context);
+		assertEquals(0, config.getPluginConfigs().size());
+
+		File pluginConf = new File(confDir, "plugin.json");
+		JSONObject json = JSONObject.fromObject("{module1 : [1,2,3]}");
+		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
+
+		assertEquals(1, config.getPluginConfigs().size());
+		assertEquals(json, config.getPluginConfigs().get("plugin"));
+
+		pluginConf.delete();
+	}
+
+	@Test
+	public void reloadPluginConfigIfModifiedRecently() throws Exception {
+		ConfigReader config = new ConfigReader(context);
+		File pluginConf = new File(confDir, "plugin.json");
+
+		JSONObject json = JSONObject.fromObject("{module1 : [1,2,3]}");
+		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
+		assertEquals(json, config.getPluginConfigs().get("plugin"));
+
+		// Last modified only takes seconds into account, not millis. We wait
+		// for at least one second.
+		Thread.sleep(1000);
+
+		json = JSONObject.fromObject("{module1 : [4,5,6]}");
+		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
+		assertEquals(json, config.getPluginConfigs().get("plugin"));
+
+		pluginConf.delete();
+	}
+
+	@Test
+	public void removePluginConfigIfFileDeleted() throws Exception {
+		ConfigReader config = new ConfigReader(context);
+		File pluginConf = new File(confDir, "plugin.json");
+
+		JSONObject json = JSONObject.fromObject("{module1 : [1,2,3]}");
+		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
+		assertEquals(json, config.getPluginConfigs().get("plugin"));
+
+		pluginConf.delete();
+		assertEquals(0, config.getPluginConfigs().size());
 	}
 }

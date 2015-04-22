@@ -3,6 +3,7 @@ package de.csgis.geobricks.servlet.client;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.servlet.ConfigReader;
 
 /**
  * Builds the json document that configures all the requirejs modules
@@ -37,7 +39,8 @@ public class ConfigServlet extends HttpServlet {
 	}
 
 	public String getConfig(HttpServletRequest request,
-			HttpServletResponse response, ServletContext context) {
+			HttpServletResponse response, ServletContext context)
+			throws IOException {
 		JSONObject pluginsConfiguration = (JSONObject) context
 				.getAttribute(Geobricks.ATTR_PLUGINS_CONF);
 
@@ -50,13 +53,18 @@ public class ConfigServlet extends HttpServlet {
 			modules.addAll(descriptor.getModules());
 		}
 
+		ConfigReader configReader = new ConfigReader(context);
+		Map<String, JSONObject> pluginConfigOverrides = configReader
+				.getPluginConfigs();
 		for (Object plugin : pluginsConfiguration.keySet()) {
+			String name = plugin.toString();
+			JSONObject override = pluginConfigOverrides.get(name);
+			JSONObject pluginConfig = override != null ? override
+					: pluginsConfiguration.getJSONObject(name);
 			// Add configuration for each module within plugin configuration
-			JSONObject pluginConfiguration = pluginsConfiguration
-					.getJSONObject(plugin.toString());
-			for (Object key : pluginConfiguration.keySet()) {
+			for (Object key : pluginConfig.keySet()) {
 				String module = key.toString();
-				config.element(module, pluginConfiguration.get(module));
+				config.element(module, pluginConfig.get(module));
 			}
 		}
 
