@@ -61,6 +61,10 @@ public class Path {
 		return copy().append("/theme");
 	}
 
+	public Path _static() {
+		return copy().append("/_static");
+	}
+
 	public Path module(String moduleName) {
 		return copy().append("/modules/" + moduleName);
 	}

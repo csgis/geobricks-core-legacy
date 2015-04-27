@@ -8,80 +8,62 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.csgis.geobricks.Path;
+import org.apache.commons.io.IOUtils;
+
 import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
-/**
- * Serves static content from the resources space, starting to look in its own
- * package and in the folder passed to the constructor.
- * 
- * @author fergonco
- */
 public abstract class AbstractStaticServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-
-	private String folder;
-	private String resource;
-
-	public AbstractStaticServlet(String folder) {
-		this(folder, null);
-	}
-
-	public AbstractStaticServlet(String folder, String resource) {
-		this.folder = folder != null ? folder : "";
-		this.resource = resource;
-	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String requestURI = req.getRequestURI();
-		InputStream resourceStream = getResourceStream(requestURI);
+		String uri = req.getRequestURI().substring(
+				getServletContext().getContextPath().length() + 1);
+
+		String resource;
+		InputStream stream;
 
 		try {
-			setContentTypeAndEncoding(resp, requestURI);
-			write(resourceStream, resp);
+			resource = getResource(uri);
+			setContentTypeAndEncoding(resp, resource);
+			stream = getResourceStream(resource);
+		} catch (IOException e) {
+			throw new HTTPCodeServletException(e,
+					HttpServletResponse.SC_NOT_FOUND);
+		}
+
+		try {
+			if (isText(resource)) {
+				IOUtils.copy(stream, resp.getWriter());
+			} else {
+				IOUtils.copy(stream, resp.getOutputStream());
+			}
 		} finally {
-			resourceStream.close();
+			stream.close();
 		}
 	}
 
+	public boolean isText(String uri) {
+		String s = uri.toLowerCase();
+		return s.endsWith(".js") || s.endsWith(".css") || s.endsWith(".txt")
+				|| s.endsWith(".html") || s.endsWith(".htm");
+	}
+
 	public void setContentTypeAndEncoding(HttpServletResponse resp, String uri) {
-		String resource = getResource(uri);
-		if (resource.endsWith(".js")) {
+		if (uri.endsWith(".js")) {
 			resp.setContentType("application/javascript");
 			resp.setCharacterEncoding("UTF-8");
-		} else if (resource.endsWith(".html")) {
+		} else if (uri.endsWith(".html")) {
 			resp.setContentType("text/html");
 			resp.setCharacterEncoding("UTF-8");
-		} else if (resource.endsWith(".css")) {
+		} else if (uri.endsWith(".css")) {
 			resp.setContentType("text/css");
 			resp.setCharacterEncoding("UTF-8");
 		}
 	}
 
-	public String getResource(String uri) {
-		if (this.resource != null) {
-			return this.resource;
-		} else {
-			return uri.substring(uri.indexOf(folder) + folder.length() + 1);
-		}
-	}
+	protected abstract String getResource(String uri) throws IOException;
 
-	public InputStream getResourceStream(String uri)
-			throws HTTPCodeServletException {
-		String resource = getResource(uri);
-		InputStream resourceStream = Path.root.file(folder).file(resource)
-				.getResourceAsStream();
-
-		if (resourceStream == null) {
-			throw new HTTPCodeServletException("Cannot find resource:"
-					+ resource, HttpServletResponse.SC_NOT_FOUND);
-		}
-
-		return resourceStream;
-	}
-
-	protected abstract void write(InputStream stream,
-			HttpServletResponse response) throws IOException;
+	protected abstract InputStream getResourceStream(String resource)
+			throws IOException;
 }
