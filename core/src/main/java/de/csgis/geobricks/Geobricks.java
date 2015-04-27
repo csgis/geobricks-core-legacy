@@ -12,5 +12,4 @@ public interface Geobricks {
 	String ATTR_APP_PROPERTIES = "de.csgis.geobricks.app_properties";
 	String ATTR_PLUGINS_CONF = "de.csgis.geobricks.plugins-conf";
 	String ATTR_PLUGINS_DESC = "de.csgis.geobricks.plugin_descriptors";
-	String ATTR_CONFIGURATORS = "de.csgis.geobricks.plugin_configurators";
 }
