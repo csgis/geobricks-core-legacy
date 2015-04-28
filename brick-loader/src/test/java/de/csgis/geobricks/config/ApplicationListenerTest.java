@@ -24,8 +24,8 @@ import de.csgis.geobricks.PluginDescriptor;
 
 public class ApplicationListenerTest {
 	private static final String REAL_PATH = "";
-	private static final String DEFAULT_CONFIG_PATH = REAL_PATH
-			+ File.separator + "WEB-INF" + File.separator + "default_config";
+	private static final String DEFAULT_CONF_PATH = REAL_PATH + File.separator
+			+ "WEB-INF" + File.separator + "default_conf";
 	private static final String PLUGIN_ID = "myplugin";
 	private static final String APP_NAME = "geobricks_testing_app_conf_dir";
 
@@ -82,7 +82,7 @@ public class ApplicationListenerTest {
 				.thenReturn(json);
 
 		String conf = configure(Geobricks.ATTR_CONF_DIR, String.class);
-		assertEquals(DEFAULT_CONFIG_PATH, conf);
+		assertEquals(DEFAULT_CONF_PATH, conf);
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class ApplicationListenerTest {
 
 		System.setProperty("GEOBRICKS_CONF_DIR", "non_existing");
 		String conf = configure(Geobricks.ATTR_CONF_DIR, String.class);
-		assertEquals(DEFAULT_CONFIG_PATH, conf);
+		assertEquals(DEFAULT_CONF_PATH, conf);
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class ApplicationListenerTest {
 		System.setProperty("GEOBRICKS_CONF_DIR",
 				System.getProperty("java.io.tmpdir"));
 		String conf = configure(Geobricks.ATTR_CONF_DIR, String.class);
-		assertEquals(DEFAULT_CONFIG_PATH, conf);
+		assertEquals(DEFAULT_CONF_PATH, conf);
 	}
 
 	@Test

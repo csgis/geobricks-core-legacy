@@ -164,7 +164,7 @@ public class ApplicationListener implements ServletContextListener {
 	/**
 	 * Configures the {@link Geobricks#ATTR_CONF_DIR} attribute with the
 	 * application conf directory. ${{@link Geobricks#PROP_GEOBRICKS_CONF}
-	 * /&lt;app&gt; or a <i>WEB-INF/default_config</i> if the system property is
+	 * /&lt;app&gt; or a <i>WEB-INF/default_conf</i> if the system property is
 	 * not set or the directory does not exist.
 	 * 
 	 * @param context
@@ -174,9 +174,9 @@ public class ApplicationListener implements ServletContextListener {
 		String conf = System.getProperty(Geobricks.PROP_GEOBRICKS_CONF);
 
 		// If the system property is not specified, the configuration
-		// is directly in the WEB-INF/default_config directory
+		// is directly in the WEB-INF/default_conf directory
 		String appConf = context.getRealPath("/") + File.separator + "WEB-INF"
-				+ File.separator + "default_config";
+				+ File.separator + "default_conf";
 		if (conf != null && new File(conf).exists()) {
 			// If the system property is specified and the app subdirectory
 			// exists, the configuration is in GEOBRICKS_CONF_DIR/<app>/
