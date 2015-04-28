@@ -39,7 +39,7 @@ public class ExternalResourceServletTest {
 	@Test
 	public void nonExistingResource() throws Exception {
 		try {
-			servlet.getResourceStream("non_existing_file");
+			servlet.getResourceAsStream("non_existing_file");
 			fail();
 		} catch (IOException e) {
 		}
@@ -61,7 +61,7 @@ public class ExternalResourceServletTest {
 
 		String resource = servlet.getResource("_static/file.txt");
 		assertEquals(file.getAbsolutePath(), resource);
-		InputStream stream = servlet.getResourceStream(resource);
+		InputStream stream = servlet.getResourceAsStream(resource);
 
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(stream, writer);

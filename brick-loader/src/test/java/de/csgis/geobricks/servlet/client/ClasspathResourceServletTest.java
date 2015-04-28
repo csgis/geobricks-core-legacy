@@ -21,7 +21,7 @@ public class ClasspathResourceServletTest {
 		ClasspathResourceServlet servlet = new ClasspathResourceServlet(null,
 				"index.html");
 		try {
-			servlet.getResourceStream(null);
+			servlet.getResourceAsStream(null);
 			fail();
 		} catch (IOException e) {
 		}
@@ -36,7 +36,7 @@ public class ClasspathResourceServletTest {
 
 		String uri = "index.html";
 		assertEquals(uri, servlet.getResource(uri));
-		InputStream resource = servlet.getResourceStream(uri);
+		InputStream resource = servlet.getResourceAsStream(uri);
 
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(resource, writer);
@@ -52,7 +52,7 @@ public class ClasspathResourceServletTest {
 
 		String uri = "modules/main.js";
 		assertEquals(uri, servlet.getResource(uri));
-		InputStream resource = servlet.getResourceStream(uri);
+		InputStream resource = servlet.getResourceAsStream(uri);
 
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(resource, writer);
@@ -67,7 +67,7 @@ public class ClasspathResourceServletTest {
 				"modules");
 		String uri = "modules/non_existing_resource";
 		try {
-			servlet.getResourceStream(uri);
+			servlet.getResourceAsStream(uri);
 			fail();
 		} catch (IOException e) {
 			// do nothing
@@ -81,7 +81,7 @@ public class ClasspathResourceServletTest {
 		ClasspathResourceServlet servlet = new ClasspathResourceServlet(
 				"modules");
 		try {
-			servlet.getResourceStream("index.html");
+			servlet.getResourceAsStream("index.html");
 			fail();
 		} catch (IOException e) {
 			// do nothing

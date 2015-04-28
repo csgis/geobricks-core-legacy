@@ -2,6 +2,8 @@ package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,7 +14,16 @@ import org.apache.commons.io.IOUtils;
 
 import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
+/**
+ * Abstract servlet to serve static content. It relies on some abstract methods
+ * to obtain resource string representation and stream corresponding to an URI.
+ * 
+ * @author vicgonco
+ * 
+ */
 public abstract class AbstractStaticServlet extends HttpServlet {
+	private static final List<String> TEXT_EXTS = Arrays.asList(".js", ".css",
+			".html", ".htm", ".txt");
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -26,14 +37,14 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 		try {
 			resource = getResource(uri);
 			setContentTypeAndEncoding(resp, resource);
-			stream = getResourceStream(resource);
+			stream = getResourceAsStream(resource);
 		} catch (IOException e) {
 			throw new HTTPCodeServletException(e,
 					HttpServletResponse.SC_NOT_FOUND);
 		}
 
 		try {
-			if (isText(resource)) {
+			if (TEXT_EXTS.contains(resource.toLowerCase())) {
 				IOUtils.copy(stream, resp.getWriter());
 			} else {
 				IOUtils.copy(stream, resp.getOutputStream());
@@ -41,12 +52,6 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 		} finally {
 			stream.close();
 		}
-	}
-
-	public boolean isText(String uri) {
-		String s = uri.toLowerCase();
-		return s.endsWith(".js") || s.endsWith(".css") || s.endsWith(".txt")
-				|| s.endsWith(".html") || s.endsWith(".htm");
 	}
 
 	public void setContentTypeAndEncoding(HttpServletResponse resp, String uri) {
@@ -62,8 +67,30 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Returns the local resource that matches the given URI.
+	 * 
+	 * @param uri
+	 *            The URI to check. It will only contain the relative path to
+	 *            the resource, excluding the context path.
+	 * @return The string representation of the required resource. It will be
+	 *         used to call {@link #getResourceAsStream(String)} in order to get
+	 *         the resource stream.
+	 * @throws IOException
+	 *             if the resource does not exist or cannot be accessed.
+	 */
 	protected abstract String getResource(String uri) throws IOException;
 
-	protected abstract InputStream getResourceStream(String resource)
+	/**
+	 * Returns the specified resource as stream.
+	 * 
+	 * @param resource
+	 *            The resource to obtain, as returned by
+	 *            {@link #getResource(String)}.
+	 * @return The resource as stream.
+	 * @throws IOException
+	 *             if the resource does not exist or cannot be accessed.
+	 */
+	protected abstract InputStream getResourceAsStream(String resource)
 			throws IOException;
 }
