@@ -51,4 +51,10 @@ public class StaticServletTest extends AbstractFunctionalTest {
 				.getStatusCode());
 	}
 
+	@Test
+	public void getExternalResource() throws Exception {
+		HttpResponse response = app.doGet("_static/static.txt");
+		assertEquals(HttpServletResponse.SC_OK, response.getStatusLine()
+				.getStatusCode());
+	}
 }

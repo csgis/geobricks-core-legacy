@@ -48,7 +48,8 @@ public class ClientServletModule extends ServletModule {
 				Geobricks.ATTR_CONF_DIR);
 		if (confDir != null) {
 			serveRegex(Path.root._static().all().path()).with(
-					new ExternalResourceServlet(new File(confDir.toString())));
+					new ExternalResourceServlet(new File(confDir.toString(),
+							"_static")));
 		}
 
 		// Application index.html
