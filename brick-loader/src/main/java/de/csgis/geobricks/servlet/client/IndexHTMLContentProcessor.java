@@ -22,7 +22,7 @@ import de.csgis.geobricks.servlet.CharResponseWrapper;
 
 @Singleton
 public class IndexHTMLContentProcessor implements Filter {
-	public static final String STYLES_DIR = "css";
+	public static final String STYLES_DIR = "_static" + File.separator + "css";
 
 	private PluginDescriptor[] descriptors;
 
@@ -36,12 +36,10 @@ public class IndexHTMLContentProcessor implements Filter {
 		descriptors = (PluginDescriptor[]) context
 				.getAttribute(Geobricks.ATTR_PLUGINS_DESC);
 
-		String path = context.getRealPath("/" + STYLES_DIR);
-		if (path != null) {
-			File dir = new File(path);
-			if (dir.exists() && dir.isDirectory() && dir.canRead()) {
-				stylesDir = dir;
-			}
+		File dir = new File(context.getAttribute(Geobricks.ATTR_CONF_DIR)
+				.toString(), STYLES_DIR);
+		if (dir.exists() && dir.isDirectory() && dir.canRead()) {
+			stylesDir = dir;
 		}
 
 		try {
