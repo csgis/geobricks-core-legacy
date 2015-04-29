@@ -2,7 +2,6 @@ package de.csgis.geobricks.servlet.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -20,6 +19,7 @@ import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.servlet.Config;
 
 public class ConfigServletTest {
 	private static final String PLUGIN_ID = "myplugin";
@@ -38,8 +38,6 @@ public class ConfigServletTest {
 		HttpServletResponse response = mock(HttpServletResponse.class);
 		ServletContext context = context(
 				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"), modules);
-		when(context.getAttribute(Geobricks.ATTR_CONF_DIR)).thenReturn(
-				"non_existing_dir");
 
 		String config = servlet.getConfig(request, response, context);
 		JSONObject json = JSONObject.fromObject(config);
@@ -61,8 +59,6 @@ public class ConfigServletTest {
 		ServletContext context = context(
 				JSONObject.fromObject("{'" + PLUGIN_ID
 						+ "' : { a : {enabled : true}}}"), modules);
-		when(context.getAttribute(Geobricks.ATTR_CONF_DIR)).thenReturn(
-				"non_existing_dir");
 
 		String config = servlet.getConfig(request, response, context);
 		JSONObject json = JSONObject.fromObject(config);
@@ -78,8 +74,6 @@ public class ConfigServletTest {
 		ServletContext context = context(
 				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"),
 				new String[0]);
-		when(context.getAttribute(Geobricks.ATTR_CONF_DIR)).thenReturn(
-				"non_existing_dir");
 
 		String config = servlet.getConfig(request, response, context);
 		JSONObject json = JSONObject.fromObject(config);
@@ -90,15 +84,17 @@ public class ConfigServletTest {
 	}
 
 	private ServletContext context(JSONObject pluginsConf, String[] modules) {
-		ServletContext context = mock(ServletContext.class);
-		when(context.getAttribute(eq(Geobricks.ATTR_PLUGINS_CONF))).thenReturn(
-				pluginsConf);
+		Config config = mock(Config.class);
+		when(config.getApplicationConf()).thenReturn(pluginsConf);
 
 		PluginDescriptor descriptor = new PluginDescriptor();
 		Collections.addAll(descriptor.getModules(), modules);
 
-		when(context.getAttribute(eq(Geobricks.ATTR_PLUGINS_DESC))).thenReturn(
+		when(config.getPluginDescriptors()).thenReturn(
 				new PluginDescriptor[] { descriptor });
+
+		ServletContext context = mock(ServletContext.class);
+		when(context.getAttribute(Geobricks.ATTR_CONFIG)).thenReturn(config);
 
 		return context;
 	}

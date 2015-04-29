@@ -9,7 +9,6 @@ import javax.inject.Singleton;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -17,36 +16,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.servlet.ConfigReader;
 import de.csgis.geobricks.servlet.CharResponseWrapper;
+import de.csgis.geobricks.servlet.Config;
 
 @Singleton
 public class IndexHTMLContentProcessor implements Filter {
 	public static final String STYLES_DIR = "_static" + File.separator + "css";
 
-	private PluginDescriptor[] descriptors;
-
-	private File stylesDir;
-
-	private ConfigReader config;
+	private Config config;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		ServletContext context = filterConfig.getServletContext();
-		descriptors = (PluginDescriptor[]) context
-				.getAttribute(Geobricks.ATTR_PLUGINS_DESC);
-
-		File dir = new File(context.getAttribute(Geobricks.ATTR_CONF_DIR)
-				.toString(), STYLES_DIR);
-		if (dir.exists() && dir.isDirectory() && dir.canRead()) {
-			stylesDir = dir;
-		}
-
-		try {
-			config = new ConfigReader(context);
-		} catch (IOException e) {
-			throw new ServletException(e);
-		}
+		config = (Config) filterConfig.getServletContext().getAttribute(
+				Geobricks.ATTR_CONFIG);
 	}
 
 	@Override
@@ -55,19 +37,17 @@ public class IndexHTMLContentProcessor implements Filter {
 		CharResponseWrapper wrapper = new CharResponseWrapper(
 				(HttpServletResponse) response);
 		chain.doFilter(request, wrapper);
+		response.getWriter().print(process(wrapper.toString(), config));
+	}
 
+	public String process(String content, Config config) {
 		Properties properties = config.getAppProperties();
 		boolean minified = Boolean.parseBoolean(properties
 				.getProperty("minified"));
 		String title = properties.getProperty("title");
+		PluginDescriptor[] descriptors = config.getPluginDescriptors();
+		File stylesDir = new File(config.getConfigDir(), STYLES_DIR);
 
-		response.getWriter().print(
-				process(wrapper.toString(), title, descriptors, stylesDir,
-						minified));
-	}
-
-	public String process(String content, String title,
-			PluginDescriptor[] descriptors, File stylesDir, boolean minified) {
 		String replaced;
 		if (minified) {
 			String css = "<link rel=\"stylesheet\" href=\"optimized/portal-style.css\"/>\n";
@@ -97,7 +77,9 @@ public class IndexHTMLContentProcessor implements Filter {
 
 	private String getCSSFromDir(File stylesDir) {
 		String ret = "";
-		if (stylesDir != null) {
+
+		if (stylesDir.exists() && stylesDir.isDirectory()
+				&& stylesDir.canRead()) {
 			File[] cssFiles = stylesDir.listFiles(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {

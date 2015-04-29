@@ -2,13 +2,13 @@ package de.csgis.geobricks.servlet.client;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileWriter;
 import java.util.Collections;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.servlet.Config;
 
 public class IndexHTMLContentProcessorTest {
 	private static final String INDEX = "/webapp/index.html";
@@ -35,8 +36,10 @@ public class IndexHTMLContentProcessorTest {
 
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content, null,
-				new PluginDescriptor[] { descriptor }, mock(File.class), false);
+
+		Config config = mockConfig(null, new PluginDescriptor[] { descriptor },
+				"", false);
+		String processed = filter.process(content, config);
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -49,9 +52,9 @@ public class IndexHTMLContentProcessorTest {
 	public void noCSS() throws Exception {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content, null,
-				new PluginDescriptor[] { new PluginDescriptor() },
-				mock(File.class), false);
+		Config config = mockConfig(null,
+				new PluginDescriptor[] { new PluginDescriptor() }, "", false);
+		String processed = filter.process(content, config);
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -62,9 +65,9 @@ public class IndexHTMLContentProcessorTest {
 	public void minifiedJS() throws Exception {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content, null,
-				new PluginDescriptor[] { new PluginDescriptor() },
-				mock(File.class), true);
+		Config config = mockConfig(null,
+				new PluginDescriptor[] { new PluginDescriptor() }, "", true);
+		String processed = filter.process(content, config);
 
 		assertTrue(content.contains("$mainModule"));
 		assertTrue(content.contains("$styleSheets"));
@@ -78,9 +81,9 @@ public class IndexHTMLContentProcessorTest {
 	public void notMinifiedJS() throws Exception {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content, null,
-				new PluginDescriptor[] { new PluginDescriptor() },
-				mock(File.class), false);
+		Config config = mockConfig(null,
+				new PluginDescriptor[] { new PluginDescriptor() }, "", false);
+		String processed = filter.process(content, config);
 
 		assertTrue(content.contains("$mainModule"));
 		assertTrue(content.contains("$styleSheets"));
@@ -92,20 +95,24 @@ public class IndexHTMLContentProcessorTest {
 
 	@Test
 	public void CSSFromStylesDir() throws Exception {
-		File[] files = new File[] { new File(
-				IndexHTMLContentProcessor.STYLES_DIR + File.separator
-						+ "testing.css") };
+		File confDir = File.createTempFile("geobricks-test", "");
+		confDir.delete();
+		confDir.mkdir();
 
-		File configDir = mock(File.class);
-		when(configDir.listFiles(any(FilenameFilter.class))).thenReturn(files);
-		when(configDir.getPath()).thenReturn(
-				IndexHTMLContentProcessor.STYLES_DIR);
+		File css = new File(confDir, "_static" + File.separator + "css");
+		css.mkdirs();
+
+		File file = new File(css, "testing.css");
+		FileWriter writer = new FileWriter(file);
+		IOUtils.write("", writer);
+		writer.close();
 
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content, null,
-				new PluginDescriptor[] { new PluginDescriptor() }, configDir,
-				false);
+		Config config = mockConfig(null,
+				new PluginDescriptor[] { new PluginDescriptor() },
+				confDir.getAbsolutePath(), false);
+		String processed = filter.process(content, config);
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -114,20 +121,24 @@ public class IndexHTMLContentProcessorTest {
 	}
 
 	public void minifiedIncludesCSSFromStylesDir() throws Exception {
-		File[] files = new File[] { new File(
-				IndexHTMLContentProcessor.STYLES_DIR + File.separator
-						+ "testing.css") };
+		File confDir = File.createTempFile("geobricks-test", "");
+		confDir.delete();
+		confDir.mkdir();
 
-		File configDir = mock(File.class);
-		when(configDir.listFiles(any(FilenameFilter.class))).thenReturn(files);
-		when(configDir.getPath()).thenReturn(
-				IndexHTMLContentProcessor.STYLES_DIR);
+		File css = new File(confDir, "_static" + File.separator + "css");
+		css.mkdirs();
+
+		File file = new File(css, "testing.css");
+		FileWriter writer = new FileWriter(file);
+		IOUtils.write("", writer);
+		writer.close();
 
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content, null,
-				new PluginDescriptor[] { new PluginDescriptor() }, configDir,
-				true);
+		Config config = mockConfig(null,
+				new PluginDescriptor[] { new PluginDescriptor() },
+				confDir.getAbsolutePath(), true);
+		String processed = filter.process(content, config);
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -140,9 +151,9 @@ public class IndexHTMLContentProcessorTest {
 	public void replacesTitleIfSpecified() throws Exception {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content, "My Page",
-				new PluginDescriptor[] { new PluginDescriptor() },
-				mock(File.class), true);
+		Config config = mockConfig("My Page",
+				new PluginDescriptor[] { new PluginDescriptor() }, "", true);
+		String processed = filter.process(content, config);
 
 		assertTrue(content.contains("$title"));
 		assertFalse(processed.contains("$title"));
@@ -153,9 +164,9 @@ public class IndexHTMLContentProcessorTest {
 	public void replacesEmptyTitleIfNotSpecified() throws Exception {
 		String content = IOUtils
 				.toString(getClass().getResourceAsStream(INDEX));
-		String processed = filter.process(content, null,
-				new PluginDescriptor[] { new PluginDescriptor() },
-				mock(File.class), true);
+		Config config = mockConfig(null,
+				new PluginDescriptor[] { new PluginDescriptor() }, "", true);
+		String processed = filter.process(content, config);
 
 		assertTrue(content.contains("$title"));
 		assertFalse(processed.contains("$title"));
@@ -167,5 +178,23 @@ public class IndexHTMLContentProcessorTest {
 				+ css + "\"\\s*/>";
 		Pattern pattern = Pattern.compile(regex);
 		assertTrue(pattern.matcher(content).find());
+	}
+
+	private Config mockConfig(String title, PluginDescriptor[] descriptors,
+			String confDir, boolean minified) {
+		Properties properties = new Properties();
+		if (title != null) {
+			properties.setProperty("title", title);
+		}
+		properties.setProperty("minified", Boolean.toString(minified));
+
+		Config config = mock(Config.class);
+		if (confDir != null) {
+			when(config.getConfigDir()).thenReturn(confDir);
+		}
+		when(config.getAppProperties()).thenReturn(properties);
+		when(config.getPluginDescriptors()).thenReturn(descriptors);
+
+		return config;
 	}
 }

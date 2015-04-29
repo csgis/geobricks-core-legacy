@@ -44,7 +44,9 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 		}
 
 		try {
-			if (TEXT_EXTS.contains(resource.toLowerCase())) {
+			String ext = resource.toLowerCase().substring(
+					resource.lastIndexOf('.'));
+			if (TEXT_EXTS.contains(ext)) {
 				IOUtils.copy(stream, resp.getWriter());
 			} else {
 				IOUtils.copy(stream, resp.getOutputStream());

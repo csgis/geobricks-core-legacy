@@ -23,12 +23,13 @@ import net.sf.json.JSONObject;
  * 
  */
 public abstract class AbstractConfigFilter implements Filter {
-	protected ConfigReader config;
+	protected Config config;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		try {
-			config = new ConfigReader(filterConfig.getServletContext());
+			config = new Config();
+			config.init(filterConfig.getServletContext());
 		} catch (IOException e) {
 			throw new ServletException(e);
 		}

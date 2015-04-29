@@ -1,93 +1,70 @@
-package de.csgis.geobricks.config;
+package de.csgis.geobricks.servlet;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.inject.Singleton;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 
 /**
  * Reads the plugins configuration from <code>gbapp-conf.json</code> and loads
  * all the required plugins from the classpath. It sets:
  * 
- * <ul>
- * <li>{@link Geobricks#ATTR_PLUGINS_DESC} ({@link PluginDescriptor}[]): Plugin
- * descriptors.
- * <li>{@link Geobricks#ATTR_PLUGINS_CONF} ({@link PluginDescriptor}[]): Plugin
- * configurations for application. Content as read from
- * <code>gbapp-conf.json</code> without any modification.</li>
- * </ul>
- * 
  * @author vicgonco
- * 
  */
 @Singleton
-public class PluginListener implements ServletContextListener {
-	private static final Logger logger = Logger.getLogger(PluginListener.class);
+public class PluginDescriptorReader {
+	private static final Logger logger = Logger
+			.getLogger(PluginDescriptorReader.class);
 
 	public static final String MODULES_PATH = "webapp/modules";
 	public static final String STYLES_PATH = "webapp/styles";
 	public static final String THEME_PATH = "webapp/theme";
-	public static final String APP_CONF_PATH = "/WEB-INF/conf/gbapp-conf.json";
 
-	@Override
-	public void contextInitialized(ServletContextEvent sce) {
-		try {
-			initialize(sce.getServletContext());
-		} catch (Exception e) {
-			// The application will not be shown so we need to tell at least
-			// the developer
-			logger.error("The application could not be loaded", e);
-		}
-	}
+	/**
+	 * Returns the descriptors for the given plugins in the same order.
+	 * 
+	 * @param plugins
+	 *            The plugin identifiers to obtain the descriptors.
+	 * @return The descriptors for required plugins.
+	 * @throws IOException
+	 *             if any I/O error occurs while reading the plugin descriptors.
+	 */
+	public PluginDescriptor[] getDescriptors(List<String> plugins)
+			throws IOException {
+		List<PluginDescriptor> descriptorSet = new ArrayList<PluginDescriptor>();
 
-	public void initialize(ServletContext context) throws IOException {
-		Set<PluginDescriptor> descriptors = new HashSet<PluginDescriptor>();
-
-		InputStream stream = context.getResourceAsStream(APP_CONF_PATH);
-		String json = IOUtils.toString(stream);
-		stream.close();
-
-		JSONObject appConf = JSONObject.fromObject(json);
-
-		for (Object key : appConf.keySet()) {
+		for (Object key : plugins) {
 			URL pluginConfUrl = getClass().getResource(
-					"/conf/" + key + "-conf.json");
+					"/conf/" + key.toString() + "-conf.json");
 			if (pluginConfUrl == null) {
 				logger.error("Cannot load plugin: " + key);
 				continue;
 			}
 
-			PluginDescriptor pluginDescriptor = getModulesAndStyles(context,
-					pluginConfUrl);
+			PluginDescriptor pluginDescriptor = getModulesAndStyles(pluginConfUrl);
 			pluginDescriptor.setId(key.toString());
 			JSONObject pluginConf = JSONObject.fromObject(IOUtils
 					.toString(pluginConfUrl));
 			processPluginConf(pluginConf, pluginDescriptor);
-			descriptors.add(pluginDescriptor);
+			descriptorSet.add(pluginDescriptor);
 		}
 
-		context.setAttribute(Geobricks.ATTR_PLUGINS_CONF, appConf);
-		context.setAttribute(Geobricks.ATTR_PLUGINS_DESC,
-				descriptors.toArray(new PluginDescriptor[descriptors.size()]));
+		return descriptorSet
+				.toArray(new PluginDescriptor[descriptorSet.size()]);
 	}
 
 	/**
@@ -95,8 +72,6 @@ public class PluginListener implements ServletContextListener {
 	 * the given plugin descriptor file URL. It scans the classpath (jar or
 	 * directory) for modules and styles.
 	 * 
-	 * @param context
-	 *            The servlet context.
 	 * @param pluginConf
 	 *            The URL of the plugin configuration file.
 	 * @return The plugin descriptor with <b>only</b> the modules and
@@ -105,8 +80,7 @@ public class PluginListener implements ServletContextListener {
 	 *             If any I/O error occurs while obtaining the modules and
 	 *             stylesheets.
 	 */
-	public PluginDescriptor getModulesAndStyles(ServletContext context,
-			URL pluginConf) throws IOException {
+	PluginDescriptor getModulesAndStyles(URL pluginConf) throws IOException {
 		String protocol = pluginConf.getProtocol();
 
 		if (protocol.equals("jar")) {
@@ -141,7 +115,7 @@ public class PluginListener implements ServletContextListener {
 	 * @throws IOException
 	 *             If any I/O error occurs while reading the jar file.
 	 */
-	public PluginDescriptor getModulesAndStylesFromJar(String zipFile)
+	PluginDescriptor getModulesAndStylesFromJar(String zipFile)
 			throws IOException {
 		PluginDescriptor descriptor = new PluginDescriptor();
 
@@ -187,7 +161,7 @@ public class PluginListener implements ServletContextListener {
 	 * @return The plugin descriptor with <b>only</b> the modules and
 	 *         stylesheets configured.
 	 */
-	public PluginDescriptor getModulesAndStylesFromDir(File root) {
+	PluginDescriptor getModulesAndStylesFromDir(File root) {
 		PluginDescriptor descriptor = new PluginDescriptor();
 
 		File[] moduleFiles = new File(root, MODULES_PATH).listFiles();
@@ -229,19 +203,19 @@ public class PluginListener implements ServletContextListener {
 	 * @param descriptor
 	 *            The descriptor where the module or style should be added.
 	 */
-	public void processCSSEntry(String entry, PluginDescriptor descriptor) {
+	void processCSSEntry(String entry, PluginDescriptor descriptor) {
 		if (entry.endsWith(".css")) {
-			int modulesLength = PluginListener.MODULES_PATH.length();
-			int stylesLength = PluginListener.STYLES_PATH.length();
-			int themeLength = PluginListener.THEME_PATH.length();
+			int modulesLength = PluginDescriptorReader.MODULES_PATH.length();
+			int stylesLength = PluginDescriptorReader.STYLES_PATH.length();
+			int themeLength = PluginDescriptorReader.THEME_PATH.length();
 
-			if (entry.startsWith(PluginListener.MODULES_PATH)) {
+			if (entry.startsWith(PluginDescriptorReader.MODULES_PATH)) {
 				String style = "modules/" + entry.substring(modulesLength + 1);
 				descriptor.getStyles().add(style);
-			} else if (entry.startsWith(PluginListener.STYLES_PATH)) {
+			} else if (entry.startsWith(PluginDescriptorReader.STYLES_PATH)) {
 				String style = "styles/" + entry.substring(stylesLength + 1);
 				descriptor.getStyles().add(style);
-			} else if (entry.startsWith(PluginListener.THEME_PATH)) {
+			} else if (entry.startsWith(PluginDescriptorReader.THEME_PATH)) {
 				String style = "theme/" + entry.substring(themeLength + 1);
 				descriptor.getStyles().add(style);
 			}
@@ -259,10 +233,10 @@ public class PluginListener implements ServletContextListener {
 	 * @param descriptor
 	 *            The descriptor where the module or style should be added.
 	 */
-	public void processJSEntry(String entry, PluginDescriptor descriptor) {
+	void processJSEntry(String entry, PluginDescriptor descriptor) {
 		if (entry.endsWith(".js")
-				&& entry.startsWith(PluginListener.MODULES_PATH)) {
-			int modulesLength = PluginListener.MODULES_PATH.length();
+				&& entry.startsWith(PluginDescriptorReader.MODULES_PATH)) {
+			int modulesLength = PluginDescriptorReader.MODULES_PATH.length();
 			String module = entry.substring(modulesLength + 1,
 					entry.length() - 3);
 			descriptor.getModules().add(module);
@@ -280,7 +254,7 @@ public class PluginListener implements ServletContextListener {
 	 * @param configurators
 	 *            The set of custom configurators.
 	 */
-	public void processPluginConf(JSONObject conf, PluginDescriptor descriptor) {
+	void processPluginConf(JSONObject conf, PluginDescriptor descriptor) {
 		JSONObject defaultConf = conf.getJSONObject("default-conf");
 		if (defaultConf != null && !defaultConf.isNullObject()) {
 			descriptor.setDefaultConfiguration(defaultConf);
@@ -298,10 +272,5 @@ public class PluginListener implements ServletContextListener {
 				descriptor.setRequireShim(shim);
 			}
 		}
-	}
-
-	@Override
-	public void contextDestroyed(ServletContextEvent sce) {
-		// do nothing
 	}
 }

@@ -3,7 +3,6 @@ package de.csgis.geobricks.servlet.client;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
@@ -16,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.servlet.ConfigReader;
+import de.csgis.geobricks.servlet.Config;
 
 /**
  * Builds the json document that configures all the requirejs modules
@@ -41,34 +40,27 @@ public class ConfigServlet extends HttpServlet {
 	public String getConfig(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context)
 			throws IOException {
-		JSONObject pluginsConfiguration = (JSONObject) context
-				.getAttribute(Geobricks.ATTR_PLUGINS_CONF);
+		Config config = (Config) context.getAttribute(Geobricks.ATTR_CONFIG);
 
-		JSONObject config = new JSONObject();
+		JSONObject ret = new JSONObject();
 		Set<String> modules = new HashSet<String>();
 
-		PluginDescriptor[] descriptors = (PluginDescriptor[]) context
-				.getAttribute(Geobricks.ATTR_PLUGINS_DESC);
+		PluginDescriptor[] descriptors = config.getPluginDescriptors();
 		for (PluginDescriptor descriptor : descriptors) {
 			modules.addAll(descriptor.getModules());
 		}
 
-		ConfigReader configReader = new ConfigReader(context);
-		Map<String, JSONObject> pluginConfigOverrides = configReader
-				.getPluginConfigs();
-		for (Object plugin : pluginsConfiguration.keySet()) {
-			String name = plugin.toString();
-			JSONObject override = pluginConfigOverrides.get(name);
-			JSONObject pluginConfig = override != null ? override
-					: pluginsConfiguration.getJSONObject(name);
+		JSONObject gbappConf = config.getApplicationConf();
+		for (Object plugin : gbappConf.keySet()) {
+			JSONObject pluginConf = gbappConf.getJSONObject(plugin.toString());
 			// Add configuration for each module within plugin configuration
-			for (Object key : pluginConfig.keySet()) {
+			for (Object key : pluginConf.keySet()) {
 				String module = key.toString();
-				config.element(module, pluginConfig.get(module));
+				ret.element(module, pluginConf.get(module));
 			}
 		}
 
-		config.element("load-modules", modules);
-		return new JSONObject().element("config", config).toString();
+		ret.element("load-modules", modules);
+		return new JSONObject().element("config", ret).toString();
 	}
 }

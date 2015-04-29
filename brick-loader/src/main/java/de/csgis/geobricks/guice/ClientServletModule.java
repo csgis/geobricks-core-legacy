@@ -6,6 +6,7 @@ import com.google.inject.servlet.ServletModule;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.Path;
+import de.csgis.geobricks.servlet.Config;
 import de.csgis.geobricks.servlet.OutputFilter;
 import de.csgis.geobricks.servlet.client.ClasspathResourceServlet;
 import de.csgis.geobricks.servlet.client.ConfigServlet;
@@ -44,13 +45,11 @@ public class ClientServletModule extends ServletModule {
 				new ClasspathResourceServlet("images"));
 		serveRegex(Path.root.theme().all().path()).with(
 				new ClasspathResourceServlet("theme"));
-		Object confDir = getServletContext().getAttribute(
-				Geobricks.ATTR_CONF_DIR);
-		if (confDir != null) {
-			serveRegex(Path.root._static().all().path()).with(
-					new ExternalResourceServlet(new File(confDir.toString(),
-							"_static")));
-		}
+		Config config = (Config) getServletContext().getAttribute(
+				Geobricks.ATTR_CONFIG);
+		serveRegex(Path.root._static().all().path()).with(
+				new ExternalResourceServlet(new File(config.getConfigDir(),
+						"_static")));
 
 		// Application index.html
 		String indexPath = Path.root.file("index.html").path();

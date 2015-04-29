@@ -15,6 +15,7 @@ import net.sf.json.JSONObject;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.servlet.CharResponseWrapper;
+import de.csgis.geobricks.servlet.Config;
 
 @Singleton
 public class MainModuleContentProcessor implements Filter {
@@ -23,8 +24,9 @@ public class MainModuleContentProcessor implements Filter {
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		descriptors = (PluginDescriptor[]) filterConfig.getServletContext()
-				.getAttribute(Geobricks.ATTR_PLUGINS_DESC);
+		Config config = (Config) filterConfig.getServletContext().getAttribute(
+				Geobricks.ATTR_CONFIG);
+		descriptors = config.getPluginDescriptors();
 	}
 
 	@Override
