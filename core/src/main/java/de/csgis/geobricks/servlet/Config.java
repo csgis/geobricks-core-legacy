@@ -14,6 +14,7 @@ import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
@@ -160,6 +161,10 @@ public class Config {
 					this.pluginConfOverrides.put(basename, json);
 					this.lastFileAccesses.put(basename,
 							new Long(System.currentTimeMillis()));
+				} catch (JSONException e) {
+					logger.error("Cannot read JSON plugin "
+							+ "config from config dir", e);
+					this.pluginConfOverrides.remove(name);
 				} catch (IOException e) {
 					logger.error("Cannot read JSON plugin "
 							+ "config from config dir", e);
