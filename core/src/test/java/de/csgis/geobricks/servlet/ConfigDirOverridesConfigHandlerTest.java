@@ -42,7 +42,6 @@ public class ConfigDirOverridesConfigHandlerTest {
 		writer.close();
 
 		JSONObject modified = handler.modifyConfig(config, null, null);
-		System.out.println(modified);
 		assertTrue(modified.has("plugin"));
 		assertTrue(modified.getJSONObject("plugin").getBoolean("a"));
 

@@ -62,6 +62,7 @@ public class Config {
 		this.handlers = new ArrayList<ConfigHandler>();
 		this.handlers.add(new PluginDefaultsConfigHandler(descriptors));
 		this.handlers.add(new ConfigDirOverridesConfigHandler(getConfigDir()));
+		this.handlers.add(new RoleSpecificConfigHandler(getConfigDir()));
 
 		updateAppProperties();
 	}
