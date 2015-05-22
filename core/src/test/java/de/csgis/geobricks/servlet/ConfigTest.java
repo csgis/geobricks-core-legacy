@@ -202,15 +202,15 @@ public class ConfigTest {
 		Config config = new Config();
 		config.init(context, reader);
 
-		assertEquals(new JSONObject(),
-				config.getApplicationConf().get(PLUGIN_ID));
+		assertEquals(new JSONObject(), config.getApplicationConf(null, null)
+				.get(PLUGIN_ID));
 
 		File pluginConf = new File(confDir, PLUGIN_ID + ".json");
 		JSONObject json = JSONObject.fromObject("{module1 : [1,2,3]}");
 		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
 
-		assertEquals(1, config.getApplicationConf().size());
-		assertEquals(json, config.getApplicationConf().get(PLUGIN_ID));
+		assertEquals(1, config.getApplicationConf(null, null).size());
+		assertEquals(json, config.getApplicationConf(null, null).get(PLUGIN_ID));
 
 		pluginConf.delete();
 	}
@@ -226,7 +226,7 @@ public class ConfigTest {
 
 		JSONObject json = JSONObject.fromObject("{module1 : [1,2,3]}");
 		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
-		assertEquals(json, config.getApplicationConf().get(PLUGIN_ID));
+		assertEquals(json, config.getApplicationConf(null, null).get(PLUGIN_ID));
 
 		// Last modified only takes seconds into account, not millis. We wait
 		// for at least one second.
@@ -234,7 +234,7 @@ public class ConfigTest {
 
 		json = JSONObject.fromObject("{module1 : [4,5,6]}");
 		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
-		assertEquals(json, config.getApplicationConf().get(PLUGIN_ID));
+		assertEquals(json, config.getApplicationConf(null, null).get(PLUGIN_ID));
 
 		pluginConf.delete();
 	}
@@ -250,11 +250,11 @@ public class ConfigTest {
 
 		JSONObject json = JSONObject.fromObject("{module1 : [1,2,3]}");
 		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
-		assertEquals(json, config.getApplicationConf().get(PLUGIN_ID));
+		assertEquals(json, config.getApplicationConf(null, null).get(PLUGIN_ID));
 
 		pluginConf.delete();
-		assertEquals(new JSONObject(),
-				config.getApplicationConf().get(PLUGIN_ID));
+		assertEquals(new JSONObject(), config.getApplicationConf(null, null)
+				.get(PLUGIN_ID));
 	}
 
 	@Test
@@ -264,8 +264,9 @@ public class ConfigTest {
 		Config config = new Config();
 		config.init(context, reader);
 
-		assertTrue(config.getApplicationConf().getJSONObject(PLUGIN_ID)
-				.getJSONObject("mymodule").getBoolean("enabled"));
+		assertTrue(config.getApplicationConf(null, null)
+				.getJSONObject(PLUGIN_ID).getJSONObject("mymodule")
+				.getBoolean("enabled"));
 	}
 
 	@Test
@@ -277,8 +278,9 @@ public class ConfigTest {
 		Config config = new Config();
 		config.init(context, reader);
 
-		assertFalse(config.getApplicationConf().getJSONObject(PLUGIN_ID)
-				.getJSONObject("mymodule").getBoolean("enabled"));
+		assertFalse(config.getApplicationConf(null, null)
+				.getJSONObject(PLUGIN_ID).getJSONObject("mymodule")
+				.getBoolean("enabled"));
 	}
 
 	@Test

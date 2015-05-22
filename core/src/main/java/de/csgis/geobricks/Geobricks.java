@@ -9,4 +9,7 @@ public interface Geobricks {
 
 	// Servlet attributes
 	String ATTR_CONFIG = "de.csgis.geobricks.config";
+
+	// Request attributes
+	String ATTR_ROLE = "de.csgis.geobricks.role";
 }
