@@ -2,26 +2,23 @@ package de.csgis.geobricks.servlet;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import de.csgis.geobricks.Geobricks;
-import de.csgis.geobricks.JSONUtils;
 import de.csgis.geobricks.PluginDescriptor;
 
 public class Config {
@@ -34,10 +31,11 @@ public class Config {
 	private ServletContext context;
 	private String confDir;
 	private PluginDescriptor[] descriptors;
-	private JSONObject originalAppConf, overridenAppConf;
+	private JSONObject gbappConf;
 	private Properties appProperties;
-	private Map<String, Long> lastFileAccesses = new HashMap<String, Long>();
-	private Map<String, JSONObject> pluginConfOverrides = new HashMap<String, JSONObject>();
+	private long lastAppPropertiesAccess;
+
+	private List<ConfigHandler> handlers;
 
 	public void init(ServletContext context) throws IOException {
 		init(context, new PluginDescriptorReader());
@@ -46,134 +44,45 @@ public class Config {
 	void init(ServletContext context, PluginDescriptorReader reader)
 			throws IOException {
 		this.context = context;
-		this.lastFileAccesses = new HashMap<String, Long>();
-		this.pluginConfOverrides = new HashMap<String, JSONObject>();
+		this.lastAppPropertiesAccess = -1;
 
 		// Read gbapp-conf.json
 		InputStream stream = context.getResourceAsStream(APP_CONF_PATH);
-		String content = IOUtils.toString(stream);
-		this.originalAppConf = JSONObject.fromObject(content);
+		this.gbappConf = JSONObject.fromObject(IOUtils.toString(stream));
 		stream.close();
 
 		// Get plugin descriptors
 		List<String> plugins = new ArrayList<String>();
-		Iterator<?> iterator = this.originalAppConf.keys();
+		Iterator<?> iterator = this.gbappConf.keys();
 		while (iterator.hasNext()) {
 			plugins.add(iterator.next().toString());
 		}
 		this.descriptors = reader.getDescriptors(plugins);
 
-		// Apply default plugin configurations to gbapp-conf
-		for (Object key : this.originalAppConf.keySet()) {
-			String pluginId = key.toString();
-			JSONObject pluginConf = this.originalAppConf
-					.getJSONObject(pluginId);
-			JSONObject defaultConf = getDefaultConfiguration(pluginId);
-			if (defaultConf != null) {
-				JSONObject merged = JSONUtils.merge(defaultConf, pluginConf);
-				this.originalAppConf.put(pluginId, merged);
-			}
-		}
-		this.overridenAppConf = JSONObject.fromObject(this.originalAppConf);
-
-		applyExternalPluginConfs();
+		this.handlers = new ArrayList<ConfigHandler>();
+		this.handlers.add(new PluginDefaultsConfigHandler(descriptors));
+		this.handlers.add(new ConfigDirOverridesConfigHandler(getConfigDir()));
+		this.handlers.add(new RoleSpecificConfigHandler(getConfigDir()));
 
 		updateAppProperties();
 	}
 
-	public JSONObject getApplicationConf() {
-		applyExternalPluginConfs();
-		return this.overridenAppConf;
+	public void addConfigHandler(ConfigHandler handler) {
+		this.handlers.add(handler);
 	}
 
-	private void applyExternalPluginConfs() {
-		boolean updated = updatePluginConfsIfNeeded();
-		if (updated) {
-			this.overridenAppConf = JSONObject.fromObject(this.originalAppConf);
-			for (Object plugin : this.originalAppConf.keySet()) {
-				JSONObject override = this.pluginConfOverrides.get(plugin);
-				if (override != null) {
-					this.overridenAppConf.put(plugin, override);
-				}
+	public JSONObject getApplicationConf(HttpServletRequest request,
+			HttpServletResponse response) {
+		JSONObject conf = JSONObject.fromObject(this.gbappConf);
+		for (ConfigHandler handler : this.handlers) {
+			try {
+				conf = handler.modifyConfig(conf, request, response);
+			} catch (IOException e) {
+				logger.error("An error has occurred while "
+						+ "modifying the configuration. Ignoring handler", e);
 			}
 		}
-	}
-
-	/**
-	 * Get the default configuration for the specified plugin.
-	 * 
-	 * @param id
-	 *            The identifier of the required plugin.
-	 * @return The default configuration of the plugin or <code>null</code> if
-	 *         the plugin cannot be found.
-	 */
-	private JSONObject getDefaultConfiguration(String id) {
-		for (PluginDescriptor descriptor : descriptors) {
-			if (descriptor.getId().equals(id)) {
-				return descriptor.getDefaultConfiguration();
-			}
-		}
-		return null;
-	}
-
-	private boolean updatePluginConfsIfNeeded() {
-		File config = new File(getConfigDir());
-		File[] files = config.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".json");
-			}
-		});
-
-		if (files == null) {
-			this.pluginConfOverrides.clear();
-			return true;
-		}
-
-		boolean updated = false;
-		for (String name : this.pluginConfOverrides.keySet()) {
-			File file = new File(getConfigDir(), name + ".json");
-			if (!file.exists()) {
-				this.pluginConfOverrides.remove(name);
-				updated = true;
-			}
-		}
-
-		for (File file : files) {
-			String name = file.getName();
-			JSONObject pluginConfig = this.pluginConfOverrides.get(name);
-			Long lastAccess = this.lastFileAccesses.get(name);
-
-			boolean needsUpdate = pluginConfig == null || lastAccess == null;
-			if (lastAccess != null) {
-				needsUpdate |= file.lastModified() > lastAccess;
-			}
-
-			if (needsUpdate) {
-				updated = true;
-				try {
-					String content = IOUtils
-							.toString(new FileInputStream(file));
-					JSONObject json = JSONObject.fromObject(content);
-
-					String basename = name.substring(0,
-							name.lastIndexOf(".json"));
-					this.pluginConfOverrides.put(basename, json);
-					this.lastFileAccesses.put(basename,
-							new Long(System.currentTimeMillis()));
-				} catch (JSONException e) {
-					logger.error("Cannot read JSON plugin "
-							+ "config from config dir", e);
-					this.pluginConfOverrides.remove(name);
-				} catch (IOException e) {
-					logger.error("Cannot read JSON plugin "
-							+ "config from config dir", e);
-					this.pluginConfOverrides.remove(name);
-				}
-			}
-		}
-
-		return updated;
+		return conf;
 	}
 
 	public String getConfigDir() {
@@ -203,19 +112,14 @@ public class Config {
 	}
 
 	private void updateAppPropertiesIfNeeded() {
-		Long lastAccess = this.lastFileAccesses.get("app.properties");
-
-		boolean needsUpdate = lastAccess == null || appProperties == null;
-		if (lastAccess != null) {
-			File file = new File(getConfigDir(), "app.properties");
-			needsUpdate |= file.lastModified() > lastAccess;
-		}
-
-		if (needsUpdate) {
+		File file = new File(getConfigDir(), "app.properties");
+		if (appProperties == null
+				|| file.lastModified() > this.lastAppPropertiesAccess) {
 			try {
 				updateAppProperties();
 			} catch (IOException e) {
-				logger.error("Cannot read app.properties file. Using previous values if any");
+				logger.error("Cannot read app.properties file."
+						+ "Using previous values if any");
 			}
 		}
 	}
@@ -229,8 +133,7 @@ public class Config {
 			in.close();
 		}
 
-		this.lastFileAccesses.put("app.properties",
-				new Long(System.currentTimeMillis()));
+		this.lastAppPropertiesAccess = System.currentTimeMillis();
 	}
 
 	public PluginDescriptor[] getPluginDescriptors() {

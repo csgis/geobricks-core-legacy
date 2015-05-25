@@ -2,12 +2,15 @@ package de.csgis.geobricks.servlet.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,7 +29,7 @@ public class ConfigServletTest {
 	private ConfigServlet servlet;
 
 	@Before
-	public void setup() {
+	public void setup() throws ServletException {
 		servlet = new ConfigServlet();
 	}
 
@@ -36,10 +39,12 @@ public class ConfigServletTest {
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
-		ServletContext context = context(
+		ServletConfig servletConfig = config(
 				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"), modules);
+		servlet.init(servletConfig);
 
-		String config = servlet.getConfig(request, response, context);
+		String config = servlet.getConfig(request, response,
+				servletConfig.getServletContext());
 		JSONObject json = JSONObject.fromObject(config);
 
 		JSONArray configModules = json.getJSONObject("config").getJSONArray(
@@ -56,11 +61,13 @@ public class ConfigServletTest {
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
-		ServletContext context = context(
+		ServletConfig servletConfig = config(
 				JSONObject.fromObject("{'" + PLUGIN_ID
 						+ "' : { a : {enabled : true}}}"), modules);
+		servlet.init(servletConfig);
 
-		String config = servlet.getConfig(request, response, context);
+		String config = servlet.getConfig(request, response,
+				servletConfig.getServletContext());
 		JSONObject json = JSONObject.fromObject(config);
 		JSONObject moduleConfig = json.getJSONObject("config").getJSONObject(
 				modules[0]);
@@ -71,11 +78,13 @@ public class ConfigServletTest {
 	public void noModules() throws Exception {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
-		ServletContext context = context(
+		ServletConfig servletConfig = config(
 				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"),
 				new String[0]);
+		servlet.init(servletConfig);
 
-		String config = servlet.getConfig(request, response, context);
+		String config = servlet.getConfig(request, response,
+				servletConfig.getServletContext());
 		JSONObject json = JSONObject.fromObject(config);
 
 		JSONArray configModules = json.getJSONObject("config").getJSONArray(
@@ -83,9 +92,12 @@ public class ConfigServletTest {
 		assertEquals(0, configModules.size());
 	}
 
-	private ServletContext context(JSONObject pluginsConf, String[] modules) {
+	private ServletConfig config(JSONObject pluginsConf, String[] modules) {
 		Config config = mock(Config.class);
-		when(config.getApplicationConf()).thenReturn(pluginsConf);
+		when(
+				config.getApplicationConf(any(HttpServletRequest.class),
+						any(HttpServletResponse.class)))
+				.thenReturn(pluginsConf);
 
 		PluginDescriptor descriptor = new PluginDescriptor();
 		Collections.addAll(descriptor.getModules(), modules);
@@ -96,6 +108,9 @@ public class ConfigServletTest {
 		ServletContext context = mock(ServletContext.class);
 		when(context.getAttribute(Geobricks.ATTR_CONFIG)).thenReturn(config);
 
-		return context;
+		ServletConfig servletConfig = mock(ServletConfig.class);
+		when(servletConfig.getServletContext()).thenReturn(context);
+
+		return servletConfig;
 	}
 }

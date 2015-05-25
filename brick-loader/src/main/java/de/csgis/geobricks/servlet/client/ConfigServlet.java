@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Singleton;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -26,6 +27,15 @@ import de.csgis.geobricks.servlet.Config;
 public class ConfigServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	private Config config;
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		this.config = (Config) config.getServletContext().getAttribute(
+				Geobricks.ATTR_CONFIG);
+	}
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -40,17 +50,16 @@ public class ConfigServlet extends HttpServlet {
 	public String getConfig(HttpServletRequest request,
 			HttpServletResponse response, ServletContext context)
 			throws IOException {
-		Config config = (Config) context.getAttribute(Geobricks.ATTR_CONFIG);
-
 		JSONObject ret = new JSONObject();
 		Set<String> modules = new HashSet<String>();
 
-		PluginDescriptor[] descriptors = config.getPluginDescriptors();
+		PluginDescriptor[] descriptors = this.config.getPluginDescriptors();
 		for (PluginDescriptor descriptor : descriptors) {
 			modules.addAll(descriptor.getModules());
 		}
 
-		JSONObject gbappConf = config.getApplicationConf();
+		JSONObject gbappConf = this.config
+				.getApplicationConf(request, response);
 		for (Object plugin : gbappConf.keySet()) {
 			JSONObject pluginConf = gbappConf.getJSONObject(plugin.toString());
 			// Add configuration for each module within plugin configuration
