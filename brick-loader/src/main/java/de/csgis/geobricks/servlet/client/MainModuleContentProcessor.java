@@ -9,6 +9,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
@@ -20,21 +21,24 @@ import de.csgis.geobricks.servlet.Config;
 @Singleton
 public class MainModuleContentProcessor implements Filter {
 
-	private PluginDescriptor[] descriptors;
+	private Config config;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		Config config = (Config) filterConfig.getServletContext().getAttribute(
+		this.config = (Config) filterConfig.getServletContext().getAttribute(
 				Geobricks.ATTR_CONFIG);
-		descriptors = config.getPluginDescriptors();
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
-		CharResponseWrapper wrapper = new CharResponseWrapper(
-				(HttpServletResponse) response);
+		HttpServletRequest req = (HttpServletRequest) request;
+		HttpServletResponse resp = (HttpServletResponse) response;
+
+		CharResponseWrapper wrapper = new CharResponseWrapper(resp);
 		chain.doFilter(request, wrapper);
+
+		PluginDescriptor[] descriptors = config.getPluginDescriptors(req, resp);
 		response.getWriter().write(process(wrapper.toString(), descriptors));
 	}
 

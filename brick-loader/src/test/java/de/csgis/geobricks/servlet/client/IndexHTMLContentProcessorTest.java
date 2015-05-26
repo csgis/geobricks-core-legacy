@@ -2,14 +2,19 @@ package de.csgis.geobricks.servlet.client;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -39,7 +44,9 @@ public class IndexHTMLContentProcessorTest {
 
 		Config config = mockConfig(null, new PluginDescriptor[] { descriptor },
 				"", false);
-		String processed = filter.process(content, config);
+		String processed = filter
+				.process(content, config, mock(HttpServletRequest.class),
+						mock(HttpServletResponse.class));
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -54,7 +61,9 @@ public class IndexHTMLContentProcessorTest {
 				.toString(getClass().getResourceAsStream(INDEX));
 		Config config = mockConfig(null,
 				new PluginDescriptor[] { new PluginDescriptor() }, "", false);
-		String processed = filter.process(content, config);
+		String processed = filter
+				.process(content, config, mock(HttpServletRequest.class),
+						mock(HttpServletResponse.class));
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -67,7 +76,9 @@ public class IndexHTMLContentProcessorTest {
 				.toString(getClass().getResourceAsStream(INDEX));
 		Config config = mockConfig(null,
 				new PluginDescriptor[] { new PluginDescriptor() }, "", true);
-		String processed = filter.process(content, config);
+		String processed = filter
+				.process(content, config, mock(HttpServletRequest.class),
+						mock(HttpServletResponse.class));
 
 		assertTrue(content.contains("$mainModule"));
 		assertTrue(content.contains("$styleSheets"));
@@ -83,7 +94,9 @@ public class IndexHTMLContentProcessorTest {
 				.toString(getClass().getResourceAsStream(INDEX));
 		Config config = mockConfig(null,
 				new PluginDescriptor[] { new PluginDescriptor() }, "", false);
-		String processed = filter.process(content, config);
+		String processed = filter
+				.process(content, config, mock(HttpServletRequest.class),
+						mock(HttpServletResponse.class));
 
 		assertTrue(content.contains("$mainModule"));
 		assertTrue(content.contains("$styleSheets"));
@@ -112,7 +125,9 @@ public class IndexHTMLContentProcessorTest {
 		Config config = mockConfig(null,
 				new PluginDescriptor[] { new PluginDescriptor() },
 				confDir.getAbsolutePath(), false);
-		String processed = filter.process(content, config);
+		String processed = filter
+				.process(content, config, mock(HttpServletRequest.class),
+						mock(HttpServletResponse.class));
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -138,7 +153,9 @@ public class IndexHTMLContentProcessorTest {
 		Config config = mockConfig(null,
 				new PluginDescriptor[] { new PluginDescriptor() },
 				confDir.getAbsolutePath(), true);
-		String processed = filter.process(content, config);
+		String processed = filter
+				.process(content, config, mock(HttpServletRequest.class),
+						mock(HttpServletResponse.class));
 
 		assertTrue(content.contains("$styleSheets"));
 		assertFalse(processed.contains("$styleSheets"));
@@ -153,7 +170,9 @@ public class IndexHTMLContentProcessorTest {
 				.toString(getClass().getResourceAsStream(INDEX));
 		Config config = mockConfig("My Page",
 				new PluginDescriptor[] { new PluginDescriptor() }, "", true);
-		String processed = filter.process(content, config);
+		String processed = filter
+				.process(content, config, mock(HttpServletRequest.class),
+						mock(HttpServletResponse.class));
 
 		assertTrue(content.contains("$title"));
 		assertFalse(processed.contains("$title"));
@@ -166,7 +185,9 @@ public class IndexHTMLContentProcessorTest {
 				.toString(getClass().getResourceAsStream(INDEX));
 		Config config = mockConfig(null,
 				new PluginDescriptor[] { new PluginDescriptor() }, "", true);
-		String processed = filter.process(content, config);
+		String processed = filter
+				.process(content, config, mock(HttpServletRequest.class),
+						mock(HttpServletResponse.class));
 
 		assertTrue(content.contains("$title"));
 		assertFalse(processed.contains("$title"));
@@ -181,7 +202,7 @@ public class IndexHTMLContentProcessorTest {
 	}
 
 	private Config mockConfig(String title, PluginDescriptor[] descriptors,
-			String confDir, boolean minified) {
+			String confDir, boolean minified) throws IOException {
 		Properties properties = new Properties();
 		if (title != null) {
 			properties.setProperty("title", title);
@@ -193,7 +214,10 @@ public class IndexHTMLContentProcessorTest {
 			when(config.getConfigDir()).thenReturn(confDir);
 		}
 		when(config.getAppProperties()).thenReturn(properties);
-		when(config.getPluginDescriptors()).thenReturn(descriptors);
+		when(
+				config.getPluginDescriptors(any(HttpServletRequest.class),
+						any(HttpServletResponse.class)))
+				.thenReturn(descriptors);
 
 		return config;
 	}

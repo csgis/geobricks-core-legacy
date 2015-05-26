@@ -53,13 +53,15 @@ public class ConfigServlet extends HttpServlet {
 		JSONObject ret = new JSONObject();
 		Set<String> modules = new HashSet<String>();
 
-		PluginDescriptor[] descriptors = this.config.getPluginDescriptors();
+		JSONObject gbappConf = this.config
+				.getApplicationConf(request, response);
+
+		PluginDescriptor[] descriptors = this.config
+				.getPluginDescriptors(gbappConf);
 		for (PluginDescriptor descriptor : descriptors) {
 			modules.addAll(descriptor.getModules());
 		}
 
-		JSONObject gbappConf = this.config
-				.getApplicationConf(request, response);
 		for (Object plugin : gbappConf.keySet()) {
 			JSONObject pluginConf = gbappConf.getJSONObject(plugin.toString());
 			// Add configuration for each module within plugin configuration

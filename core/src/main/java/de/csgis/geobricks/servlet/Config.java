@@ -30,10 +30,10 @@ public class Config {
 
 	private ServletContext context;
 	private String confDir;
-	private PluginDescriptor[] descriptors;
 	private JSONObject gbappConf;
 	private Properties appProperties;
 	private long lastAppPropertiesAccess;
+	private PluginDescriptorReader reader;
 
 	private List<ConfigHandler> handlers;
 
@@ -44,25 +44,17 @@ public class Config {
 	void init(ServletContext context, PluginDescriptorReader reader)
 			throws IOException {
 		this.context = context;
+		this.reader = reader;
 		this.lastAppPropertiesAccess = -1;
 
-		// Read gbapp-conf.json
 		InputStream stream = context.getResourceAsStream(APP_CONF_PATH);
 		this.gbappConf = JSONObject.fromObject(IOUtils.toString(stream));
 		stream.close();
 
-		// Get plugin descriptors
-		List<String> plugins = new ArrayList<String>();
-		Iterator<?> iterator = this.gbappConf.keys();
-		while (iterator.hasNext()) {
-			plugins.add(iterator.next().toString());
-		}
-		this.descriptors = reader.getDescriptors(plugins);
-
 		this.handlers = new ArrayList<ConfigHandler>();
-		this.handlers.add(new PluginDefaultsConfigHandler(descriptors));
 		this.handlers.add(new ConfigDirOverridesConfigHandler(getConfigDir()));
 		this.handlers.add(new RoleSpecificConfigHandler(getConfigDir()));
+		this.handlers.add(new PluginDefaultsConfigHandler(this));
 
 		updateAppProperties();
 	}
@@ -73,7 +65,7 @@ public class Config {
 
 	public JSONObject getApplicationConf(HttpServletRequest request,
 			HttpServletResponse response) {
-		JSONObject conf = JSONObject.fromObject(this.gbappConf);
+		JSONObject conf = this.gbappConf;
 		for (ConfigHandler handler : this.handlers) {
 			try {
 				conf = handler.modifyConfig(conf, request, response);
@@ -136,8 +128,25 @@ public class Config {
 		this.lastAppPropertiesAccess = System.currentTimeMillis();
 	}
 
-	public PluginDescriptor[] getPluginDescriptors() {
-		return this.descriptors;
+	public PluginDescriptor[] getPluginDescriptors(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		return getPluginDescriptors(getApplicationConf(request, response),
+				this.reader);
+	}
+
+	public PluginDescriptor[] getPluginDescriptors(JSONObject gbappConf)
+			throws IOException {
+		return getPluginDescriptors(gbappConf, this.reader);
+	}
+
+	PluginDescriptor[] getPluginDescriptors(JSONObject gbappConf,
+			PluginDescriptorReader reader) throws IOException {
+		List<String> plugins = new ArrayList<String>();
+		Iterator<?> iterator = gbappConf.keys();
+		while (iterator.hasNext()) {
+			plugins.add(iterator.next().toString());
+		}
+		return reader.getDescriptors(plugins);
 	}
 
 	/**

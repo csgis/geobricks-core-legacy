@@ -2,7 +2,11 @@ package de.csgis.geobricks.servlet;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,12 +27,12 @@ public class PluginDefaultsConfigHandlerTest {
 		p.setId(id);
 
 		PluginDefaultsConfigHandler handler = new PluginDefaultsConfigHandler(
-				new PluginDescriptor[] { p });
+				mockConfig(p));
 
-		JSONObject config = JSONObject.fromObject("{'" + id + "' : {}}");
+		JSONObject jsonConfig = JSONObject.fromObject("{'" + id + "' : {}}");
 
 		JSONObject modified = handler
-				.modifyConfig(config, mock(HttpServletRequest.class),
+				.modifyConfig(jsonConfig, mock(HttpServletRequest.class),
 						mock(HttpServletResponse.class));
 
 		assertTrue(modified.getJSONObject(id).getBoolean("a"));
@@ -43,7 +47,7 @@ public class PluginDefaultsConfigHandlerTest {
 		p.setId(id);
 
 		PluginDefaultsConfigHandler handler = new PluginDefaultsConfigHandler(
-				new PluginDescriptor[] { p });
+				mockConfig(p));
 
 		JSONObject config = JSONObject.fromObject("{'" + id
 				+ "' : { 'a' : false }}");
@@ -64,7 +68,7 @@ public class PluginDefaultsConfigHandlerTest {
 		p.setId(id);
 
 		PluginDefaultsConfigHandler handler = new PluginDefaultsConfigHandler(
-				new PluginDescriptor[] { p });
+				mockConfig(p));
 
 		JSONObject config = JSONObject.fromObject("{}");
 
@@ -78,7 +82,7 @@ public class PluginDefaultsConfigHandlerTest {
 	@Test
 	public void ignoresInvalidPlugins() throws Exception {
 		PluginDefaultsConfigHandler handler = new PluginDefaultsConfigHandler(
-				new PluginDescriptor[0]);
+				mockConfig());
 
 		JSONObject config = JSONObject
 				.fromObject("{'plugin' : { 'a' : true }}");
@@ -88,5 +92,14 @@ public class PluginDefaultsConfigHandlerTest {
 						mock(HttpServletResponse.class));
 
 		assertTrue(modified.getJSONObject("plugin").getBoolean("a"));
+	}
+
+	private Config mockConfig(PluginDescriptor... descriptors)
+			throws IOException {
+		Config config = mock(Config.class);
+		when(config.getPluginDescriptors(any(JSONObject.class))).thenReturn(
+				descriptors);
+
+		return config;
 	}
 }

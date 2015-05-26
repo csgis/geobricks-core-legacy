@@ -6,6 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import javax.servlet.ServletConfig;
@@ -92,7 +93,8 @@ public class ConfigServletTest {
 		assertEquals(0, configModules.size());
 	}
 
-	private ServletConfig config(JSONObject pluginsConf, String[] modules) {
+	private ServletConfig config(JSONObject pluginsConf, String[] modules)
+			throws IOException {
 		Config config = mock(Config.class);
 		when(
 				config.getApplicationConf(any(HttpServletRequest.class),
@@ -102,7 +104,7 @@ public class ConfigServletTest {
 		PluginDescriptor descriptor = new PluginDescriptor();
 		Collections.addAll(descriptor.getModules(), modules);
 
-		when(config.getPluginDescriptors()).thenReturn(
+		when(config.getPluginDescriptors(any(JSONObject.class))).thenReturn(
 				new PluginDescriptor[] { descriptor });
 
 		ServletContext context = mock(ServletContext.class);

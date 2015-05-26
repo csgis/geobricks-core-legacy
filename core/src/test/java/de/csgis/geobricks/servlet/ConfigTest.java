@@ -129,7 +129,7 @@ public class ConfigTest {
 		when(context.getContextPath()).thenReturn(confDir.getName());
 
 		Config config = new Config();
-		config.init(context);
+		config.init(context, reader);
 		assertEquals(DEFAULT_CONF_PATH, config.getConfigDir());
 	}
 
@@ -139,7 +139,7 @@ public class ConfigTest {
 		when(context.getContextPath()).thenReturn("viewer");
 
 		Config config = new Config();
-		config.init(context);
+		config.init(context, reader);
 		assertEquals(DEFAULT_CONF_PATH, config.getConfigDir());
 	}
 
@@ -149,7 +149,7 @@ public class ConfigTest {
 		when(context.getContextPath()).thenReturn("viewer");
 
 		Config config = new Config();
-		config.init(context);
+		config.init(context, reader);
 		assertEquals(DEFAULT_CONF_PATH, config.getConfigDir());
 	}
 
@@ -159,7 +159,7 @@ public class ConfigTest {
 		when(context.getContextPath()).thenReturn(confDir.getName());
 
 		Config config = new Config();
-		config.init(context);
+		config.init(context, reader);
 
 		assertEquals(confDir.getAbsolutePath(), config.getConfigDir());
 	}
@@ -306,10 +306,10 @@ public class ConfigTest {
 		Config config = new Config();
 		config.init(context, reader);
 
-		assertFalse(config
+		JSONObject conf = config
 				.getApplicationConf(mock(HttpServletRequest.class),
-						mock(HttpServletResponse.class))
-				.getJSONObject(PLUGIN_ID).getJSONObject("mymodule")
+						mock(HttpServletResponse.class));
+		assertFalse(conf.getJSONObject(PLUGIN_ID).getJSONObject("mymodule")
 				.getBoolean("enabled"));
 	}
 

@@ -12,6 +12,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import de.csgis.geobricks.Geobricks;
@@ -34,18 +35,25 @@ public class IndexHTMLContentProcessor implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
-		CharResponseWrapper wrapper = new CharResponseWrapper(
-				(HttpServletResponse) response);
+		HttpServletRequest req = (HttpServletRequest) request;
+		HttpServletResponse resp = (HttpServletResponse) response;
+
+		CharResponseWrapper wrapper = new CharResponseWrapper(resp);
 		chain.doFilter(request, wrapper);
-		response.getWriter().print(process(wrapper.toString(), config));
+
+		response.getWriter().print(
+				process(wrapper.toString(), config, req, resp));
 	}
 
-	public String process(String content, Config config) {
+	public String process(String content, Config config,
+			HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
 		Properties properties = config.getAppProperties();
 		boolean minified = Boolean.parseBoolean(properties
 				.getProperty("minified"));
 		String title = properties.getProperty("title");
-		PluginDescriptor[] descriptors = config.getPluginDescriptors();
+		PluginDescriptor[] descriptors = config.getPluginDescriptors(request,
+				response);
 		File stylesDir = new File(config.getConfigDir(), STYLES_DIR);
 
 		String replaced;

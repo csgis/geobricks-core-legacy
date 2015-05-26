@@ -1,5 +1,7 @@
 package de.csgis.geobricks.servlet;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,23 +17,24 @@ import de.csgis.geobricks.PluginDescriptor;
  */
 public class PluginDefaultsConfigHandler implements ConfigHandler {
 	private JSONObject modified, lastConfig;
+	private Config config;
 
-	private PluginDescriptor[] descriptors;
-
-	public PluginDefaultsConfigHandler(PluginDescriptor[] descriptors) {
-		this.descriptors = descriptors;
+	public PluginDefaultsConfigHandler(Config config) {
+		this.config = config;
 	}
 
 	@Override
 	public JSONObject modifyConfig(JSONObject config,
-			HttpServletRequest request, HttpServletResponse response) {
+			HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
 		if (this.lastConfig != config) {
 			this.modified = JSONObject.fromObject(config);
 
 			for (Object key : config.keySet()) {
 				String pluginId = key.toString();
 				JSONObject pluginConf = config.getJSONObject(pluginId);
-				JSONObject defaultConf = getDefaultConfiguration(pluginId);
+				JSONObject defaultConf = getDefaultConfiguration(pluginId,
+						this.config.getPluginDescriptors(config));
 				if (defaultConf != null) {
 					JSONObject merged = JSONUtils
 							.merge(defaultConf, pluginConf);
@@ -53,8 +56,9 @@ public class PluginDefaultsConfigHandler implements ConfigHandler {
 	 * @return The default configuration of the plugin or <code>null</code> if
 	 *         the plugin cannot be found.
 	 */
-	private JSONObject getDefaultConfiguration(String id) {
-		for (PluginDescriptor descriptor : this.descriptors) {
+	private JSONObject getDefaultConfiguration(String id,
+			PluginDescriptor[] descriptors) {
+		for (PluginDescriptor descriptor : descriptors) {
 			if (descriptor.getId().equals(id)) {
 				return descriptor.getDefaultConfiguration();
 			}
