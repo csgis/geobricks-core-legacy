@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -34,6 +36,8 @@ public class PluginDescriptorReader {
 	public static final String STYLES_PATH = "webapp/styles";
 	public static final String THEME_PATH = "webapp/theme";
 
+	private Map<String, PluginDescriptor> descriptors = new HashMap<String, PluginDescriptor>();
+
 	/**
 	 * Returns the descriptors for the given plugins in the same order.
 	 * 
@@ -45,26 +49,30 @@ public class PluginDescriptorReader {
 	 */
 	public PluginDescriptor[] getDescriptors(List<String> plugins)
 			throws IOException {
-		List<PluginDescriptor> descriptorSet = new ArrayList<PluginDescriptor>();
+		List<PluginDescriptor> list = new ArrayList<PluginDescriptor>();
 
 		for (Object key : plugins) {
-			URL pluginConfUrl = getClass().getResource(
-					"/conf/" + key.toString() + "-conf.json");
-			if (pluginConfUrl == null) {
-				logger.error("Cannot load plugin: " + key);
-				continue;
+			if (!this.descriptors.containsKey(key)) {
+				URL pluginConfUrl = getClass().getResource(
+						"/conf/" + key.toString() + "-conf.json");
+				if (pluginConfUrl == null) {
+					logger.error("Cannot load plugin: " + key);
+					continue;
+				}
+
+				PluginDescriptor descriptor = getModulesAndStyles(pluginConfUrl);
+				descriptor.setId(key.toString());
+				JSONObject pluginConf = JSONObject.fromObject(IOUtils
+						.toString(pluginConfUrl));
+				processPluginConf(pluginConf, descriptor);
+
+				this.descriptors.put(key.toString(), descriptor);
 			}
 
-			PluginDescriptor pluginDescriptor = getModulesAndStyles(pluginConfUrl);
-			pluginDescriptor.setId(key.toString());
-			JSONObject pluginConf = JSONObject.fromObject(IOUtils
-					.toString(pluginConfUrl));
-			processPluginConf(pluginConf, pluginDescriptor);
-			descriptorSet.add(pluginDescriptor);
+			list.add(this.descriptors.get(key));
 		}
 
-		return descriptorSet
-				.toArray(new PluginDescriptor[descriptorSet.size()]);
+		return list.toArray(new PluginDescriptor[list.size()]);
 	}
 
 	/**
