@@ -12,7 +12,6 @@
 	<modules>
 		<module>core</module>
 		<module>brick-loader</module>
-		<module>tests-commons</module>
 		<module>libs</module>
 		<module>plugins</module>
 		<module>themes</module>
