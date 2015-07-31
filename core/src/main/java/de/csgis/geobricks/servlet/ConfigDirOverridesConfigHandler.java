@@ -1,5 +1,6 @@
 package de.csgis.geobricks.servlet;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,14 +32,36 @@ public class ConfigDirOverridesConfigHandler implements ConfigHandler {
 
 			Map<String, JSONObject> overrideConfs = this.contents.get();
 
-			for (String plugin : overrideConfs.keySet()) {
-				JSONObject override = overrideConfs.get(plugin);
-				JSONObject defaultObj = config.getJSONObject(plugin);
-				JSONObject merged = JSONUtils.merge(defaultObj, override);
-				this.modified.put(plugin, merged);
+			for (String key : overrideConfs.keySet()) {
+				JSONObject override = overrideConfs.get(key);
+
+				JSONObject plugin = findPluginWithModule(this.modified, key);
+				if (plugin != null) {
+					// Treat it as a module override
+					JSONObject defaultObj = plugin.getJSONObject(key);
+					plugin.put(key, JSONUtils.merge(defaultObj, override));
+				} else {
+					// Treat it as a plugin override
+					JSONObject defaultObj = this.modified.getJSONObject(key);
+					JSONObject merged = JSONUtils.merge(defaultObj, override);
+					this.modified.put(key, merged);
+				}
 			}
 		}
 
 		return this.modified;
+	}
+
+	private JSONObject findPluginWithModule(JSONObject config, String module) {
+		Iterator<?> it = config.keySet().iterator();
+		while (it.hasNext()) {
+			String key = it.next().toString();
+			JSONObject plugin = config.getJSONObject(key);
+			if (plugin.has(module)) {
+				return plugin;
+			}
+		}
+
+		return null;
 	}
 }

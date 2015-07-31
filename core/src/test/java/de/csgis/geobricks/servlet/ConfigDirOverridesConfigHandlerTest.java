@@ -1,6 +1,6 @@
 package de.csgis.geobricks.servlet;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -36,32 +36,53 @@ public class ConfigDirOverridesConfigHandlerTest {
 	public void addsPlugin() throws Exception {
 		JSONObject config = JSONObject.fromObject("{}");
 
-		File tmp = new File(dir, "plugin.json");
+		File tmp = new File(dir, "olmap.json");
 		FileWriter writer = new FileWriter(tmp);
-		IOUtils.write("{ 'a' : true }", writer);
+		IOUtils.write("{ 'map' : { 'div' : 'mymap' } }", writer);
 		writer.close();
 
 		JSONObject modified = handler.modifyConfig(config, null, null);
-		assertTrue(modified.has("plugin"));
-		assertTrue(modified.getJSONObject("plugin").getBoolean("a"));
+		assertTrue(modified.has("olmap"));
+		JSONObject olmap = modified.getJSONObject("olmap");
+		assertEquals("mymap", olmap.getJSONObject("map").getString("div"));
 
 		tmp.delete();
 	}
 
 	@Test
 	public void modifiesPluginConfig() throws Exception {
-		JSONObject config = JSONObject.fromObject("{ 'a' : false }");
+		JSONObject config = JSONObject
+				.fromObject("{ 'olmap' : { 'map' : { 'div' : 'mymap' }}}");
 
-		File tmp = new File(dir, "plugin.json");
+		File tmp = new File(dir, "olmap.json");
 		FileWriter writer = new FileWriter(tmp);
-		IOUtils.write("{ 'a' : true, 'b' : false }", writer);
+		IOUtils.write("{ 'map' : { 'div' : 'mymap' }, "
+				+ "'zoom' : { 'tooltip' : 'Zoom' } }", writer);
 		writer.close();
 
 		JSONObject modified = handler.modifyConfig(config, null, null);
-		System.out.println(modified);
-		assertTrue(modified.has("plugin"));
-		assertTrue(modified.getJSONObject("plugin").getBoolean("a"));
-		assertFalse(modified.getJSONObject("plugin").getBoolean("b"));
+		assertTrue(modified.has("olmap"));
+		JSONObject map = modified.getJSONObject("olmap");
+		assertEquals("mymap", map.getJSONObject("map").getString("div"));
+		assertEquals("Zoom", map.getJSONObject("zoom").getString("tooltip"));
+
+		tmp.delete();
+	}
+
+	@Test
+	public void modifiesModuleConfigIfExists() throws Exception {
+		JSONObject config = JSONObject
+				.fromObject("{ 'olmap' : { 'map' : { 'div' : 'mymap' }}}");
+
+		File tmp = new File(dir, "map.json");
+		FileWriter writer = new FileWriter(tmp);
+		IOUtils.write("{ 'div' : 'anotherdiv' }", writer);
+		writer.close();
+
+		JSONObject modified = handler.modifyConfig(config, null, null);
+		assertTrue(modified.has("olmap"));
+		assertEquals("anotherdiv", modified.getJSONObject("olmap")
+				.getJSONObject("map").getString("div"));
 
 		tmp.delete();
 	}
