@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ import java.util.zip.ZipInputStream;
 
 import javax.inject.Singleton;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
@@ -60,10 +63,16 @@ public class PluginDescriptorReader {
 					continue;
 				}
 
-				PluginDescriptor descriptor = getModulesAndStyles(pluginConfUrl);
-				descriptor.setId(key.toString());
 				JSONObject pluginConf = JSONObject.fromObject(IOUtils
 						.toString(pluginConfUrl));
+				PluginDescriptor descriptor = new PluginDescriptor(
+						key.toString());
+
+				PluginDescriptor[] dependencies = getDescriptors(getPluginDependencies(
+						key.toString(), pluginConf));
+				Collections.addAll(descriptor.getDependencies(), dependencies);
+
+				processModulesAndStyles(pluginConfUrl, descriptor);
 				processPluginConf(pluginConf, descriptor);
 
 				this.descriptors.put(key.toString(), descriptor);
@@ -75,6 +84,22 @@ public class PluginDescriptorReader {
 		return list.toArray(new PluginDescriptor[list.size()]);
 	}
 
+	List<String> getPluginDependencies(String id, JSONObject conf) {
+		List<String> deps = new ArrayList<String>();
+
+		try {
+			JSONArray array = conf.getJSONArray("deps");
+			for (int i = 0; i < array.size(); i++) {
+				deps.add(array.getString(i));
+			}
+		} catch (JSONException e) {
+			logger.error("Invalid dependencies ('deps') for plugin " + id
+					+ ". Expecting array of strings. Got: " + conf.get("deps"));
+		}
+
+		return deps;
+	}
+
 	/**
 	 * Obtains the plugin descriptor with the modules and styles configured from
 	 * the given plugin descriptor file URL. It scans the classpath (jar or
@@ -82,33 +107,34 @@ public class PluginDescriptorReader {
 	 * 
 	 * @param pluginConf
 	 *            The URL of the plugin configuration file.
-	 * @return The plugin descriptor with <b>only</b> the modules and
-	 *         stylesheets configured.
+	 * @param descriptor
+	 *            The descriptor where the modules and/or styles should be
+	 *            added.
 	 * @throws IOException
 	 *             If any I/O error occurs while obtaining the modules and
 	 *             stylesheets.
 	 */
-	PluginDescriptor getModulesAndStyles(URL pluginConf) throws IOException {
+	void processModulesAndStyles(URL pluginConf, PluginDescriptor descriptor)
+			throws IOException {
 		String protocol = pluginConf.getProtocol();
 
 		if (protocol.equals("jar")) {
 			try {
 				String path = new URL(pluginConf.getFile()).getPath();
 				logger.debug("Getting path: " + path);
-				return getModulesAndStylesFromJar(path.substring(0,
-						path.indexOf('!')));
+				String jarPath = path.substring(0, path.indexOf('!'));
+				processModulesAndStylesFromJar(jarPath, descriptor);
 			} catch (MalformedURLException e) {
 				throw new IOException(e);
 			}
 		} else if (protocol.equals("file")) {
 			File confDir = new File(pluginConf.getPath()).getParentFile();
 			File root = confDir.getParentFile();
-			return getModulesAndStylesFromDir(root);
+			processModulesAndStylesFromDir(root, descriptor);
 		} else {
 			logger.error("Unknown protocol '" + protocol
 					+ "' for plugin descriptor: " + pluginConf.toString()
 					+ ". Ignoring");
-			return null;
 		}
 	}
 
@@ -118,15 +144,14 @@ public class PluginDescriptorReader {
 	 * 
 	 * @param zipFile
 	 *            The path of the jar file to scan.
-	 * @return The plugin descriptor with <b>only</b> the modules and
-	 *         stylesheets configured.
+	 * @param descriptor
+	 *            The descriptor where the modules and/or styles should be
+	 *            added.
 	 * @throws IOException
 	 *             If any I/O error occurs while reading the jar file.
 	 */
-	PluginDescriptor getModulesAndStylesFromJar(String zipFile)
-			throws IOException {
-		PluginDescriptor descriptor = new PluginDescriptor();
-
+	void processModulesAndStylesFromJar(String zipFile,
+			PluginDescriptor descriptor) throws IOException {
 		ZipEntry entry;
 
 		ZipInputStream jar = new ZipInputStream(new FileInputStream(zipFile));
@@ -156,8 +181,6 @@ public class PluginDescriptorReader {
 			}
 		}
 		jar.close();
-
-		return descriptor;
 	}
 
 	/**
@@ -166,12 +189,11 @@ public class PluginDescriptorReader {
 	 * 
 	 * @param root
 	 *            The directory to scan.
-	 * @return The plugin descriptor with <b>only</b> the modules and
-	 *         stylesheets configured.
+	 * @param descriptor
+	 *            The descriptor where the modules and/or styles should be
+	 *            added.
 	 */
-	PluginDescriptor getModulesAndStylesFromDir(File root) {
-		PluginDescriptor descriptor = new PluginDescriptor();
-
+	void processModulesAndStylesFromDir(File root, PluginDescriptor descriptor) {
 		File[] moduleFiles = new File(root, MODULES_PATH).listFiles();
 		if (moduleFiles != null) {
 			for (File file : moduleFiles) {
@@ -185,8 +207,6 @@ public class PluginDescriptorReader {
 				descriptor);
 		processCSSFiles(new File(root, THEME_PATH).listFiles(), THEME_PATH,
 				descriptor);
-
-		return descriptor;
 	}
 
 	private void processCSSFiles(File[] files, String dir,

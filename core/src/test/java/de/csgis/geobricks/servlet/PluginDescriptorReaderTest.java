@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -173,7 +173,8 @@ public class PluginDescriptorReaderTest {
 	public void processEntriesFromJar() throws IOException {
 		String file = getClass().getResource("/resources.jar").getPath();
 		PluginDescriptorReader reader = new PluginDescriptorReader();
-		PluginDescriptor descriptor = reader.getModulesAndStylesFromJar(file);
+		PluginDescriptor descriptor = new PluginDescriptor();
+		reader.processModulesAndStylesFromJar(file, descriptor);
 
 		List<String> styles = descriptor.getStyles();
 		assertEquals(1, styles.size());
@@ -198,7 +199,8 @@ public class PluginDescriptorReaderTest {
 		File root = new File(getClass().getResource("/").getPath());
 
 		PluginDescriptorReader reader = new PluginDescriptorReader();
-		PluginDescriptor descriptor = reader.getModulesAndStylesFromDir(root);
+		PluginDescriptor descriptor = new PluginDescriptor();
+		reader.processModulesAndStylesFromDir(root, descriptor);
 
 		assertEquals(0, descriptor.getModules().size());
 		assertEquals(3, descriptor.getStyles().size());
@@ -211,10 +213,36 @@ public class PluginDescriptorReaderTest {
 				+ "!/conf/mock-conf.json");
 
 		PluginDescriptorReader reader = spy(new PluginDescriptorReader());
-		doReturn(new PluginDescriptor()).when(reader)
-				.getModulesAndStylesFromJar(any(String.class));
-		reader.getModulesAndStyles(pluginConf);
+		PluginDescriptor descriptor = new PluginDescriptor();
+		reader.processModulesAndStyles(pluginConf, descriptor);
 
-		verify(reader).getModulesAndStylesFromJar(any(String.class));
+		verify(reader).processModulesAndStylesFromJar(any(String.class),
+				eq(descriptor));
+	}
+
+	@Test
+	public void getPluginDependenciesInvalidDeps() throws Exception {
+		PluginDescriptorReader reader = spy(new PluginDescriptorReader());
+		JSONObject conf = JSONObject.fromObject("{deps : 'invalid'}");
+		List<String> deps = reader.getPluginDependencies("myplugin", conf);
+		assertEquals(0, deps.size());
+	}
+
+	@Test
+	public void getPluginDependenciesNoDeps() throws Exception {
+		PluginDescriptorReader reader = spy(new PluginDescriptorReader());
+		JSONObject conf = JSONObject.fromObject("{}");
+		List<String> deps = reader.getPluginDependencies("myplugin", conf);
+		assertEquals(0, deps.size());
+	}
+
+	@Test
+	public void getPluginDependenciesValidDeps() throws Exception {
+		PluginDescriptorReader reader = spy(new PluginDescriptorReader());
+		JSONObject conf = JSONObject.fromObject("{deps : ['p1','p2']}");
+		List<String> deps = reader.getPluginDependencies("myplugin", conf);
+		assertEquals(2, deps.size());
+		assertTrue(deps.contains("p1"));
+		assertTrue(deps.contains("p2"));
 	}
 }

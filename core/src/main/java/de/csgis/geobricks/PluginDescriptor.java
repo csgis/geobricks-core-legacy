@@ -14,6 +14,7 @@ public class PluginDescriptor {
 	private List<String> styles = new ArrayList<String>();
 	private JSONObject requirePaths = new JSONObject();
 	private JSONObject requireShim = new JSONObject();
+	private Set<PluginDescriptor> dependencies = new HashSet<PluginDescriptor>();
 
 	public PluginDescriptor() {
 	}
@@ -60,5 +61,9 @@ public class PluginDescriptor {
 
 	public void setDefaultConfiguration(JSONObject defaultConfiguration) {
 		this.defaultConfiguration = defaultConfiguration;
+	}
+
+	public Set<PluginDescriptor> getDependencies() {
+		return dependencies;
 	}
 }

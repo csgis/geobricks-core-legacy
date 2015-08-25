@@ -52,6 +52,7 @@ public class Config {
 		stream.close();
 
 		this.handlers = new ArrayList<ConfigHandler>();
+		this.handlers.add(new PluginDependenciesConfigHandler());
 		this.handlers.add(new ConfigDirOverridesConfigHandler(getConfigDir()));
 		this.handlers.add(new RoleSpecificConfigHandler(getConfigDir()));
 		this.handlers.add(new PluginDefaultsConfigHandler(this));
