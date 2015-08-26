@@ -3,9 +3,11 @@ package de.csgis.geobricks.servlet.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -18,20 +20,38 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.csgis.geobricks.Geobricks;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.guice.GuiceServletConfig;
 import de.csgis.geobricks.servlet.Config;
 
 public class ConfigServletTest {
 	private static final String PLUGIN_ID = "myplugin";
 	private ConfigServlet servlet;
+	private Config config;
 
 	@Before
 	public void setup() throws ServletException {
 		servlet = new ConfigServlet();
+		config = mock(Config.class);
+		GuiceServletConfig.setInjector(Guice
+				.createInjector(new AbstractModule() {
+					@Override
+					protected void configure() {
+						bind(Config.class).toInstance(config);
+					}
+				}));
+	}
+
+	@After
+	public void tearDown() {
+		GuiceServletConfig.setInjector(null);
 	}
 
 	@Test
@@ -44,8 +64,7 @@ public class ConfigServletTest {
 				JSONObject.fromObject("{'" + PLUGIN_ID + "' : {}}"), modules);
 		servlet.init(servletConfig);
 
-		String config = servlet.getConfig(request, response,
-				servletConfig.getServletContext());
+		String config = servlet.getConfig(request, response);
 		JSONObject json = JSONObject.fromObject(config);
 
 		JSONArray configModules = json.getJSONObject("config").getJSONArray(
@@ -67,8 +86,7 @@ public class ConfigServletTest {
 						+ "' : { a : {enabled : true}}}"), modules);
 		servlet.init(servletConfig);
 
-		String config = servlet.getConfig(request, response,
-				servletConfig.getServletContext());
+		String config = servlet.getConfig(request, response);
 		JSONObject json = JSONObject.fromObject(config);
 		JSONObject moduleConfig = json.getJSONObject("config").getJSONObject(
 				modules[0]);
@@ -84,8 +102,7 @@ public class ConfigServletTest {
 				new String[0]);
 		servlet.init(servletConfig);
 
-		String config = servlet.getConfig(request, response,
-				servletConfig.getServletContext());
+		String config = servlet.getConfig(request, response);
 		JSONObject json = JSONObject.fromObject(config);
 
 		JSONArray configModules = json.getJSONObject("config").getJSONArray(
@@ -95,20 +112,20 @@ public class ConfigServletTest {
 
 	private ServletConfig config(JSONObject pluginsConf, String[] modules)
 			throws IOException {
-		Config config = mock(Config.class);
 		when(
-				config.getApplicationConf(any(HttpServletRequest.class),
+				this.config.getApplicationConf(any(HttpServletRequest.class),
 						any(HttpServletResponse.class)))
 				.thenReturn(pluginsConf);
 
 		PluginDescriptor descriptor = new PluginDescriptor();
 		Collections.addAll(descriptor.getModules(), modules);
 
-		when(config.getPluginDescriptors(any(JSONObject.class))).thenReturn(
-				new PluginDescriptor[] { descriptor });
+		when(this.config.getPluginDescriptors(any(JSONObject.class)))
+				.thenReturn(new PluginDescriptor[] { descriptor });
 
 		ServletContext context = mock(ServletContext.class);
-		when(context.getAttribute(Geobricks.ATTR_CONFIG)).thenReturn(config);
+		when(context.getResourceAsStream(anyString())).thenReturn(
+				new ByteArrayInputStream("{}".getBytes()));
 
 		ServletConfig servletConfig = mock(ServletConfig.class);
 		when(servletConfig.getServletContext()).thenReturn(context);

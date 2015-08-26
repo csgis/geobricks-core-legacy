@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,7 +16,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.servlet.CharResponseWrapper;
 import de.csgis.geobricks.servlet.Config;
@@ -24,12 +24,12 @@ import de.csgis.geobricks.servlet.Config;
 public class IndexHTMLContentProcessor implements Filter {
 	public static final String STYLES_DIR = "_static" + File.separator + "css";
 
+	@Inject
 	private Config config;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		config = (Config) filterConfig.getServletContext().getAttribute(
-				Geobricks.ATTR_CONFIG);
+		// do nothing
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package de.csgis.geobricks.servlet;
+package de.csgis.geobricks;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -20,6 +20,7 @@ import net.sf.json.JSONObject;
 import org.junit.Test;
 
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.PluginDescriptorReader;
 
 public class PluginDescriptorReaderTest {
 	@Test

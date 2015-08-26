@@ -15,10 +15,6 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<!-- Reads application config -->
-	<listener>
-		<listener-class>de.csgis.geobricks.config.ApplicationListener</listener-class>
-	</listener>
 
 	<!-- Guice modules configuration -->
 	<listener>

@@ -37,6 +37,7 @@ import org.mockito.stubbing.Answer;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.PluginDescriptorReader;
 
 @SuppressWarnings("unchecked")
 public class ConfigTest {

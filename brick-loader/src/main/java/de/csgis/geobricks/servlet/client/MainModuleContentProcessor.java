@@ -2,6 +2,7 @@ package de.csgis.geobricks.servlet.client;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
-import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.servlet.CharResponseWrapper;
 import de.csgis.geobricks.servlet.Config;
@@ -21,12 +21,12 @@ import de.csgis.geobricks.servlet.Config;
 @Singleton
 public class MainModuleContentProcessor implements Filter {
 
+	@Inject
 	private Config config;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		this.config = (Config) filterConfig.getServletContext().getAttribute(
-				Geobricks.ATTR_CONFIG);
+		// do nothing
 	}
 
 	@Override

@@ -6,17 +6,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Singleton;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
-import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.servlet.Config;
+import de.csgis.geobricks.servlet.AbstractGeobricksServlet;
 
 /**
  * Builds the json document that configures all the requirejs modules
@@ -24,22 +20,13 @@ import de.csgis.geobricks.servlet.Config;
  * @author fergonco
  */
 @Singleton
-public class ConfigServlet extends HttpServlet {
+public class ConfigServlet extends AbstractGeobricksServlet {
 	private static final long serialVersionUID = 1L;
-
-	private Config config;
-
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
-		this.config = (Config) config.getServletContext().getAttribute(
-				Geobricks.ATTR_CONFIG);
-	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String json = getConfig(req, resp, getServletContext());
+		String json = getConfig(req, resp);
 
 		resp.setContentType("application/javascript");
 		resp.setCharacterEncoding("utf8");
@@ -48,16 +35,15 @@ public class ConfigServlet extends HttpServlet {
 	}
 
 	public String getConfig(HttpServletRequest request,
-			HttpServletResponse response, ServletContext context)
-			throws IOException {
+			HttpServletResponse response) throws IOException {
 		JSONObject ret = new JSONObject();
 		Set<String> modules = new HashSet<String>();
 
-		JSONObject gbappConf = this.config
+		JSONObject gbappConf = getConfig()
 				.getApplicationConf(request, response);
 
-		PluginDescriptor[] descriptors = this.config
-				.getPluginDescriptors(gbappConf);
+		PluginDescriptor[] descriptors = getConfig().getPluginDescriptors(
+				gbappConf);
 		for (PluginDescriptor descriptor : descriptors) {
 			modules.addAll(descriptor.getModules());
 		}

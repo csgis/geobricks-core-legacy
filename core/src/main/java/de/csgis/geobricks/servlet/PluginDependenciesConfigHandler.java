@@ -11,12 +11,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.PluginDescriptorReader;
 
 public class PluginDependenciesConfigHandler implements ConfigHandler {
 
 	private JSONObject modified, lastConfig;
 
-	private PluginDescriptorReader reader = new PluginDescriptorReader();
+	private PluginDescriptorReader reader;
+
+	public PluginDependenciesConfigHandler(PluginDescriptorReader reader) {
+		this.reader = reader;
+	}
 
 	@Override
 	public JSONObject modifyConfig(JSONObject config,
@@ -55,14 +60,5 @@ public class PluginDependenciesConfigHandler implements ConfigHandler {
 		}
 
 		return deps;
-	}
-
-	/**
-	 * Only for testing purposes.
-	 * 
-	 * @param reader
-	 */
-	void setPluginDescriptorReader(PluginDescriptorReader reader) {
-		this.reader = reader;
 	}
 }

@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.PluginDescriptorReader;
 
 public class Config {
 	private static final Logger logger = Logger.getLogger(Config.class);
@@ -37,11 +38,7 @@ public class Config {
 
 	private List<ConfigHandler> handlers;
 
-	public void init(ServletContext context) throws IOException {
-		init(context, new PluginDescriptorReader());
-	}
-
-	void init(ServletContext context, PluginDescriptorReader reader)
+	public void init(ServletContext context, PluginDescriptorReader reader)
 			throws IOException {
 		this.context = context;
 		this.reader = reader;
@@ -52,7 +49,7 @@ public class Config {
 		stream.close();
 
 		this.handlers = new ArrayList<ConfigHandler>();
-		this.handlers.add(new PluginDependenciesConfigHandler());
+		this.handlers.add(new PluginDependenciesConfigHandler(this.reader));
 		this.handlers.add(new ConfigDirOverridesConfigHandler(getConfigDir()));
 		this.handlers.add(new RoleSpecificConfigHandler(getConfigDir()));
 		this.handlers.add(new PluginDefaultsConfigHandler(this));

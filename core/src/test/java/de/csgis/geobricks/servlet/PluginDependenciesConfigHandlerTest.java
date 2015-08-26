@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.PluginDescriptorReader;
 
 public class PluginDependenciesConfigHandlerTest {
 	private PluginDependenciesConfigHandler handler;
@@ -24,9 +25,7 @@ public class PluginDependenciesConfigHandlerTest {
 	@Before
 	public void setup() {
 		this.reader = mock(PluginDescriptorReader.class);
-
-		this.handler = new PluginDependenciesConfigHandler();
-		this.handler.setPluginDescriptorReader(reader);
+		this.handler = new PluginDependenciesConfigHandler(reader);
 	}
 
 	@Test

@@ -1,4 +1,4 @@
-package de.csgis.geobricks.servlet;
+package de.csgis.geobricks;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.inject.Singleton;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -22,15 +20,12 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-import de.csgis.geobricks.PluginDescriptor;
-
 /**
  * Reads the plugins configuration from <code>gbapp-conf.json</code> and loads
  * all the required plugins from the classpath. It sets:
  * 
  * @author vicgonco
  */
-@Singleton
 public class PluginDescriptorReader {
 	private static final Logger logger = Logger
 			.getLogger(PluginDescriptorReader.class);

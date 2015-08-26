@@ -81,7 +81,6 @@
 						<excludes>
 							<exclude>de/csgis/geobricks/guice/ClientServletModule.class</exclude>
 							<exclude>de/csgis/geobricks/guice/GuiceServletConfig.class</exclude>
-							<exclude>de/csgis/geobricks/guice/RuntimeModule.class</exclude>
 						</excludes>
 					</instrumentation>
 				</configuration>
