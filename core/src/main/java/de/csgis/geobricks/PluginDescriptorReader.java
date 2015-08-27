@@ -17,6 +17,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
@@ -189,13 +190,14 @@ public class PluginDescriptorReader {
 	 *            added.
 	 */
 	void processModulesAndStylesFromDir(File root, PluginDescriptor descriptor) {
-		File[] moduleFiles = new File(root, MODULES_PATH).listFiles();
-		if (moduleFiles != null) {
-			for (File file : moduleFiles) {
-				String entry = MODULES_PATH + File.separator + file.getName();
-				processJSEntry(entry, descriptor);
-				processCSSEntry(entry, descriptor);
-			}
+		File modulesDir = new File(root, MODULES_PATH);
+		for (File file : FileUtils.listFiles(modulesDir, null, true)) {
+			String relativePath = file.getAbsolutePath().substring(
+					modulesDir.getAbsolutePath().length());
+			String entry = (MODULES_PATH + relativePath)
+					.replaceAll("\\\\", "/");
+			processJSEntry(entry, descriptor);
+			processCSSEntry(entry, descriptor);
 		}
 
 		processCSSFiles(new File(root, STYLES_PATH).listFiles(), STYLES_PATH,

@@ -13,14 +13,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.junit.Test;
-
-import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.PluginDescriptorReader;
 
 public class PluginDescriptorReaderTest {
 	@Test
@@ -180,6 +178,10 @@ public class PluginDescriptorReaderTest {
 		List<String> styles = descriptor.getStyles();
 		assertEquals(1, styles.size());
 		assertEquals("modules/mock.css", styles.get(0));
+
+		Set<String> modules = descriptor.getModules();
+		assertEquals(1, modules.size());
+		assertEquals("de/csgis/test/module", modules.iterator().next());
 	}
 
 	@Test
@@ -203,7 +205,9 @@ public class PluginDescriptorReaderTest {
 		PluginDescriptor descriptor = new PluginDescriptor();
 		reader.processModulesAndStylesFromDir(root, descriptor);
 
-		assertEquals(0, descriptor.getModules().size());
+		assertEquals(1, descriptor.getModules().size());
+		assertEquals("de/csgis/test/module", descriptor.getModules().iterator()
+				.next());
 		assertEquals(3, descriptor.getStyles().size());
 	}
 
