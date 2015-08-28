@@ -23,9 +23,9 @@ import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
 
-public class RoleSpecificConfigHandlerTest {
+public class RoleSpecificConfigFilterTest {
 	private File configDir, roleDir;
-	private RoleSpecificConfigHandler handler;
+	private RoleSpecificConfigFilter filter;
 
 	@Before
 	public void setup() throws IOException {
@@ -33,10 +33,10 @@ public class RoleSpecificConfigHandlerTest {
 		configDir.delete();
 		configDir.mkdir();
 
-		roleDir = new File(configDir, RoleSpecificConfigHandler.ROLE_DIR);
+		roleDir = new File(configDir, RoleSpecificConfigFilter.ROLE_DIR);
 		roleDir.mkdir();
 
-		handler = new RoleSpecificConfigHandler(configDir.getAbsolutePath());
+		filter = new RoleSpecificConfigFilter(configDir.getAbsolutePath());
 	}
 
 	@After
@@ -51,7 +51,7 @@ public class RoleSpecificConfigHandlerTest {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn(null);
 
-		JSONObject modified = handler.modifyConfig(config, request,
+		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
 		assertEquals(config, modified);
 	}
@@ -63,7 +63,7 @@ public class RoleSpecificConfigHandlerTest {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn("role1");
 
-		JSONObject modified = handler.modifyConfig(config, request,
+		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
 		assertEquals(config, modified);
 	}
@@ -81,7 +81,7 @@ public class RoleSpecificConfigHandlerTest {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn(role);
 
-		JSONObject modified = handler.modifyConfig(config, request,
+		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
 		assertTrue(modified.has("plugin"));
 		assertTrue(modified.getJSONObject("plugin").getBoolean("a"));
@@ -102,7 +102,7 @@ public class RoleSpecificConfigHandlerTest {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn(role);
 
-		JSONObject modified = handler.modifyConfig(config, request,
+		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
 		System.out.println(modified);
 		assertTrue(modified.has("plugin"));

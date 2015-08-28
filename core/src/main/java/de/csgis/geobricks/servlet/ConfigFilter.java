@@ -18,7 +18,7 @@ import net.sf.json.JSONObject;
  * 
  * @author vicgonco
  */
-public interface ConfigHandler {
+public interface ConfigFilter {
 	/**
 	 * Returns a new JSON object as a result of the modification of the given
 	 * object. The returned object <b>must</b> be a different object and the

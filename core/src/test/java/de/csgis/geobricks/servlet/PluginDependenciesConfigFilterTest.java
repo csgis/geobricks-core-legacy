@@ -18,14 +18,14 @@ import org.junit.Test;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginDescriptorReader;
 
-public class PluginDependenciesConfigHandlerTest {
-	private PluginDependenciesConfigHandler handler;
+public class PluginDependenciesConfigFilterTest {
+	private PluginDependenciesConfigFilter filter;
 	private PluginDescriptorReader reader;
 
 	@Before
 	public void setup() {
 		this.reader = mock(PluginDescriptorReader.class);
-		this.handler = new PluginDependenciesConfigHandler(reader);
+		this.filter = new PluginDependenciesConfigFilter(reader);
 	}
 
 	@Test
@@ -39,7 +39,7 @@ public class PluginDependenciesConfigHandlerTest {
 				new PluginDescriptor[] { plugin });
 
 		JSONObject config = JSONObject.fromObject("{plugin : {}}");
-		config = handler.modifyConfig(config, mock(HttpServletRequest.class),
+		config = filter.modifyConfig(config, mock(HttpServletRequest.class),
 				mock(HttpServletResponse.class));
 
 		assertTrue(config.has("dependency"));
@@ -59,7 +59,7 @@ public class PluginDependenciesConfigHandlerTest {
 		JSONObject depConfig = JSONObject.fromObject("{module:{value : true}}");
 		JSONObject config = JSONObject.fromObject("{plugin : {}, "
 				+ "dependency : " + depConfig.toString() + "}");
-		config = handler.modifyConfig(config, mock(HttpServletRequest.class),
+		config = filter.modifyConfig(config, mock(HttpServletRequest.class),
 				mock(HttpServletResponse.class));
 
 		assertTrue(config.has("dependency"));
@@ -79,7 +79,7 @@ public class PluginDependenciesConfigHandlerTest {
 				new PluginDescriptor[] { p1, p2 });
 
 		JSONObject config = JSONObject.fromObject("{p1 : {}, p2 : {}}");
-		config = handler.modifyConfig(config, mock(HttpServletRequest.class),
+		config = filter.modifyConfig(config, mock(HttpServletRequest.class),
 				mock(HttpServletResponse.class));
 
 		assertTrue(config.has("dependency"));

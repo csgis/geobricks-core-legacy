@@ -13,13 +13,13 @@ import net.sf.json.JSONObject;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginDescriptorReader;
 
-public class PluginDependenciesConfigHandler implements ConfigHandler {
+public class PluginDependenciesConfigFilter implements ConfigFilter {
 
 	private JSONObject modified, lastConfig;
 
 	private PluginDescriptorReader reader;
 
-	public PluginDependenciesConfigHandler(PluginDescriptorReader reader) {
+	public PluginDependenciesConfigFilter(PluginDescriptorReader reader) {
 		this.reader = reader;
 	}
 

@@ -64,7 +64,7 @@ public class ConfigTest {
 
 		appProperties = new File(confDir, "app.properties");
 
-		roleDir = new File(confDir, RoleSpecificConfigHandler.ROLE_DIR);
+		roleDir = new File(confDir, RoleSpecificConfigFilter.ROLE_DIR);
 	}
 
 	@Before

@@ -15,11 +15,11 @@ import de.csgis.geobricks.PluginDescriptor;
  * 
  * @author vicgonco
  */
-public class PluginDefaultsConfigHandler implements ConfigHandler {
+public class PluginDefaultsConfigFilter implements ConfigFilter {
 	private JSONObject modified, lastConfig;
 	private Config config;
 
-	public PluginDefaultsConfigHandler(Config config) {
+	public PluginDefaultsConfigFilter(Config config) {
 		this.config = config;
 	}
 

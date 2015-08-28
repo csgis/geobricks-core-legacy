@@ -11,12 +11,12 @@ import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.JSONContentProvider;
 import de.csgis.geobricks.JSONUtils;
 
-public class RoleSpecificConfigHandler implements ConfigHandler {
+public class RoleSpecificConfigFilter implements ConfigFilter {
 	public static final String ROLE_DIR = "role_conf";
 
 	private JSONContentProvider contents;
 
-	public RoleSpecificConfigHandler(String configDir) {
+	public RoleSpecificConfigFilter(String configDir) {
 		this.contents = new JSONContentProvider(configDir + File.separator
 				+ ROLE_DIR);
 	}

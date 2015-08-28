@@ -15,16 +15,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ConfigDirOverridesConfigHandlerTest {
+public class ConfigDirOverridesConfigFilterTest {
 	private File dir;
-	private ConfigDirOverridesConfigHandler handler;
+	private ConfigDirOverridesConfigFilter fiilter;
 
 	@Before
 	public void setup() throws IOException {
 		dir = File.createTempFile("geobricks", "");
 		dir.delete();
 		dir.mkdir();
-		handler = new ConfigDirOverridesConfigHandler(dir.getAbsolutePath());
+		fiilter = new ConfigDirOverridesConfigFilter(dir.getAbsolutePath());
 	}
 
 	@After
@@ -41,7 +41,7 @@ public class ConfigDirOverridesConfigHandlerTest {
 		IOUtils.write("{ 'map' : { 'div' : 'mymap' } }", writer);
 		writer.close();
 
-		JSONObject modified = handler.modifyConfig(config, null, null);
+		JSONObject modified = fiilter.modifyConfig(config, null, null);
 		assertTrue(modified.has("olmap"));
 		JSONObject olmap = modified.getJSONObject("olmap");
 		assertEquals("mymap", olmap.getJSONObject("map").getString("div"));
@@ -60,7 +60,7 @@ public class ConfigDirOverridesConfigHandlerTest {
 				+ "'zoom' : { 'tooltip' : 'Zoom' } }", writer);
 		writer.close();
 
-		JSONObject modified = handler.modifyConfig(config, null, null);
+		JSONObject modified = fiilter.modifyConfig(config, null, null);
 		assertTrue(modified.has("olmap"));
 		JSONObject map = modified.getJSONObject("olmap");
 		assertEquals("mymap", map.getJSONObject("map").getString("div"));
@@ -79,7 +79,7 @@ public class ConfigDirOverridesConfigHandlerTest {
 		IOUtils.write("{ 'div' : 'anotherdiv' }", writer);
 		writer.close();
 
-		JSONObject modified = handler.modifyConfig(config, null, null);
+		JSONObject modified = fiilter.modifyConfig(config, null, null);
 		assertTrue(modified.has("olmap"));
 		assertEquals("anotherdiv", modified.getJSONObject("olmap")
 				.getJSONObject("map").getString("div"));

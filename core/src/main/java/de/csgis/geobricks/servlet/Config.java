@@ -36,7 +36,7 @@ public class Config {
 	private long lastAppPropertiesAccess;
 	private PluginDescriptorReader reader;
 
-	private List<ConfigHandler> handlers;
+	private List<ConfigFilter> filters;
 
 	public void init(ServletContext context, PluginDescriptorReader reader)
 			throws IOException {
@@ -48,23 +48,23 @@ public class Config {
 		this.gbappConf = JSONObject.fromObject(IOUtils.toString(stream));
 		stream.close();
 
-		this.handlers = new ArrayList<ConfigHandler>();
-		this.handlers.add(new PluginDependenciesConfigHandler(this.reader));
-		this.handlers.add(new ConfigDirOverridesConfigHandler(getConfigDir()));
-		this.handlers.add(new RoleSpecificConfigHandler(getConfigDir()));
-		this.handlers.add(new PluginDefaultsConfigHandler(this));
+		this.filters = new ArrayList<ConfigFilter>();
+		this.filters.add(new PluginDependenciesConfigFilter(this.reader));
+		this.filters.add(new ConfigDirOverridesConfigFilter(getConfigDir()));
+		this.filters.add(new RoleSpecificConfigFilter(getConfigDir()));
+		this.filters.add(new PluginDefaultsConfigFilter(this));
 
 		updateAppProperties();
 	}
 
-	public void addConfigHandler(ConfigHandler handler) {
-		this.handlers.add(handler);
+	public void addConfigFilter(ConfigFilter filter) {
+		this.filters.add(filter);
 	}
 
 	public JSONObject getApplicationConf(HttpServletRequest request,
 			HttpServletResponse response) {
 		JSONObject conf = this.gbappConf;
-		for (ConfigHandler handler : this.handlers) {
+		for (ConfigFilter handler : this.filters) {
 			try {
 				conf = handler.modifyConfig(conf, request, response);
 			} catch (IOException e) {

@@ -16,11 +16,11 @@ import de.csgis.geobricks.JSONUtils;
  * 
  * @author vicgonco
  */
-public class ConfigDirOverridesConfigHandler implements ConfigHandler {
+public class ConfigDirOverridesConfigFilter implements ConfigFilter {
 	private JSONContentProvider contents;
 	private JSONObject modified, lastConfig;
 
-	public ConfigDirOverridesConfigHandler(String configDir) {
+	public ConfigDirOverridesConfigFilter(String configDir) {
 		this.contents = new JSONContentProvider(configDir);
 	}
 

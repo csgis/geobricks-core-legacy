@@ -17,7 +17,7 @@ import org.junit.Test;
 
 import de.csgis.geobricks.PluginDescriptor;
 
-public class PluginDefaultsConfigHandlerTest {
+public class PluginDefaultsConfigFilterTest {
 	@Test
 	public void addsDefaultConfig() throws Exception {
 		String id = "plugin";
@@ -26,12 +26,12 @@ public class PluginDefaultsConfigHandlerTest {
 		p.setDefaultConfiguration(JSONObject.fromObject("{'a' : true }"));
 		p.setId(id);
 
-		PluginDefaultsConfigHandler handler = new PluginDefaultsConfigHandler(
+		PluginDefaultsConfigFilter filter = new PluginDefaultsConfigFilter(
 				mockConfig(p));
 
 		JSONObject jsonConfig = JSONObject.fromObject("{'" + id + "' : {}}");
 
-		JSONObject modified = handler
+		JSONObject modified = filter
 				.modifyConfig(jsonConfig, mock(HttpServletRequest.class),
 						mock(HttpServletResponse.class));
 
@@ -46,13 +46,13 @@ public class PluginDefaultsConfigHandlerTest {
 		p.setDefaultConfiguration(JSONObject.fromObject("{'a' : true }"));
 		p.setId(id);
 
-		PluginDefaultsConfigHandler handler = new PluginDefaultsConfigHandler(
+		PluginDefaultsConfigFilter filter = new PluginDefaultsConfigFilter(
 				mockConfig(p));
 
 		JSONObject config = JSONObject.fromObject("{'" + id
 				+ "' : { 'a' : false }}");
 
-		JSONObject modified = handler
+		JSONObject modified = filter
 				.modifyConfig(config, mock(HttpServletRequest.class),
 						mock(HttpServletResponse.class));
 
@@ -67,12 +67,12 @@ public class PluginDefaultsConfigHandlerTest {
 		p.setDefaultConfiguration(JSONObject.fromObject("{'a' : true }"));
 		p.setId(id);
 
-		PluginDefaultsConfigHandler handler = new PluginDefaultsConfigHandler(
+		PluginDefaultsConfigFilter filter = new PluginDefaultsConfigFilter(
 				mockConfig(p));
 
 		JSONObject config = JSONObject.fromObject("{}");
 
-		JSONObject modified = handler
+		JSONObject modified = filter
 				.modifyConfig(config, mock(HttpServletRequest.class),
 						mock(HttpServletResponse.class));
 
@@ -81,13 +81,13 @@ public class PluginDefaultsConfigHandlerTest {
 
 	@Test
 	public void ignoresInvalidPlugins() throws Exception {
-		PluginDefaultsConfigHandler handler = new PluginDefaultsConfigHandler(
+		PluginDefaultsConfigFilter filter = new PluginDefaultsConfigFilter(
 				mockConfig());
 
 		JSONObject config = JSONObject
 				.fromObject("{'plugin' : { 'a' : true }}");
 
-		JSONObject modified = handler
+		JSONObject modified = filter
 				.modifyConfig(config, mock(HttpServletRequest.class),
 						mock(HttpServletResponse.class));
 
