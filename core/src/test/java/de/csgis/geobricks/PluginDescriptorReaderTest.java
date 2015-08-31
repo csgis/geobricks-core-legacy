@@ -5,13 +5,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -226,6 +229,31 @@ public class PluginDescriptorReaderTest {
 	}
 
 	@Test
+	public void getPluginDescriptorFromFile() throws Exception {
+		URL pluginConf = getClass().getResource("/conf/mock-conf.json");
+
+		PluginDescriptorReader reader = spy(new PluginDescriptorReader());
+		PluginDescriptor descriptor = new PluginDescriptor();
+		reader.processModulesAndStyles(pluginConf, descriptor);
+
+		verify(reader).processModulesAndStylesFromDir(
+				new File(getClass().getResource("/").getPath()), descriptor);
+	}
+
+	@Test
+	public void getPluginDescriptorInvalidProtocol() throws Exception {
+		URL pluginConf = new URL("ftp://localhost");
+
+		PluginDescriptorReader reader = spy(new PluginDescriptorReader());
+		reader.processModulesAndStyles(pluginConf, new PluginDescriptor());
+
+		verify(reader, never()).processModulesAndStylesFromDir(any(File.class),
+				any(PluginDescriptor.class));
+		verify(reader, never()).processModulesAndStylesFromJar(anyString(),
+				any(PluginDescriptor.class));
+	}
+
+	@Test
 	public void getPluginDependenciesInvalidDeps() throws Exception {
 		PluginDescriptorReader reader = spy(new PluginDescriptorReader());
 		JSONObject conf = JSONObject.fromObject("{deps : 'invalid'}");
@@ -249,5 +277,24 @@ public class PluginDescriptorReaderTest {
 		assertEquals(2, deps.size());
 		assertTrue(deps.contains("p1"));
 		assertTrue(deps.contains("p2"));
+	}
+
+	@Test
+	public void getDescriptors() throws Exception {
+		PluginDescriptorReader reader = new PluginDescriptorReader();
+		PluginDescriptor[] descriptors = reader.getDescriptors(Collections
+				.singletonList("mock"));
+		assertEquals(1, descriptors.length);
+
+		PluginDescriptor d = descriptors[0];
+
+		assertEquals(1, d.getModules().size());
+		assertEquals("de/csgis/test/module", d.getModules().iterator().next());
+		assertEquals(3, d.getStyles().size());
+		assertEquals("Mock Plugin",
+				d.getDefaultConfiguration().getString("name"));
+		assertEquals(new JSONObject(), d.getRequirePaths());
+		assertEquals(new JSONObject(), d.getRequireShim());
+		assertEquals(0, d.getDependencies().size());
 	}
 }
