@@ -1,4 +1,4 @@
-package de.csgis.geobricks.servlet.client;
+package de.csgis.geobricks.servlet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -30,6 +30,7 @@ import com.google.inject.Guice;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.guice.GuiceServletConfig;
 import de.csgis.geobricks.servlet.Config;
+import de.csgis.geobricks.servlet.ConfigServlet;
 
 public class ConfigServletTest {
 	private static final String PLUGIN_ID = "myplugin";

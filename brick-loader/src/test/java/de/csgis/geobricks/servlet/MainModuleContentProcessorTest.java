@@ -1,4 +1,4 @@
-package de.csgis.geobricks.servlet.client;
+package de.csgis.geobricks.servlet;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.csgis.geobricks.PluginDescriptor;
+import de.csgis.geobricks.servlet.MainModuleContentProcessor;
 
 public class MainModuleContentProcessorTest {
 	private static final String MAIN = "/webapp/modules/main.js";

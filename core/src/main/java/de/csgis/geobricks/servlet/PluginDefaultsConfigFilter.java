@@ -10,8 +10,8 @@ import de.csgis.geobricks.JSONUtils;
 import de.csgis.geobricks.PluginDescriptor;
 
 /**
- * Applies the default plugin configurations (
- * <code>&lt;plugin&gt;-conf.json</code>) to the config request.
+ * {@link ConfigFilter} for applying the default plugin configurations (
+ * <code>&lt;plugin&gt;-conf.json</code>) to the current configuration.
  * 
  * @author vicgonco
  */

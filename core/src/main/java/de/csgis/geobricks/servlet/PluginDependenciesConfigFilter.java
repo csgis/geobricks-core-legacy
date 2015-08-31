@@ -13,6 +13,12 @@ import net.sf.json.JSONObject;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginDescriptorReader;
 
+/**
+ * {@link ConfigFilter} for adding plugin dependencies that are not present on
+ * the current configuration.
+ * 
+ * @author vicgonco
+ */
 public class PluginDependenciesConfigFilter implements ConfigFilter {
 
 	private JSONObject modified, lastConfig;

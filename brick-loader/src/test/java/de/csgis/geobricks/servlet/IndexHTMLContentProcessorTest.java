@@ -1,4 +1,4 @@
-package de.csgis.geobricks.servlet.client;
+package de.csgis.geobricks.servlet;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.servlet.Config;
+import de.csgis.geobricks.servlet.IndexHTMLContentProcessor;
 
 public class IndexHTMLContentProcessorTest {
 	private static final String INDEX = "/webapp/index.html";

@@ -11,8 +11,9 @@ import de.csgis.geobricks.JSONContentProvider;
 import de.csgis.geobricks.JSONUtils;
 
 /**
- * Overrides the given config with all the <code>*.json</code> file contents on
- * the configuration directory ({@link Config#getConfigDir()}).
+ * {@link ConfigFilter} for overriding the given config with all the
+ * <code>*.json</code> file contents on the configuration directory (
+ * {@link Config#getConfigDir()}).
  * 
  * @author vicgonco
  */

@@ -7,6 +7,11 @@ import java.util.Set;
 
 import net.sf.json.JSONObject;
 
+/**
+ * Bean class for describing a plugin.
+ * 
+ * @author vicgonco
+ */
 public class PluginDescriptor {
 	private String id;
 	private JSONObject defaultConfiguration;

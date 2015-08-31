@@ -1,4 +1,4 @@
-package de.csgis.geobricks.servlet.client;
+package de.csgis.geobricks.servlet;
 
 import java.io.IOException;
 
@@ -12,6 +12,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Filter for redirecting requests without an ending slash (<code>/</code>) to
+ * the same URL with an ending slash.
+ * 
+ * @author vicgonco
+ */
 @Singleton
 public class IndexHTMLRedirectFilter implements Filter {
 

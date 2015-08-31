@@ -11,6 +11,14 @@ import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.JSONContentProvider;
 import de.csgis.geobricks.JSONUtils;
 
+/**
+ * {@link ConfigFilter} for role specific configuration. Roles are defined by
+ * separate <code>&lt;role&gt;.json</code> files in the {@link #ROLE_DIR}
+ * directory, containing application descriptors (same format as
+ * <code>gbapp-conf.json</code> files).
+ * 
+ * @author vicgonco
+ */
 public class RoleSpecificConfigFilter implements ConfigFilter {
 	public static final String ROLE_DIR = "role_conf";
 

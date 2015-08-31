@@ -14,6 +14,7 @@ import net.sf.json.JSONObject;
  * <li>Adding role-specific plugins and/or configurations.
  * <li>Overriding the default configuration with contents from files on the
  * configuration directory ({@link Config#getConfigDir()}.</li>
+ * <li>...</li>
  * </ul>
  * 
  * @author vicgonco

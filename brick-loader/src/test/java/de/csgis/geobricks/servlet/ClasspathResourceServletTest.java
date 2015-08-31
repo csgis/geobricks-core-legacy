@@ -1,4 +1,4 @@
-package de.csgis.geobricks.servlet.client;
+package de.csgis.geobricks.servlet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+
+import de.csgis.geobricks.servlet.ClasspathResourceServlet;
 
 public class ClasspathResourceServletTest {
 	@Test

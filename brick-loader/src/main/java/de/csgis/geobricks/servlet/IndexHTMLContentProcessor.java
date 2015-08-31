@@ -1,4 +1,4 @@
-package de.csgis.geobricks.servlet.client;
+package de.csgis.geobricks.servlet;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -20,6 +20,12 @@ import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.servlet.CharResponseWrapper;
 import de.csgis.geobricks.servlet.Config;
 
+/**
+ * Filter to process the index.html document (replace placeholders, add extra
+ * parts,...), depending on the request.
+ * 
+ * @author vicgonco
+ */
 @Singleton
 public class IndexHTMLContentProcessor implements Filter {
 	public static final String STYLES_DIR = "_static" + File.separator + "css";
@@ -45,9 +51,24 @@ public class IndexHTMLContentProcessor implements Filter {
 				process(wrapper.toString(), config, req, resp));
 	}
 
-	public String process(String content, Config config,
-			HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
+	/**
+	 * Processes the index.html content.
+	 * 
+	 * @param content
+	 *            The index.html content.
+	 * @param config
+	 *            The configuration object.
+	 * @param request
+	 *            The HTTP request for the index.html document.
+	 * @param response
+	 *            The HTTP response.
+	 * @return The index.html content already processed.
+	 * @throws IOException
+	 *             if any I/O error occurs while processing the index.html
+	 *             content.
+	 */
+	String process(String content, Config config, HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
 		Properties properties = config.getAppProperties();
 		boolean minified = Boolean.parseBoolean(properties
 				.getProperty("minified"));
@@ -60,7 +81,7 @@ public class IndexHTMLContentProcessor implements Filter {
 		if (minified) {
 			String css = "<link rel=\"stylesheet\" href=\"optimized/portal-style.css\"/>\n";
 			content = content.replace("$styleSheets", css
-					+ getCSSFromDir(stylesDir));
+					+ getCSSTagsFromDir(stylesDir));
 			replaced = content.replace("$mainModule", "optimized/portal");
 		} else {
 			StringBuilder str = new StringBuilder();
@@ -71,7 +92,7 @@ public class IndexHTMLContentProcessor implements Filter {
 				}
 			}
 			content = content.replace("$styleSheets", str.toString()
-					+ getCSSFromDir(stylesDir));
+					+ getCSSTagsFromDir(stylesDir));
 			replaced = content.replace("$mainModule", "modules/main");
 		}
 
@@ -83,29 +104,41 @@ public class IndexHTMLContentProcessor implements Filter {
 		return replaced;
 	}
 
-	private String getCSSFromDir(File stylesDir) {
-		String ret = "";
+	/**
+	 * Obtains the <code>&lt;link&gt;</code> tags, corresponding to all CSS
+	 * files within the given directory.
+	 * 
+	 * @param stylesDir
+	 *            The directory containing the CSS files.
+	 * @return A string containing all <code>&lt;link&gt;</code> tags for all
+	 *         CSS files.
+	 */
+	private String getCSSTagsFromDir(File stylesDir) {
+		if (!stylesDir.exists() || !stylesDir.isDirectory()
+				|| !stylesDir.canRead()) {
+			return "";
+		}
 
-		if (stylesDir.exists() && stylesDir.isDirectory()
-				&& stylesDir.canRead()) {
-			File[] cssFiles = stylesDir.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.toLowerCase().endsWith(".css");
-				}
-			});
-
-			if (cssFiles != null) {
-				for (File css : cssFiles) {
-					String path = css.getPath();
-					String stylesPath = stylesDir.getPath();
-					if (path.startsWith(stylesPath)) {
-						path = path.substring(stylesPath.length() + 1);
-					}
-					ret += "<link rel=\"stylesheet\" href=\"" + STYLES_DIR
-							+ "/" + path + "\"/>\n";
-				}
+		File[] cssFiles = stylesDir.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.toLowerCase().endsWith(".css");
 			}
+		});
+
+		if (cssFiles == null) {
+			return "";
+		}
+
+		String ret = "";
+		for (File css : cssFiles) {
+			String path = css.getPath();
+			String stylesPath = stylesDir.getPath();
+			if (path.startsWith(stylesPath)) {
+				path = path.substring(stylesPath.length() + 1);
+			}
+			ret += "<link rel=\"stylesheet\" href=\"" + STYLES_DIR + "/" + path
+					+ "\"/>\n";
 		}
 
 		return ret;
@@ -113,5 +146,6 @@ public class IndexHTMLContentProcessor implements Filter {
 
 	@Override
 	public void destroy() {
+		// do nothing
 	}
 }

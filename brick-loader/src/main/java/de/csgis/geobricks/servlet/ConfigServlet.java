@@ -1,4 +1,4 @@
-package de.csgis.geobricks.servlet.client;
+package de.csgis.geobricks.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,10 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.servlet.AbstractGeobricksServlet;
 
 /**
- * Builds the json document that configures all the requirejs modules
+ * Builds the JSON document that configures all the RequireJS modules.
  * 
  * @author fergonco
  */
@@ -34,8 +33,19 @@ public class ConfigServlet extends AbstractGeobricksServlet {
 		writer.write("var require = " + json);
 	}
 
-	public String getConfig(HttpServletRequest request,
-			HttpServletResponse response) throws IOException {
+	/**
+	 * Obtains the string representation of the JSON config object.
+	 * 
+	 * @param request
+	 *            The HTTP request for the config.js resource.
+	 * @param response
+	 *            The HTTP response.
+	 * @return The config.js content as a string.
+	 * @throws IOException
+	 *             if any I/O error occurs while obtaining the configuration.
+	 */
+	String getConfig(HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
 		JSONObject ret = new JSONObject();
 		Set<String> modules = new HashSet<String>();
 

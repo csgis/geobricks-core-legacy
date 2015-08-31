@@ -22,8 +22,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 /**
- * Reads the plugins configuration from <code>gbapp-conf.json</code> and loads
- * all the required plugins from the classpath. It sets:
+ * Loads all the required plugins from the classpath.
  * 
  * @author vicgonco
  */
@@ -80,6 +79,17 @@ public class PluginDescriptorReader {
 		return list.toArray(new PluginDescriptor[list.size()]);
 	}
 
+	/**
+	 * Obtains the dependencies for the specified plugin.
+	 * 
+	 * @param id
+	 *            The identifier of the plugin.
+	 * @param conf
+	 *            The plugin configuration, where dependencies are defined.
+	 * @return The list of dependencies for the given plugin. If the plugin has
+	 *         no dependencies it returns an empty list. It never returns
+	 *         <code>null</code>.
+	 */
 	List<String> getPluginDependencies(String id, JSONObject conf) {
 		List<String> deps = new ArrayList<String>();
 

@@ -6,6 +6,11 @@ import javax.servlet.http.HttpServlet;
 
 import de.csgis.geobricks.guice.GuiceServletConfig;
 
+/**
+ * {@link HttpServlet} with members injected using Guice.
+ * 
+ * @author vicgonco
+ */
 public class AbstractGeobricksServlet extends HttpServlet {
 	@Inject
 	private Config config;

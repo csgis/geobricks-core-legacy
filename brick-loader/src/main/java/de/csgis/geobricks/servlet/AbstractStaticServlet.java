@@ -1,4 +1,4 @@
-package de.csgis.geobricks.servlet.client;
+package de.csgis.geobricks.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,13 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-
-import de.csgis.geobricks.servlet.HTTPCodeServletException;
 
 /**
  * Abstract servlet to serve static content. It relies on some abstract methods
@@ -21,7 +18,7 @@ import de.csgis.geobricks.servlet.HTTPCodeServletException;
  * @author vicgonco
  * 
  */
-public abstract class AbstractStaticServlet extends HttpServlet {
+public abstract class AbstractStaticServlet extends AbstractGeobricksServlet {
 	private static final List<String> TEXT_EXTS = Arrays.asList(".js", ".css",
 			".html", ".htm", ".txt");
 
@@ -56,7 +53,16 @@ public abstract class AbstractStaticServlet extends HttpServlet {
 		}
 	}
 
-	public void setContentTypeAndEncoding(HttpServletResponse resp, String uri) {
+	/**
+	 * Sets the corresponding content type and character encoding on the
+	 * response.
+	 * 
+	 * @param resp
+	 *            The response to set the content type and character encoding.
+	 * @param uri
+	 *            The URI to determine the content type and character encoding.
+	 */
+	void setContentTypeAndEncoding(HttpServletResponse resp, String uri) {
 		if (uri.endsWith(".js")) {
 			resp.setContentType("application/javascript");
 			resp.setCharacterEncoding("UTF-8");

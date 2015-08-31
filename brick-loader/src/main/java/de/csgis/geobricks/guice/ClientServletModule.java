@@ -7,31 +7,29 @@ import com.google.inject.servlet.ServletModule;
 
 import de.csgis.geobricks.Path;
 import de.csgis.geobricks.PluginDescriptorReader;
+import de.csgis.geobricks.servlet.ClasspathResourceServlet;
 import de.csgis.geobricks.servlet.Config;
+import de.csgis.geobricks.servlet.ConfigServlet;
+import de.csgis.geobricks.servlet.ExternalResourceServlet;
+import de.csgis.geobricks.servlet.IndexHTMLContentProcessor;
+import de.csgis.geobricks.servlet.IndexHTMLRedirectFilter;
+import de.csgis.geobricks.servlet.MainModuleContentProcessor;
 import de.csgis.geobricks.servlet.OutputFilter;
-import de.csgis.geobricks.servlet.client.ClasspathResourceServlet;
-import de.csgis.geobricks.servlet.client.ConfigServlet;
-import de.csgis.geobricks.servlet.client.ExternalResourceServlet;
-import de.csgis.geobricks.servlet.client.IndexHTMLContentProcessor;
-import de.csgis.geobricks.servlet.client.IndexHTMLRedirectFilter;
-import de.csgis.geobricks.servlet.client.MainModuleContentProcessor;
 
 public class ClientServletModule extends ServletModule {
-	private PluginDescriptorReader reader;
-	private Config config;
-
 	@Override
 	protected void configureServlets() {
-		this.reader = new PluginDescriptorReader();
-		this.config = new Config();
+		// Bind object instances
+		PluginDescriptorReader reader = new PluginDescriptorReader();
+		Config config;
 		try {
-			this.config.init(getServletContext(), reader);
+			config = new Config(getServletContext(), reader);
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot initialize Config object.", e);
 		}
 
 		bind(PluginDescriptorReader.class).toInstance(reader);
-		bind(Config.class).toInstance(this.config);
+		bind(Config.class).toInstance(config);
 
 		// Output filter
 		filterRegex(Path.root.all().path()).through(OutputFilter.class);
@@ -61,8 +59,8 @@ public class ClientServletModule extends ServletModule {
 		serveRegex(Path.root.theme().all().path()).with(
 				new ClasspathResourceServlet("theme"));
 		serveRegex(Path.root._static().all().path()).with(
-				new ExternalResourceServlet(new File(
-						this.config.getConfigDir(), "_static")));
+				new ExternalResourceServlet(new File(config.getConfigDir(),
+						"_static")));
 
 		// Application index.html
 		String indexPath = Path.root.file("index.html").path();

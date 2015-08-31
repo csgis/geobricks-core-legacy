@@ -22,6 +22,12 @@ import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginDescriptorReader;
 
+/**
+ * Class for managing all the application configuration (application descriptor,
+ * <code>app.properties</code> file, plugin descriptors, etc.
+ * 
+ * @author vicgonco
+ */
 public class Config {
 	private static final Logger logger = Logger.getLogger(Config.class);
 
@@ -38,7 +44,7 @@ public class Config {
 
 	private List<ConfigFilter> filters;
 
-	public void init(ServletContext context, PluginDescriptorReader reader)
+	public Config(ServletContext context, PluginDescriptorReader reader)
 			throws IOException {
 		this.context = context;
 		this.reader = reader;
@@ -57,10 +63,27 @@ public class Config {
 		updateAppProperties();
 	}
 
+	/**
+	 * Adds a new {@link ConfigFilter} to apply to the application
+	 * configuration.
+	 * 
+	 * @param filter
+	 *            the {@link ConfigFilter} to apply.
+	 */
 	public void addConfigFilter(ConfigFilter filter) {
 		this.filters.add(filter);
 	}
 
+	/**
+	 * Obtains the application configuration for the specified request.
+	 * 
+	 * @param request
+	 *            The HTTP request for the application configuration.
+	 * @param response
+	 *            The HTTP response, in case it needs to be modified (cookies,
+	 *            headers, etc.)
+	 * @return The application configuration for the specified request.
+	 */
 	public JSONObject getApplicationConf(HttpServletRequest request,
 			HttpServletResponse response) {
 		JSONObject conf = this.gbappConf;
@@ -75,6 +98,11 @@ public class Config {
 		return conf;
 	}
 
+	/**
+	 * Obtains the configuration directory for the application.
+	 * 
+	 * @return The path of the configuration directory.
+	 */
 	public String getConfigDir() {
 		if (confDir == null) {
 			String conf = System.getProperty(Geobricks.PROP_GEOBRICKS_CONF);
@@ -96,12 +124,12 @@ public class Config {
 		return confDir;
 	}
 
+	/**
+	 * Obtains the <code>app.properties</code> file contents.
+	 * 
+	 * @return
+	 */
 	public Properties getAppProperties() {
-		updateAppPropertiesIfNeeded();
-		return this.appProperties;
-	}
-
-	private void updateAppPropertiesIfNeeded() {
 		File file = new File(getConfigDir(), "app.properties");
 		if (appProperties == null
 				|| file.lastModified() > this.lastAppPropertiesAccess) {
@@ -112,6 +140,7 @@ public class Config {
 						+ "Using previous values if any");
 			}
 		}
+		return this.appProperties;
 	}
 
 	private void updateAppProperties() throws IOException {
@@ -126,17 +155,50 @@ public class Config {
 		this.lastAppPropertiesAccess = System.currentTimeMillis();
 	}
 
+	/**
+	 * Obtains the plugin descriptors for the given request.
+	 * 
+	 * @param request
+	 *            The HTTP request for the application configuration.
+	 * @param response
+	 *            The HTTP response, in case it needs to be modified (cookies,
+	 *            headers, etc.)
+	 * @return The plugin descriptors.
+	 * @throws IOException
+	 *             if any I/O error occurs while reading the plugin descriptors.
+	 */
 	public PluginDescriptor[] getPluginDescriptors(HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		return getPluginDescriptors(getApplicationConf(request, response),
 				this.reader);
 	}
 
+	/**
+	 * Obtains the plugin descriptors for the given application configuration.
+	 * 
+	 * @param gbappConf
+	 *            The application configuration with the plugins to obtain the
+	 * @return The plugin descriptors.
+	 * @throws IOException
+	 *             if any I/O error occurs while reading the plugin descriptors.
+	 */
 	public PluginDescriptor[] getPluginDescriptors(JSONObject gbappConf)
 			throws IOException {
 		return getPluginDescriptors(gbappConf, this.reader);
 	}
 
+	/**
+	 * Obtains the plugin descriptors for the given application configuration.
+	 * 
+	 * @param gbappConf
+	 *            The application configuration with the plugins to obtain the
+	 * @return The plugin descriptors.
+	 * @param reader
+	 *            The {@link PluginDescriptorReader} used for reading the
+	 *            descriptors.
+	 * @throws IOException
+	 *             if any I/O error occurs while reading the plugin descriptors.
+	 */
 	PluginDescriptor[] getPluginDescriptors(JSONObject gbappConf,
 			PluginDescriptorReader reader) throws IOException {
 		List<String> plugins = new ArrayList<String>();

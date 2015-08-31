@@ -1,4 +1,4 @@
-package de.csgis.geobricks.servlet.client;
+package de.csgis.geobricks.servlet;
 
 import java.io.IOException;
 
@@ -18,6 +18,12 @@ import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.servlet.CharResponseWrapper;
 import de.csgis.geobricks.servlet.Config;
 
+/**
+ * Filter to process the main.js document (replace placeholders, add extra
+ * parts,...), depending on the request.
+ * 
+ * @author vicgonco
+ */
 @Singleton
 public class MainModuleContentProcessor implements Filter {
 
@@ -42,7 +48,16 @@ public class MainModuleContentProcessor implements Filter {
 		response.getWriter().write(process(wrapper.toString(), descriptors));
 	}
 
-	public String process(String content, PluginDescriptor[] descriptors) {
+	/**
+	 * Processes the main.js content.
+	 * 
+	 * @param content
+	 *            The content of the main.js document.
+	 * @param descriptors
+	 *            The plugin descriptors for the application.
+	 * @return The content of the main.js document already processed.
+	 */
+	String process(String content, PluginDescriptor[] descriptors) {
 		JSONObject paths = new JSONObject();
 		JSONObject shim = new JSONObject();
 
@@ -58,5 +73,6 @@ public class MainModuleContentProcessor implements Filter {
 
 	@Override
 	public void destroy() {
+		// do nothing
 	}
 }

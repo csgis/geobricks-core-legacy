@@ -129,8 +129,7 @@ public class ConfigTest {
 		System.clearProperty(Geobricks.PROP_GEOBRICKS_CONF);
 		when(context.getContextPath()).thenReturn(confDir.getName());
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 		assertEquals(DEFAULT_CONF_PATH, config.getConfigDir());
 	}
 
@@ -139,8 +138,7 @@ public class ConfigTest {
 		System.setProperty(Geobricks.PROP_GEOBRICKS_CONF, "non_existing_dir");
 		when(context.getContextPath()).thenReturn("viewer");
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 		assertEquals(DEFAULT_CONF_PATH, config.getConfigDir());
 	}
 
@@ -149,8 +147,7 @@ public class ConfigTest {
 		System.setProperty(Geobricks.PROP_GEOBRICKS_CONF, confDir.getParent());
 		when(context.getContextPath()).thenReturn("viewer");
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 		assertEquals(DEFAULT_CONF_PATH, config.getConfigDir());
 	}
 
@@ -159,8 +156,7 @@ public class ConfigTest {
 		System.setProperty(Geobricks.PROP_GEOBRICKS_CONF, confDir.getParent());
 		when(context.getContextPath()).thenReturn(confDir.getName());
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 
 		assertEquals(confDir.getAbsolutePath(), config.getConfigDir());
 	}
@@ -171,8 +167,7 @@ public class ConfigTest {
 		properties.setProperty("k1", "v1");
 		properties.store(new FileOutputStream(appProperties), null);
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 
 		Properties app = config.getAppProperties();
 		assertEquals(1, app.size());
@@ -185,8 +180,7 @@ public class ConfigTest {
 		properties.setProperty("k1", "v1");
 		properties.store(new FileOutputStream(appProperties), null);
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 
 		// Last modified only takes seconds into account, not millis. We wait
 		// for at least one second.
@@ -207,8 +201,7 @@ public class ConfigTest {
 	public void addPluginConfigIfFileCreated() throws Exception {
 		gbappConf = "{" + PLUGIN_ID + ":{}}";
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 
 		assertEquals(
 				new JSONObject(),
@@ -235,8 +228,7 @@ public class ConfigTest {
 	public void reloadPluginConfigIfModifiedRecently() throws Exception {
 		gbappConf = "{" + PLUGIN_ID + ":{}}";
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 
 		File pluginConf = new File(confDir, PLUGIN_ID + ".json");
 
@@ -265,8 +257,7 @@ public class ConfigTest {
 	public void removePluginConfigIfFileDeleted() throws Exception {
 		gbappConf = "{" + PLUGIN_ID + ":{}}";
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 
 		File pluginConf = new File(confDir, PLUGIN_ID + ".json");
 
@@ -288,8 +279,7 @@ public class ConfigTest {
 	public void customPluginConfig() throws Exception {
 		gbappConf = "{" + PLUGIN_ID + ": { mymodule : { enabled : true }}}";
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 
 		assertTrue(config
 				.getApplicationConf(mock(HttpServletRequest.class),
@@ -304,8 +294,7 @@ public class ConfigTest {
 				.fromObject("{ mymodule : { enabled : false }}"));
 		gbappConf = "{" + PLUGIN_ID + ": {}}";
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 
 		JSONObject conf = config
 				.getApplicationConf(mock(HttpServletRequest.class),
@@ -321,7 +310,7 @@ public class ConfigTest {
 				configuredId);
 		when(context.getContextPath()).thenReturn("/myapp");
 
-		Config config = new Config();
+		Config config = new Config(context, reader);
 		assertEquals(config.getApplicationId(context), configuredId);
 	}
 
@@ -331,7 +320,7 @@ public class ConfigTest {
 		when(context.getInitParameter("geobricks-app-id")).thenReturn(null);
 		when(context.getContextPath()).thenReturn("/" + urlId);
 
-		Config config = new Config();
+		Config config = new Config(context, reader);
 		assertEquals(urlId, config.getApplicationId(context));
 	}
 
@@ -347,8 +336,7 @@ public class ConfigTest {
 		json.element(PLUGIN_ID, pluginSpecificConf);
 		IOUtils.write(json.toString(), new FileOutputStream(pluginConfFile));
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn(role);
@@ -372,8 +360,7 @@ public class ConfigTest {
 		json.element(anotherPlugin, pluginSpecificConf);
 		IOUtils.write(json.toString(), new FileOutputStream(pluginConfFile));
 
-		Config config = new Config();
-		config.init(context, reader);
+		Config config = new Config(context, reader);
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		// Plugin is available for role

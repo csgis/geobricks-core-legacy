@@ -13,12 +13,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+/**
+ * Filter for catching exceptions and formatting them into well known server
+ * responses (JSON objects with status code and message). In order to configure
+ * status code and message properly, throw {@link HTTPCodeServletException}
+ * exceptions.
+ * 
+ * @author vicgonco
+ */
 @Singleton
 public class OutputFilter implements Filter {
 	private static final Logger logger = Logger.getLogger(OutputFilter.class);
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
+		// do nothing
 	}
 
 	@Override
@@ -60,5 +69,6 @@ public class OutputFilter implements Filter {
 
 	@Override
 	public void destroy() {
+		// do nothing
 	}
 }
