@@ -20,9 +20,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.csgis.geobricks.Path;
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.servlet.Config;
-import de.csgis.geobricks.servlet.IndexHTMLContentProcessor;
 
 public class IndexHTMLContentProcessorTest {
 	private static final String INDEX = "/webapp/index.html";
@@ -193,6 +192,30 @@ public class IndexHTMLContentProcessorTest {
 		assertTrue(content.contains("$title"));
 		assertFalse(processed.contains("$title"));
 		assertTrue(processed.contains("<title></title>"));
+	}
+
+	@Test
+	public void ordersCSSByDirectory() throws Exception {
+		String content = IOUtils
+				.toString(getClass().getResourceAsStream(INDEX));
+		PluginDescriptor descriptor = new PluginDescriptor();
+		descriptor.getStyles().add(
+				new Path("").theme().file("mytheme.css").path());
+		descriptor.getStyles().add(
+				new Path("").styles().file("mystyle.css").path());
+
+		Config config = mockConfig(null, new PluginDescriptor[] { descriptor },
+				"", false);
+
+		String processed = filter
+				.process(content, config, mock(HttpServletRequest.class),
+						mock(HttpServletResponse.class));
+		int themeIndex = processed.indexOf("theme/mytheme.css");
+		int styleIndex = processed.indexOf("styles/mystyle.css");
+
+		assertTrue(themeIndex > 0);
+		assertTrue(styleIndex > 0);
+		assertTrue(themeIndex > styleIndex);
 	}
 
 	private void checkCSS(String content, String css) {

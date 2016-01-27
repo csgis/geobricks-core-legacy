@@ -30,9 +30,10 @@ public class PluginDescriptorReader {
 	private static final Logger logger = Logger
 			.getLogger(PluginDescriptorReader.class);
 
-	public static final String MODULES_PATH = "webapp/modules";
-	public static final String STYLES_PATH = "webapp/styles";
-	public static final String THEME_PATH = "webapp/theme";
+	public static final Path WEBAPP = new Path("webapp");
+	public static final String MODULES_PATH = WEBAPP.modules().path();
+	public static final String STYLES_PATH = WEBAPP.styles().path();
+	public static final String THEME_PATH = WEBAPP.theme().path();
 
 	private Map<String, PluginDescriptor> descriptors = new HashMap<String, PluginDescriptor>();
 
