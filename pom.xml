@@ -26,14 +26,12 @@
 	<distributionManagement>
 		<!-- 80.237.188.123 is geo-service -->
 		<repository>
-			<id>gbnexus</id>
-			<name>Geobricks Nexus</name>
-			<url>http://80.237.188.123/nexus/content/repositories/releases/</url>
+			<id>geobricks-ssh-releases</id>
+			<url>scpexe://service.csgis.de:${csgis.ssh.port}/var/maven/releases</url>
 		</repository>
 		<snapshotRepository>
-			<id>gbnexus</id>
-			<name>Geobricks nexus</name>
-			<url>http://80.237.188.123/nexus/content/repositories/snapshots/</url>
+			<id>geobricks-ssh-snapshots</id>
+			<url>scpexe://service.csgis.de:${csgis.ssh.port}/var/maven/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -46,6 +44,13 @@
 	</pluginRepositories>
 
 	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh-external</artifactId>
+				<version>1.0-beta-6</version>
+			</extension>
+		</extensions>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
