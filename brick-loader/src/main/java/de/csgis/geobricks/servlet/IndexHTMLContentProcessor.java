@@ -3,6 +3,10 @@ package de.csgis.geobricks.servlet;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -16,9 +20,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.csgis.geobricks.Path;
 import de.csgis.geobricks.PluginDescriptor;
-import de.csgis.geobricks.servlet.CharResponseWrapper;
-import de.csgis.geobricks.servlet.Config;
 
 /**
  * Filter to process the index.html document (replace placeholders, add extra
@@ -85,11 +88,31 @@ public class IndexHTMLContentProcessor implements Filter {
 			replaced = content.replace("$mainModule", "optimized/portal");
 		} else {
 			StringBuilder str = new StringBuilder();
+			List<String> styles = new ArrayList<String>();
 			for (PluginDescriptor descriptor : descriptors) {
-				for (String style : descriptor.getStyles()) {
-					str.append("<link rel=\"stylesheet\" href=\"" + style
-							+ "\"/>\n");
+				styles.addAll(descriptor.getStyles());
+			}
+
+			Collections.sort(styles, new Comparator<String>() {
+				@Override
+				public int compare(String o1, String o2) {
+					String themePath = new Path("").theme().path();
+					String stylesPath = new Path("").styles().path();
+
+					if (o1.startsWith(themePath) || o2.startsWith(stylesPath)) {
+						return 1;
+					} else if (o1.startsWith(stylesPath)
+							|| o2.startsWith(themePath)) {
+						return -1;
+					} else {
+						return 0;
+					}
 				}
+			});
+
+			for (String style : styles) {
+				str.append("<link rel=\"stylesheet\" href=\"" + style
+						+ "\"/>\n");
 			}
 			content = content.replace("$styleSheets", str.toString()
 					+ getCSSTagsFromDir(stylesDir));
