@@ -72,6 +72,9 @@ public abstract class AbstractStaticServlet extends AbstractGeobricksServlet {
 		} else if (uri.endsWith(".css")) {
 			resp.setContentType("text/css");
 			resp.setCharacterEncoding("UTF-8");
+		} else if (uri.endsWith(".svg")) {
+			resp.setContentType("image/svg+xml");
+			resp.setCharacterEncoding("UTF-8");
 		}
 	}
 

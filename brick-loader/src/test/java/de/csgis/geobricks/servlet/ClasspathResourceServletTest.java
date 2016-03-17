@@ -135,4 +135,17 @@ public class ClasspathResourceServletTest {
 		verify(resp).setContentType("application/javascript");
 		verify(resp).setCharacterEncoding("UTF-8");
 	}
+
+	@Test
+	public void svgContentTypeAndEncoding() throws Exception {
+		ClasspathResourceServlet servlet = new ClasspathResourceServlet(
+				"images");
+
+		HttpServletResponse resp = mock(HttpServletResponse.class);
+		servlet.setContentTypeAndEncoding(resp,
+				servlet.getResource("images/img.svg"));
+
+		verify(resp).setContentType("image/svg+xml");
+		verify(resp).setCharacterEncoding("UTF-8");
+	}
 }
