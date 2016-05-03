@@ -9,4 +9,7 @@ public interface Geobricks {
 
 	// Request attributes
 	String ATTR_ROLE = "de.csgis.geobricks.role";
+
+	// HttpSession user attribute
+	String SESSION_ATTR_USER = "de.csgis.geobricks.session.user";
 }
