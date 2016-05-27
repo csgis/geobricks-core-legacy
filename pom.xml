@@ -6,7 +6,7 @@
 	<groupId>de.csgis.geobricks</groupId>
 	<artifactId>geobricks</artifactId>
 	<name>Geobricks</name>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.9.0-beta1</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -74,7 +74,7 @@
 						</goals>
 						<configuration>
 							<maxmemory>512m</maxmemory>
-							<aggregate>true</aggregate>
+							<aggregate>false</aggregate>
 						</configuration>
 					</execution>
 				</executions>
