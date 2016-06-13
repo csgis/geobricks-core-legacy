@@ -19,7 +19,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jasmine.version>2.0-alpha-01</jasmine.version>
+		<jasmine.version>2.1</jasmine.version>
 		<saga.version>1.5.5</saga.version>
 	</properties>
 
