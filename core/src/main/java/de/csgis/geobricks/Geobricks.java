@@ -12,4 +12,5 @@ public interface Geobricks {
 
 	// HttpSession user attribute
 	String SESSION_ATTR_USER = "de.csgis.geobricks.session.user";
+	String SESSION_ATTR_PASS = "de.csgis.geobricks.session.pass";
 }
