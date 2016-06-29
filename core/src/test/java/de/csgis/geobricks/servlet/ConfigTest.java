@@ -23,8 +23,7 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONObject;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -38,13 +37,12 @@ import org.mockito.stubbing.Answer;
 import de.csgis.geobricks.Geobricks;
 import de.csgis.geobricks.PluginDescriptor;
 import de.csgis.geobricks.PluginDescriptorReader;
+import net.sf.json.JSONObject;
 
 @SuppressWarnings("unchecked")
 public class ConfigTest {
 	private static final String DEFAULT_CONF_PATH = ConfigTest.class
-			.getResource(".").getPath()
-			+ File.separator
-			+ "WEB-INF"
+			.getResource(".").getPath() + File.separator + "WEB-INF"
 			+ File.separator + "default_conf";
 	private static final String PLUGIN_ID = "myplugin";
 
@@ -75,10 +73,10 @@ public class ConfigTest {
 		// Conf dir
 		FileUtils.deleteDirectory(confDir);
 		confDir.mkdir();
-		System.setProperty(Geobricks.PROP_GEOBRICKS_CONF, confDir
-				.getParentFile().getAbsolutePath());
-		when(context.getRealPath("/")).thenReturn(
-				getClass().getResource(".").getPath());
+		System.setProperty(Geobricks.PROP_GEOBRICKS_CONF,
+				confDir.getParentFile().getAbsolutePath());
+		when(context.getRealPath("/"))
+				.thenReturn(getClass().getResource(".").getPath());
 
 		// Context attributes
 		attributes = new HashMap<Object, Object>();
@@ -99,8 +97,8 @@ public class ConfigTest {
 
 		// gbappConf
 		gbappConf = "{}";
-		when(context.getResourceAsStream(anyString())).thenAnswer(
-				new Answer<InputStream>() {
+		when(context.getResourceAsStream(anyString()))
+				.thenAnswer(new Answer<InputStream>() {
 					@Override
 					public InputStream answer(InvocationOnMock invocation)
 							throws Throwable {
@@ -112,8 +110,8 @@ public class ConfigTest {
 		descriptor.setId(PLUGIN_ID);
 
 		reader = mock(PluginDescriptorReader.class);
-		when(reader.getDescriptors(anyList())).thenReturn(
-				new PluginDescriptor[] { descriptor });
+		when(reader.getDescriptors(anyList()))
+				.thenReturn(new PluginDescriptor[]{descriptor});
 
 		FileUtils.deleteDirectory(roleDir);
 		roleDir.mkdir();
@@ -204,22 +202,22 @@ public class ConfigTest {
 		Config config = new Config(context, reader);
 
 		assertEquals(
-				new JSONObject(),
-				config.getApplicationConf(mock(HttpServletRequest.class),
-						mock(HttpServletResponse.class)).get(PLUGIN_ID));
+				new JSONObject(), config
+						.getApplicationConf(mockRequest(),
+								mock(HttpServletResponse.class))
+						.get(PLUGIN_ID));
 
 		File pluginConf = new File(confDir, PLUGIN_ID + ".json");
 		JSONObject json = JSONObject.fromObject("{module1 : [1,2,3]}");
 		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
 
+		assertEquals(1, config.getApplicationConf(mockRequest(),
+				mock(HttpServletResponse.class)).size());
 		assertEquals(
-				1,
-				config.getApplicationConf(mock(HttpServletRequest.class),
-						mock(HttpServletResponse.class)).size());
-		assertEquals(
-				json,
-				config.getApplicationConf(mock(HttpServletRequest.class),
-						mock(HttpServletResponse.class)).get(PLUGIN_ID));
+				json, config
+						.getApplicationConf(mockRequest(),
+								mock(HttpServletResponse.class))
+						.get(PLUGIN_ID));
 
 		pluginConf.delete();
 	}
@@ -235,9 +233,10 @@ public class ConfigTest {
 		JSONObject json = JSONObject.fromObject("{module1 : [1,2,3]}");
 		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
 		assertEquals(
-				json,
-				config.getApplicationConf(mock(HttpServletRequest.class),
-						mock(HttpServletResponse.class)).get(PLUGIN_ID));
+				json, config
+						.getApplicationConf(mockRequest(),
+								mock(HttpServletResponse.class))
+						.get(PLUGIN_ID));
 
 		// Last modified only takes seconds into account, not millis. We wait
 		// for at least one second.
@@ -246,9 +245,10 @@ public class ConfigTest {
 		json = JSONObject.fromObject("{module1 : [4,5,6]}");
 		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
 		assertEquals(
-				json,
-				config.getApplicationConf(mock(HttpServletRequest.class),
-						mock(HttpServletResponse.class)).get(PLUGIN_ID));
+				json, config
+						.getApplicationConf(mockRequest(),
+								mock(HttpServletResponse.class))
+						.get(PLUGIN_ID));
 
 		pluginConf.delete();
 	}
@@ -264,15 +264,17 @@ public class ConfigTest {
 		JSONObject json = JSONObject.fromObject("{module1 : [1,2,3]}");
 		IOUtils.write(json.toString(), new FileOutputStream(pluginConf));
 		assertEquals(
-				json,
-				config.getApplicationConf(mock(HttpServletRequest.class),
-						mock(HttpServletResponse.class)).get(PLUGIN_ID));
+				json, config
+						.getApplicationConf(mockRequest(),
+								mock(HttpServletResponse.class))
+						.get(PLUGIN_ID));
 
 		pluginConf.delete();
 		assertEquals(
-				new JSONObject(),
-				config.getApplicationConf(mock(HttpServletRequest.class),
-						mock(HttpServletResponse.class)).get(PLUGIN_ID));
+				new JSONObject(), config
+						.getApplicationConf(mockRequest(),
+								mock(HttpServletResponse.class))
+						.get(PLUGIN_ID));
 	}
 
 	@Test
@@ -282,7 +284,7 @@ public class ConfigTest {
 		Config config = new Config(context, reader);
 
 		assertTrue(config
-				.getApplicationConf(mock(HttpServletRequest.class),
+				.getApplicationConf(mockRequest(),
 						mock(HttpServletResponse.class))
 				.getJSONObject(PLUGIN_ID).getJSONObject("mymodule")
 				.getBoolean("enabled"));
@@ -290,15 +292,14 @@ public class ConfigTest {
 
 	@Test
 	public void defaultPluginConfigWhenEmpty() throws Exception {
-		descriptor.setDefaultConfiguration(JSONObject
-				.fromObject("{ mymodule : { enabled : false }}"));
+		descriptor.setDefaultConfiguration(
+				JSONObject.fromObject("{ mymodule : { enabled : false }}"));
 		gbappConf = "{" + PLUGIN_ID + ": {}}";
 
 		Config config = new Config(context, reader);
 
-		JSONObject conf = config
-				.getApplicationConf(mock(HttpServletRequest.class),
-						mock(HttpServletResponse.class));
+		JSONObject conf = config.getApplicationConf(mockRequest(),
+				mock(HttpServletResponse.class));
 		assertFalse(conf.getJSONObject(PLUGIN_ID).getJSONObject("mymodule")
 				.getBoolean("enabled"));
 	}
@@ -306,8 +307,8 @@ public class ConfigTest {
 	@Test
 	public void getConfiguredAppId() throws Exception {
 		String configuredId = "configuredid";
-		when(context.getInitParameter("geobricks-app-id")).thenReturn(
-				configuredId);
+		when(context.getInitParameter("geobricks-app-id"))
+				.thenReturn(configuredId);
 		when(context.getContextPath()).thenReturn("/myapp");
 
 		Config config = new Config(context, reader);
@@ -338,13 +339,12 @@ public class ConfigTest {
 
 		Config config = new Config(context, reader);
 
-		HttpServletRequest request = mock(HttpServletRequest.class);
-		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
+		HttpServletRequest request = mockRequest();
+		when(request.getSession().getAttribute(Geobricks.SESSION_ATTR_ROLE))
 				.thenReturn(role);
-		assertEquals(
-				pluginSpecificConf,
-				config.getApplicationConf(request,
-						mock(HttpServletResponse.class)).get(PLUGIN_ID));
+		assertEquals(pluginSpecificConf, config
+				.getApplicationConf(request, mock(HttpServletResponse.class))
+				.get(PLUGIN_ID));
 	}
 
 	@Test
@@ -363,18 +363,27 @@ public class ConfigTest {
 
 		Config config = new Config(context, reader);
 
-		HttpServletRequest request = mock(HttpServletRequest.class);
+		HttpServletRequest request = mockRequest();
 		// Plugin is available for role
-		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
+		when(request.getSession().getAttribute(Geobricks.SESSION_ATTR_ROLE))
 				.thenReturn(role);
-		assertEquals(
-				pluginSpecificConf,
-				config.getApplicationConf(request,
-						mock(HttpServletResponse.class)).get(anotherPlugin));
+		assertEquals(pluginSpecificConf, config
+				.getApplicationConf(request, mock(HttpServletResponse.class))
+				.get(anotherPlugin));
 		// Plugin is not available by default
-		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
+		when(request.getSession().getAttribute(Geobricks.SESSION_ATTR_ROLE))
 				.thenReturn(null);
-		assertNull(config.getApplicationConf(request,
-				mock(HttpServletResponse.class)).get(anotherPlugin));
+		assertNull(config
+				.getApplicationConf(request, mock(HttpServletResponse.class))
+				.get(anotherPlugin));
+	}
+
+	private HttpServletRequest mockRequest() {
+		HttpServletRequest request = mock(HttpServletRequest.class);
+
+		HttpSession session = mock(HttpSession.class);
+		when(request.getSession()).thenReturn(session);
+
+		return request;
 	}
 }

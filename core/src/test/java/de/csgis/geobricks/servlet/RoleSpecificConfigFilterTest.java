@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -47,10 +48,7 @@ public class RoleSpecificConfigFilterTest {
 	public void noRoleOnRequest() throws Exception {
 		JSONObject config = JSONObject.fromObject("{ plugin : { a : true }}");
 
-		HttpServletRequest request = mock(HttpServletRequest.class);
-		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
-				.thenReturn(null);
-
+		HttpServletRequest request = mockRequest(null);
 		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
 		assertEquals(config, modified);
@@ -60,10 +58,7 @@ public class RoleSpecificConfigFilterTest {
 	public void roleWithoutSpecificConf() throws Exception {
 		JSONObject config = JSONObject.fromObject("{ plugin : { a : true }}");
 
-		HttpServletRequest request = mock(HttpServletRequest.class);
-		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
-				.thenReturn("role1");
-
+		HttpServletRequest request = mockRequest("role1");
 		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
 		assertEquals(config, modified);
@@ -79,10 +74,7 @@ public class RoleSpecificConfigFilterTest {
 		IOUtils.write("{ plugin : {'a' : true }}", writer);
 		writer.close();
 
-		HttpServletRequest request = mock(HttpServletRequest.class);
-		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
-				.thenReturn(role);
-
+		HttpServletRequest request = mockRequest(role);
 		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
 		assertTrue(modified.has("plugin"));
@@ -101,17 +93,24 @@ public class RoleSpecificConfigFilterTest {
 		IOUtils.write("{ plugin : {'a' : true, 'b' : false }}", writer);
 		writer.close();
 
-		HttpServletRequest request = mock(HttpServletRequest.class);
-		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
-				.thenReturn(role);
-
+		HttpServletRequest request = mockRequest(role);
 		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
-		System.out.println(modified);
 		assertTrue(modified.has("plugin"));
 		assertTrue(modified.getJSONObject("plugin").getBoolean("a"));
 		assertFalse(modified.getJSONObject("plugin").getBoolean("b"));
 
 		tmp.delete();
+	}
+
+	private HttpServletRequest mockRequest(String role) {
+		HttpServletRequest request = mock(HttpServletRequest.class);
+
+		HttpSession session = mock(HttpSession.class);
+		when(request.getSession()).thenReturn(session);
+		when(session.getAttribute(Geobricks.SESSION_ATTR_ROLE))
+				.thenReturn(role);
+
+		return request;
 	}
 }
