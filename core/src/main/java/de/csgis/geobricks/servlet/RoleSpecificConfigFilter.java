@@ -25,8 +25,8 @@ public class RoleSpecificConfigFilter implements ConfigFilter {
 	private JSONContentProvider contents;
 
 	public RoleSpecificConfigFilter(String configDir) {
-		this.contents = new JSONContentProvider(configDir + File.separator
-				+ ROLE_DIR);
+		this.contents = new JSONContentProvider(
+				configDir + File.separator + ROLE_DIR);
 	}
 
 	@Override
@@ -35,7 +35,8 @@ public class RoleSpecificConfigFilter implements ConfigFilter {
 			throws IOException {
 		JSONObject modified = JSONObject.fromObject(config);
 
-		Object attr = request.getAttribute(Geobricks.ATTR_ROLE);
+		Object attr = request.getSession()
+				.getAttribute(Geobricks.SESSION_ATTR_ROLE);
 		if (attr == null) {
 			return modified;
 		}

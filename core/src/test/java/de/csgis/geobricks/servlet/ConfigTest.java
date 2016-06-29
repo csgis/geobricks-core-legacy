@@ -339,7 +339,8 @@ public class ConfigTest {
 		Config config = new Config(context, reader);
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
-		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn(role);
+		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
+				.thenReturn(role);
 		assertEquals(
 				pluginSpecificConf,
 				config.getApplicationConf(request,
@@ -364,13 +365,15 @@ public class ConfigTest {
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		// Plugin is available for role
-		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn(role);
+		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
+				.thenReturn(role);
 		assertEquals(
 				pluginSpecificConf,
 				config.getApplicationConf(request,
 						mock(HttpServletResponse.class)).get(anotherPlugin));
 		// Plugin is not available by default
-		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn(null);
+		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
+				.thenReturn(null);
 		assertNull(config.getApplicationConf(request,
 				mock(HttpServletResponse.class)).get(anotherPlugin));
 	}

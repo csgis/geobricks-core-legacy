@@ -8,9 +8,9 @@ public interface Geobricks {
 	String PROP_GEOBRICKS_CONF = "GEOBRICKS_CONF_DIR";
 
 	// Request attributes
-	String ATTR_ROLE = "de.csgis.geobricks.role";
 
 	// HttpSession user attribute
 	String SESSION_ATTR_USER = "de.csgis.geobricks.session.user";
 	String SESSION_ATTR_PASS = "de.csgis.geobricks.session.pass";
+	String SESSION_ATTR_ROLE = "de.csgis.geobricks.session.role";
 }

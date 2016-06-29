@@ -13,8 +13,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -22,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.csgis.geobricks.Geobricks;
+import net.sf.json.JSONObject;
 
 public class RoleSpecificConfigFilterTest {
 	private File configDir, roleDir;
@@ -49,7 +48,8 @@ public class RoleSpecificConfigFilterTest {
 		JSONObject config = JSONObject.fromObject("{ plugin : { a : true }}");
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
-		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn(null);
+		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
+				.thenReturn(null);
 
 		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
@@ -61,7 +61,8 @@ public class RoleSpecificConfigFilterTest {
 		JSONObject config = JSONObject.fromObject("{ plugin : { a : true }}");
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
-		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn("role1");
+		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
+				.thenReturn("role1");
 
 		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
@@ -79,7 +80,8 @@ public class RoleSpecificConfigFilterTest {
 		writer.close();
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
-		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn(role);
+		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
+				.thenReturn(role);
 
 		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
@@ -100,7 +102,8 @@ public class RoleSpecificConfigFilterTest {
 		writer.close();
 
 		HttpServletRequest request = mock(HttpServletRequest.class);
-		when(request.getAttribute(Geobricks.ATTR_ROLE)).thenReturn(role);
+		when(request.getAttribute(Geobricks.SESSION_ATTR_ROLE))
+				.thenReturn(role);
 
 		JSONObject modified = filter.modifyConfig(config, request,
 				mock(HttpServletResponse.class));
