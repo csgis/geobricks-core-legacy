@@ -6,7 +6,7 @@
 	<groupId>de.csgis.geobricks</groupId>
 	<artifactId>geobricks</artifactId>
 	<name>Geobricks</name>
-	<version>0.8.3</version>
+	<version>0.8.4-beta1</version>
 	<packaging>pom</packaging>
 
 	<modules>
