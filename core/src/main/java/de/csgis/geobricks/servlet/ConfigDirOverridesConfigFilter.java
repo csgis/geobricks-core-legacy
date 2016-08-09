@@ -6,9 +6,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.csgis.commons.JSONContentProvider;
+import de.csgis.commons.JSONUtils;
 import net.sf.json.JSONObject;
-import de.csgis.geobricks.JSONContentProvider;
-import de.csgis.geobricks.JSONUtils;
 
 /**
  * {@link ConfigFilter} for overriding the given config with all the

@@ -6,10 +6,10 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
+import de.csgis.commons.JSONContentProvider;
+import de.csgis.commons.JSONUtils;
 import de.csgis.geobricks.Geobricks;
-import de.csgis.geobricks.JSONContentProvider;
-import de.csgis.geobricks.JSONUtils;
+import net.sf.json.JSONObject;
 
 /**
  * {@link ConfigFilter} for role specific configuration. Roles are defined by

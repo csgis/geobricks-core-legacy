@@ -5,9 +5,9 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-import de.csgis.geobricks.JSONUtils;
+import de.csgis.commons.JSONUtils;
 import de.csgis.geobricks.PluginDescriptor;
+import net.sf.json.JSONObject;
 
 /**
  * {@link ConfigFilter} for applying the default plugin configurations (

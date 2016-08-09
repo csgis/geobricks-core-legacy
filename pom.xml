@@ -36,6 +36,13 @@
 		</snapshotRepository>
 	</distributionManagement>
 
+	<repositories>
+		<repository>
+			<id>csgis-releases</id>
+			<url>http://service-sandbox.csgis.de:8081/mvn/releases/</url>
+		</repository>
+	</repositories>
+
 	<pluginRepositories>
 		<pluginRepository>
 			<id>nfms4redd</id>
