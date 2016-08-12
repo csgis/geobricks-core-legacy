@@ -12,9 +12,6 @@
 	<modules>
 		<module>core</module>
 		<module>brick-loader</module>
-		<module>libs</module>
-		<module>plugins</module>
-		<module>themes</module>
 	</modules>
 
 	<properties>
